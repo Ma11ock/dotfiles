@@ -12,10 +12,14 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(ansi-color-names-vector
+   ["#000000" "#8b0000" "#00ff00" "#ffa500" "#7b68ee" "#dc8cc3" "#93e0e3" "#dcdccc"])
  '(comment-style (quote box))
+ '(custom-enabled-themes (quote (manoj-dark)))
+ '(fci-rule-color "#383838")
  '(package-selected-packages
    (quote
-    (cyberpunk-theme rainbow-mode pretty-mode cargo flycheck-rust racer helm rust-mode rebox2 ssh evil telephone-line vimrc-mode multi-term spacemacs-theme night-owl-theme php-mode robe hlinum ggtags flycheck-perl6 company-rtags neotree modern-cpp-font-lock magit cmake-mode company-c-headers hydra irony company auto-complete-clang cmake-ide rtags fish-mode flycheck iedit auto-complete-c-headers auto-complete markdown-mode pdf-tools geiser projectile clojure-mode-extra-font-locking cider slime grandshell-theme)))
+    (org-mime highlight-indent-guides highlight-indentation auctex chess scroll-restore smooth-scroll smooth-scrolling cyberpunk-theme rainbow-mode pretty-mode cargo flycheck-rust racer helm rust-mode rebox2 ssh evil telephone-line vimrc-mode multi-term spacemacs-theme night-owl-theme php-mode robe hlinum ggtags flycheck-perl6 company-rtags neotree modern-cpp-font-lock magit cmake-mode company-c-headers hydra irony company auto-complete-clang cmake-ide rtags fish-mode flycheck iedit auto-complete-c-headers auto-complete markdown-mode pdf-tools geiser projectile clojure-mode-extra-font-locking cider slime grandshell-theme)))
  '(safe-local-variable-values
    (quote
     ((eval setq flycheck-clang-include-path
@@ -31,6 +35,7 @@
  '(spacemacs-theme-org-bold nil)
  '(spacemacs-theme-underline-parens nil)
  '(tool-bar-mode nil))
+
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -38,15 +43,12 @@
  ;; If there is more than one, they won't work right.
  )
 ;; theme and font stuff
-(load-theme 'cyberpunk t)  ;(load-theme 'night-owl t)https://stackoverflow.com/questions/3297
 
 (add-to-list 'default-frame-alist
-             '(font . "Monaco:antialias=true:size=16:style=Regular"))
+             '(font . "DejaVu Sans Mono:antialias=true:size=16:style=Regular"))
 
 
 ;;; various emacs settings
-
-
 (put 'upcase-region 'disabled nil)                                                                      ;;
 (electric-pair-mode t)                                                                                  ;;
 (desktop-save-mode 1)                                                                                   ;;
@@ -59,17 +61,6 @@
 (scroll-bar-mode -1)                                                                                    ;;
 (setq ring-bell-function 'ignore)                                                                       ;;
 (blink-cursor-mode 0)                                                                                   ;;
-                                                                                                        ;;
-;;;; Keybinding settings                                                                                ;;
-                                                                                                        ;;
-;;; so backspace works with indentation.                                                                ;;
-;;; big thanks to https://www.reddit.com/user/clemera for this.                                         ;;
-                                                                                                        ;;
-;;;; Programmer settings                                                                                ;;
-                                                                                                        ;;
-;;; Lisp settings                                                                                       ;;
-                                                                                                        ;;
-                                                                                                        ;;
                                                                                                         ;;
 (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode)) ; for markdown editing                     ;;
                                                                                                         ;;
@@ -84,7 +75,7 @@
 (setq c-default-style "linux"                                                                           ;;
       c-basic-offset 4)                                                                                 ;;
                                                                                                         ;;
-(global-flycheck-mode 1) ; flycheck                                                                     ;;
+(global-flycheck-mode 1)
                                                                                                         ;;
 ;; for betting modern C++ highlighting                                                                  ;;
 (require 'modern-cpp-font-lock)                                                                         ;;
@@ -95,14 +86,12 @@
 (setq ispell-local-dictionary "en_US")                                                                  ;;
 (setq ispell-local-dictionary-alist                                                                     ;;
       '(("en_US" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil nil nil utf-8)))                                ;;
-                                                                                                        ;;
-;; notree                                                                                               ;;
 (require 'neotree)                                                                                      ;;
 (global-set-key [f8] 'neotree-toggle)                                                                   ;;
                                                                                                         ;;
                                                                                                         ;;
 ;; Set your lisp system and, optionally, some contribs                                                  ;;
-(setq inferior-lisp-program "/opt/sbcl/bin/sbcl") 
+(setq inferior-lisp-program "/opt/sbcl/bin/sbcl")
 (setq slime-contribs '(slime-fancy))                                                                    ;;
                                                                                                         ;;
 (load (expand-file-name "~/quicklisp/slime-helper.el"))                                                 ;;
@@ -110,7 +99,6 @@
 (setq inferior-lisp-program "sbcl")                                                                     ;;
                                                                                                         ;;
 (setq geiser-active-implementations '(guile))                                                           ;;
-                                                                                                        ;;
                                                                                                         ;;
 ;; cperl-mode                                                                                           ;;
 (fset 'perl-mode 'cperl-mode)                                                                           ;;
@@ -125,18 +113,17 @@
   (semantic-mode 1)
   (add-to-list 'ac-sources 'ac-source-semantic))                                                        ;;
                                                                                                         ;;
-(add-hook 'c-mode-hook 'my:add-semantic-to-autocomplete)                                                ;;
-(add-hook 'c++-mode-hook 'my:add-semantic-to-autocomplete)                                              ;;
-                                                                                                        ;;
+(add-hook 'c-mode-hook 'my:add-semantic-to-autocomplete)
+(add-hook 'c++-mode-hook 'my:add-semantic-to-autocomplete)
 
 (defun my:ac-c-headers-init()                                                                           ;;    ;;
   (require 'auto-complete-c-headers)                                                                    ;;    ;;
   (add-to-list 'achead:include-directories '"/usr/include/")                                            ;;    ;;
   (add-to-list 'achead:include-directories '"/usr/include/c++/8.2.1/")                                        ;;
   ;; CURRENT PROJECT                                                                                          ;;
-  (add-to-list 'achead:include-directories '"~/CSProjects/dirw/include/")                                  ;; ;;
-  (add-to-list 'ac-sources 'ac-source-c-headers))                                                       ;;    ;;
-                                                                                                        ;;    ;;
+  (add-to-list 'achead:include-directories '"~/CSProjects/dirw/include/") ;; to fix
+  (add-to-list 'ac-sources 'ac-source-c-headers))
+
 (add-hook 'c-mode-hook 'my:ac-c-headers-init)                                                           ;;    ;;
 (add-hook 'c++-mode-hook 'my:ac-c-headers-init)                                                         ;;    ;;
 
@@ -184,9 +171,7 @@
 (add-to-list 'load-path "/home/ryan/CSProjects/emacs-libvterm/")                                        ;;
 (let (vterm-install)                                                                                    ;;
   (require 'vterm))                                                                                     ;;
-                                                                                                        ;;
-                                                                                                        ;;
-                                                                                                        ;;
+
 (require 'telephone-line)                                                                               ;;
                                                                                                         ;;
 ;;; telephone-line configuration'                                                                       ;;
@@ -205,35 +190,12 @@
         (evil   . (telephone-line-airline-position-segment))))                                          ;;
                                                                                                         ;;
 (telephone-line-mode 1)                                                                                 ;;
-                                                                                                        ;;
-;; evil mode settings                                                                                   ;;
-(require 'evil)                                                                                         ;;
-(evil-mode 1)                                                                                           ;;
-
-
-;; programmer hooks
-(setq my-programmer-hooks '('c-mode-common-hook 'clojure-mode-hook 'scheme-mode-hook 'lisp-mode-hook 'ruby-mode-hook
-                                                'perl-mode-hook))
-
-
+                                                                                                       ;;
 ;; absolute line numbers
-(defun my/text-mode-init ()
-  "Initialize basic 'text-mode' features."
-  (require 'linum-relative)                                                                               ;;
-  (linum-mode)                                                                                            ;;
-  (linum-relative-global-mode)                                                                            ;;
-  (setq linum-relative-current-symbol ""))
-
-(add-hook 'text-mode-hook 'my/text-mode-init)
-
-(defun my/add-hooks-to-prog-modes (hook-modes func)
-  "Add FUNC to all of the hooks in HOOK-MODES."
-  (if (= (car hook-modes) nil)
-      nil)
-  (add-hook (car hook-modes) 'my/text-mode-init)
-  (my/add-hooks-to-prog-modes (cdr hook-modes)))
-
-(my/add-hooks-to-prog-modes my-programmer-hooks 'my/text-mode-init)
+(require 'linum-relative)                                                                               ;;
+(linum-mode)                                                                                            ;;
+(linum-relative-global-mode)                                                                            ;;
+(setq linum-relative-current-symbol "")
 
 ;;; ssh mode stuff                                                                                      ;;
  (require 'ssh)                                                                                         ;;
@@ -241,37 +203,10 @@
               (lambda ()                                                                                ;;
                 (setq ssh-directory-tracking-mode t)                                                    ;;
                 (shell-dirtrack-mode t)                                                                 ;;
-                (setq dirtrackp nil)))                                                                  ;;
-                                                                                                        ;;
-;;; some wordstar keybindings to make manipulating the editor itself a bit easier                       ;;
-(defvar my-keys-minor-mode-map                                                                          ;;
-  (let ((map (make-sparse-keymap)))                                                                     ;;
-    (define-key map (kbd "C-k o") 'split-window-vertically)                                             ;;
-	(define-key map (kbd "C-k C-c") 'delete-window)                                                        ;;
-	(define-key map (kbd "C-k c") 'delete-window)                                                          ;;
-    (define-key map (kbd "C-k C-o") 'split-window-vertically)                                           ;;
-	(define-key map (kbd "C-k v") 'split-window-horizontally)                                              ;;
-	(define-key map (kbd "C-k C-v") 'split-window-horizontally)                                            ;;
-	(define-key map (kbd "C-k b") 'kill-buffer)                                                            ;;
-	(define-key map (kbd "C-k n") 'other-window)                                                           ;;
-	(define-key map (kbd "C-k C-b") 'kill-buffer)                                                          ;;
-	(define-key map (kbd "C-k C-n") 'other-window)                                                         ;;
-	(define-key map (kbd "M-+")  'text-scale-increase)                                                     ;;
-	(define-key map (kbd "M--")  'text-scale-decrease)                                                     ;;
-                                                                                                        ;;
-    map)                                                                                                ;;
-  "my-keys-minor-mode keymap.")                                                                         ;;
-                                                                                                        ;;
-                                                                                                        ;;
-(define-minor-mode my-keys-minor-mode                                                                   ;;
-  "A minor mode so that my key settings override annoying major modes."                                 ;;
-  :init-value t                                                                                         ;;
-  :lighter " my-keys")                                                                                  ;;
-                                                                                                        ;;
-(my-keys-minor-mode 1)                                                                                  ;;
-                                                                                                        ;;
-(require 'rebox2)                                                                                       ;;
-                                                                                                        ;;
+                (setq dirtrackp nil)))
+
+
+(require 'rebox2)
 (rebox-register-template                                                                                ;;
  75                                                                                                     ;;
  999                                                                                                    ;;
@@ -301,35 +236,13 @@
                                                                                                         ;;
                                                                                                         ;;
 (defun er-sudo-edit (&optional arg)                                                                     ;;
-  "Edit currently visited file as root.                                                                 ;;
-                                                                                                        ;;
-With a prefix ARG prompt for a file to visit.                                                           ;;
-Will also prompt for a file to visit if current                                                         ;;
-buffer is not visiting a file."                                                                         ;;
+  "Edit currently visited file as root With a prefix ARG prompt for a file to visit.  Will also prompt for a file to visit if current buffer is not visiting a file."
   (interactive "P")                                                                                     ;;
   (if (or arg (not buffer-file-name))                                                                   ;;
       (find-file (concat "/sudo:root@localhost:"                                                        ;;
                          (ido-read-file-name "Find file(as root): ")))                                  ;;
     (find-alternate-file (concat "/sudo:root@localhost:" buffer-file-name))))                           ;;
-                                                                                                        ;;
-(defun my-backward-delete-char ()                                                                       ;;
-  (interactive)                                                                                         ;;
-  (cond ((bolp)                                                                                         ;;
-         (delete-char -1)                                                                               ;;
-         (indent-according-to-mode)                                                                     ;;
-         (when (looking-at "\\([ \t]+\\)[^ \t]")                                                        ;;
-           (delete-region (point) (match-end 1))))                                                      ;;
-        ((<= (point) (save-excursion (back-to-indentation) (point)))                                    ;;
-         (let ((backward-delete-char-untabify-method 'hungry))                                          ;;
-           (call-interactively 'backward-delete-char-untabify)                                          ;;
-           (delete-char -1))                                                                            ;;
-         (indent-according-to-mode))                                                                    ;;
-        (t                                                                                              ;;
-         (let ((backward-delete-char-untabify-method 'hungry))                                          ;;
-           (call-interactively 'backward-delete-char-untabify)))))                                      ;;
-                                                                                                        ;;
-(global-set-key (kbd "<backspace>") 'my-backward-delete-char)                                           ;;
-
+ 
 (require 'company)
 (require 'racer)
 (require 'rust-mode)
@@ -346,17 +259,33 @@ buffer is not visiting a file."                                                 
 (add-hook 'racer-mode-hook #'company-mode)
 (add-hook 'flycheck-mode-hook #'flycheck-rust-setup)
 
-(add-hook 'rust-mode-hook
-            (lambda ()
-              (push '(">=" . ?≥) prettify-symbols-alist)
-              (push '("->" . ?→) prettify-symbols-alist)
-              (push '("<=" . ?≤) prettify-symbols-alist)
-              (push '("!=" . ?≠) prettify-symbols-alist)
-              (push '("<-" . ?←) prettify-symbols-alist)))
+(defun my/create-basic-ligatures ()
+  "Create basic ligatures."
+  (push '(">=" . ?≥) prettify-symbols-alist)
+  (push '("<=" . ?≤) prettify-symbols-alist)
+  (push '("!=" . ?≠) prettify-symbols-alist))
 
+(defun my/create-advanced-ligatures ()
+  "Create more invasive ligatures."
+  (my/create-basic-ligatures)
+  (push '("<-" . ?←) prettify-symbols-alist)
+  (push '("->" . ?→) prettify-symbols-alist))
 
+(add-hook 'c-mode-common-hook 'my/create-basic-ligatures)
+(add-hook 'rust-mode-hook 'my/create-advanced-ligatures)
+(add-hook 'c-mode-common-hook 'my/create-advanced-ligatures)
 
-(global-prettify-symbols-mode 1)
+(global-prettify-symbols-mode)
+
+(add-to-list 'load-path "~/.emacs.d/joejoe/")
+(load "joejoe.el")
+(require 'joejoe)
+
+(setq normal-hooks (list c-mode-common-hook ))
+
+(setq backup-directory-alist `(("." . "~/.saves")))
+
+(require 'highlight-indentation)
 
 (provide '.emacs)
 ;;; .emacs ends here
