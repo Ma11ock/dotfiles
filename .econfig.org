@@ -4,13 +4,20 @@
 #+OPTIONS: num:nil
 
 * Emacs
+** init
+#+BEGIN_SRC emacs-lisp
+
+(eval-when-compile
+(require 'use-package))
+
+#+END_SRC
 ** font and theme
 #+BEGIN_SRC emacs-lisp
    
 (add-to-list 'default-frame-alist
    '(font . "DejaVu Sans Mono:antialias=true:size=16:style=Regular"))
 
-   (load-theme 'grandshell t)
+   (load-theme 'seti t)
 
 #+END_SRC
 ** Ivy-mode
@@ -39,7 +46,6 @@
 
 #+END_SRC
 
-
 ** Misc
 #+BEGIN_SRC emacs-lisp
 
@@ -66,25 +72,52 @@
 (add-to-list 'auto-mode-alist '("\\.rs\\'" . rust-mode))
 
 #+END_SRC
-** joejoe
+** joestar
 #+BEGIN_SRC emacs-lisp
 
-(add-to-list 'load-path "~/.emacs.d/joejoe/")
-(load "joejoe.el")
-(require 'joejoe)
+  (use-package joestar
+  :load-path 
+      "~/.emacs.d/joestar/"
+  :config
+      (joestar-mode t)
+      (add-hook 'text-mode-hook 'joestar-mode)
+      (add-hook 'prog-mode-hook 'joestar-mode))
 
-(add-hook 'text-mode-hook 'joejoe-mode)
-(add-hook 'prog-mode-hook 'joejoe-mode)
+#+END_SRC
+** org
+#+BEGIN_SRC emacs-lisp
+
+(use-package org-indent-mode
+    :config
+    (org-indent-mode t)
+    :hook org-mode)
 
 #+END_SRC
 * IDE
-** company-mode
+** company-mode and flycheck 
 #+BEGIN_SRC emacs-lisp
+  ;; (use-package company
+  ;;       :init
+  ;;       (progn
+  ;;           (setq company-idle-delay 0.5)
+  ;;           (setq company-minimum-prefix-length 1)
+  ;;           (setq company-selection-wrap-around t))
+  ;;       :config
+  ;;           (progn 
+  ;;              (global-company-mode t)))
+             
+  (use-package flycheck-mode
+         :config
+              (flycheck-mode t)
+         :hook (prog-mode))
 
-(setq company-idle-delay 0.5)
+       
+  (use-package auto-complete
+  :config (ac-config-default))
 
 #+END_SRC
-** comments
+** all programming languages
+*** comments
 #+BEGIN_SRC emacs-lisp
 
 (require 'rebox2)
@@ -94,6 +127,15 @@
  '("?*************?"
    "?* box123456 *?"
    "?*************?"))
+
+#+END_SRC
+*** todos
+#+BEGIN_SRC emacs-lisp
+
+(use-package fic-mode
+:config
+     (fic-mode t)
+:hook prog-mode)
 
 #+END_SRC
 ** C/C++
@@ -111,48 +153,59 @@
 #+BEGIN_SRC emacs-lisp
 
 (add-to-list 'load-path "/home/ryan/CSProjects/rtags")
-(set-variable 'rtags-path "/usr/local/bin/rc")
-(require 'company-rtags)
 
-(require 'rtags)
-(require 'company-rtags)
+(use-package rtags
+  :init 
+  (set-variable 'rtags-path "/usr/local/bin/")
+  :config
+  (progn
+    (unless (rtags-executable-find "rc") (error "Binary rc is not installed!"))
+    (unless (rtags-executable-find "rdm") (error "Binary rdm is not installed!"))
 
-(setq rtags-completions-enabled t)
-(eval-after-load 'company
-  '(add-to-list
-    'company-backends 'company-rtags))
-(setq rtags-autostart-diagnostics t)
-(rtags-enable-standard-keybindings)
+    (define-key c-mode-base-map (kbd "M-.") 'rtags-find-symbol-at-point)
+    (define-key c-mode-base-map (kbd "M-,") 'rtags-find-references-at-point)
+    (define-key c-mode-base-map (kbd "M-?") 'rtags-display-summary)
+    (rtags-enable-standard-keybindings)
 
-(setq rtags-display-result-backend 'ivy)
-(require 'ivy-rtags)
-(setq rtags-use-ivy t)
+    (setq rtags-use-ivy t)
 
-(require 'company-c-headers)
-(eval-after-load 'company
-  '(add-to-list
-    'company-backends '(company-c-headers company-rtags)))
+    ;; Shutdown rdm when leaving emacs.
+    (add-hook 'kill-emacs-hook 'rtags-quit-rdm)
+    ))
 
+;; TODO: Has no coloring! How can I get coloring?
+(use-package ivy-rtags
+  :config
+  (progn
+    (setq rtags-display-result-backend 'ivy)
+    ))
 
-    #+END_SRC
-** rust
-#+BEGIN_SRC emacs-lisp
+;; Use rtags for auto-completion.
+(use-package company-rtags
+  :config
+  (progn
+    (setq rtags-autostart-diagnostics t)
+    (rtags-diagnostics)
+    (setq rtags-completions-enabled t)
+    (push 'company-rtags company-backends)
+    ))
 
-(require 'racer)
-(require 'rust-mode)
-(require 'electric)
-(require 'eldoc)
-(require 'flycheck-rust)
-
-(setq racer-cmd "/home/ryan/.cargo/bin/racer") ;; Rustup binaries PATH
-(setq racer-rust-src-path "/home/ryan/CSProjects/rust/src") ;; Rust source code PATH
-
-(add-hook 'rust-mode-hook #'racer-mode)
-(add-hook 'racer-mode-hook #'eldoc-mode)
-(add-hook 'racer-mode-hook #'company-mode)
-(add-hook 'flycheck-mode-hook #'flycheck-rust-setup)
-
-
+;; Live code checking.
+(use-package flycheck-rtags
+  :config
+  (progn
+    ;; ensure that we use only rtags checking
+    ;; https://github.com/Andersbakken/rtags#optional-1
+    (defun setup-flycheck-rtags ()
+      (flycheck-select-checker 'rtags)
+      (setq-local flycheck-highlighting-mode nil) ;; RTags creates more accurate overlays.
+      (setq-local flycheck-check-syntax-automatically nil)
+      (rtags-set-periodic-reparse-timeout 2.0)  ;; Run flycheck 2 seconds after being idle.
+      )
+    (add-hook 'c-mode-hook #'setup-flycheck-rtags)
+    (add-hook 'c++-mode-hook #'setup-flycheck-rtags)
+    ))
+    
 #+END_SRC
 ** lisp
 #+BEGIN_SRC emacs-lisp
@@ -210,10 +263,9 @@
 ** line numbers
 #+BEGIN_SRC emacs-lisp
 
+(setq linum-relative-backend 'display-line-numbers-mode)
 (require 'linum-relative)
-(linum-mode)
-(linum-relative-global-mode)
-(setq linum-relative-current-symbol "")
+(linum-relative-on)
 
 #+END_SRC
 ** sudo edit
@@ -275,7 +327,13 @@
 
 
 #+END_SRC
+** misc
+#+BEGIN_SRC emacs-lisp
 
+;; tell emacs not to use the clipboard
+;(setq x-select-enable-clipboard nil)
+
+#+END_SRC
 * emacs-os
 ** email
 #+BEGIN_SRC emacs-lisp
@@ -477,7 +535,7 @@
 (add-hook 'term-mode-hook
 	  (defun my-term-mode-hook ()
 	  (setq bidi-paragraph-direction 'left-to-right)))
-(setq-default term-suppress-hard-newline t)
+      (setq-default term-suppress-hard-newline t)
 
 #+END_SRC
 *** vterm
@@ -486,6 +544,7 @@
 (add-to-list 'load-path "/home/ryan/CSProjects/emacs-libvterm/")
 (let (vterm-install)
   (require 'vterm))
+
 
 #+END_SRC
 ** ssh
