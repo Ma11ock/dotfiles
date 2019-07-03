@@ -19,11 +19,11 @@
 (add-to-list 'default-frame-alist
    '(font . "DejaVu Sans Mono:antialias=true:size=16:style=Regular"))
 
-
 (add-to-list 'load-path "~/.emacs.d/themes/")
 
-;; fav themes: aanila, grandshell, manoj-dark   
-(load-theme 'aanila t)
+(if (display-graphic-p)
+    (load-theme 'aanila t)
+  (load-theme 'manoj-dark t))
 
 #+END_SRC
 ** Ivy-mode
@@ -64,6 +64,7 @@
 (setq ring-bell-function 'ignore)
 (blink-cursor-mode 0)
 (set-language-environment "UTF-8")
+(setq redisplay-dont-pause t)
 #+END_SRC
 
 ** Filename-mode associations
@@ -104,8 +105,7 @@
       "~/.emacs.d/joestar/"
   :config
       (joestar-mode t))
-
-(dolist (hook '(prog-mode-hook text-mode-hook help-mode-hook))
+(dolist (hook '(prog-mode-hook text-mode-hook help-mode-hook dired-mode-hook))
     (add-hook hook #'joestar-mode))
 
 #+END_SRC
@@ -445,13 +445,6 @@
   (push '("<-" . ?←) prettify-symbols-alist)
   (push '("->" . ?→) prettify-symbols-alist))
 
-(add-hook 'c-mode-common-hook 'my/create-basic-ligatures)
-(add-hook 'rust-mode-hook 'my/create-advanced-ligatures)
-(add-hook 'lisp-mode-hook 'my/create-basic-ligatures)
-(add-hook 'ruby-mode-hook 'my/create-basic-ligatures)
-(add-hook 'cperl-mode-hook 'my/create-basic-ligatures)
-(add-hook 'org-mode-hook  'my/create-basic-ligatures)
-
 (setq backup-directory-alist `(("." . "~/.saves")))
 
 
@@ -481,22 +474,25 @@
 ** highlighting
 #+BEGIN_SRC emacs-lisp
 
-   (defface font-lock-control-face 
-   '((t :foreground "#FF0000"))
-     "Font Lock mode face used for function calls."
-     :group 'font-lock-highlighting-faces)
+   ;; (defface font-lock-control-face 
+  ;;  '((t :foreground "#FF0000"))
+  ;;    "Font Lock mode face used for function calls."
+  ;;    :group 'font-lock-highlighting-faces)
 
-  ;; (font-lock-add-keywords 
-  ;;   'c-mode
-  ;;   '(("\\<{}\\>"
-  ;;      1 'font-lock-control-face)))
+  ;; ;; (font-lock-add-keywords 
+  ;; ;;   'c-mode
+  ;; ;;   '(("\\<{}\\>"
+  ;; ;;      1 'font-lock-control-face)))
 
-  (defun ctr-chars-hl ()
-     font-lock-add-keywords nil
-        '(("[-+*/=<>,;:(){}]" (0 font-lock-control-face))))
+  ;; (defun ctr-chars-hl ()
+  ;;    font-lock-add-keywords nil
+  ;;       '(("[-+*/=<>,;:(){}]" (0 font-lock-control-face))))
 
-  (dolist (hook '(python-mode-hook fortran-mode-hook c-mode-common-hook))
-      (add-hook hook #'ctr-chars-hl))
+  ;; (dolist (hook '(python-mode-hook fortran-mode-hook c-mode-common-hook))
+  ;;     (add-hook hook #'ctr-chars-hl))
+
+;; rainbow delimeters
+(add-hook 'lisp-mode-hook #'rainbow-delimitets-mode)
 
 
 #+END_SRC

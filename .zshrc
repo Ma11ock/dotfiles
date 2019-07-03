@@ -8,7 +8,7 @@
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
-ZSH_THEME="bira"
+ZSH_THEME="alanpeabody"
 
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
@@ -78,11 +78,11 @@ export CXX="g++"
 export CGO_ENABLED="1"
 export GOROOT="/usr/lib/go"
 export GOBIN="/home/ryan/CSProjects/goproj/bin/"
-export GOPATH="/home/koolade/CSProjects/goproj/"
-export PATH="$PATH:/bin/go/bin:$SCRIPTS:/home/ryan/.gem/ruby/2.6.0/bin:/root/.gem/ruby/2.6.0/bin"
+export GOPATH="/home/ryan/CSProjects/goproj/"
+export PATH="$PATH:$GOROOT/bin:/usr/lib/go/bin/:$SCRIPTS:/home/ryan/.gem/ruby/2.6.0/bin:/root/.gem/ruby/2.6.0/bin"
 export MUSIC='~/Music/'
 export TERMINAL='xterm'
-export EDITOR='joe'
+export EDITOR='emacs'
 
 alias vim='nvim'
 alias comd='pandoc --pdf-engine=xelatex -o '
@@ -114,8 +114,6 @@ alias occ='sudo gcc `gnustep-config --objc-flags` -lgnustep-base -lobjc'
 # else
 #   export EDITOR='mvim'
 # fi
-
-
 
 extract () {
     if [ -f $1 ] ; then
