@@ -7,23 +7,26 @@
 ** init
 #+BEGIN_SRC emacs-lisp
 
+(server-start) 
+
 (eval-when-compile
     (require 'use-package))
 
 (defalias 'yes-or-no-p 'y-or-n-p)
+
+ (set-frame-parameter (selected-frame) 'alpha '(90 . 50))
+ (add-to-list 'default-frame-alist '(alpha . (90 . 50)))
 
 #+END_SRC
 ** font and theme
 #+BEGIN_SRC emacs-lisp
    
 (add-to-list 'default-frame-alist
-   '(font . "DejaVu Sans Mono:antialias=true:size=16:style=Regular"))
+   '(font . "Droid Sans Mono:antialias=true:size=16:style=Regular"))
 
 (add-to-list 'load-path "~/.emacs.d/themes/")
 
-(if (display-graphic-p)
-    (load-theme 'aanila t)
-  (load-theme 'manoj-dark t))
+(load-theme 'manoj-dark2 t)
 
 #+END_SRC
 ** Ivy-mode
@@ -105,8 +108,12 @@
       "~/.emacs.d/joestar/"
   :config
       (joestar-mode t))
+
 (dolist (hook '(prog-mode-hook text-mode-hook help-mode-hook dired-mode-hook))
     (add-hook hook #'joestar-mode))
+
+(global-set-key (kbd "S-<right>") 'joe-nbuf)
+(global-set-key (kbd "S-<left>") 'joe-pbuf)
 
 #+END_SRC
 ** org
@@ -162,6 +169,7 @@
 #+END_SRC
 ** C/C++
 *** style and font-lock
+
 #+BEGIN_SRC emacs-lisp
 
 (setq c-default-style "linux"
@@ -171,64 +179,28 @@
 (modern-c++-font-lock-global-mode t)
 
 #+END_SRC
-*** rtags
+*** autocomplete and yasnippet
 #+BEGIN_SRC emacs-lisp
 
-(add-to-list 'load-path "/home/ryan/CSProjects/rtags")
+(defun my:ac-c-headers-init ()
+  (require 'auto-complete-c-headers)
+  (add-to-list 'ac-sources 'ac-source-c-headers) 
+  (add-to-list 'achead:include-directories '"/usr/include/c++/9.2.0"))
 
-(use-package rtags
-  :init 
-  (set-variable 'rtags-path "/usr/local/bin/")
-  :config
-  (progn
-    (unless (rtags-executable-find "rc") (error "Binary rc is not installed!"))
-    (unless (rtags-executable-find "rdm") (error "Binary rdm is not installed!"))
 
-    (define-key c-mode-base-map (kbd "M-.") 'rtags-find-symbol-at-point)
-    (define-key c-mode-base-map (kbd "M-,") 'rtags-find-references-at-point)
-    (define-key c-mode-base-map (kbd "M-?") 'rtags-display-summary)
-    (rtags-enable-standard-keybindings)
+(add-hook 'c++-mode-hook 'my:ac-c-headers-init)
+(add-hook 'c-mode-hook 'my:ac-c-headers-init)
 
-    (setq rtags-use-ivy t)
 
-    ;; Shutdown rdm when leaving emacs.
-    (add-hook 'kill-emacs-hook 'rtags-quit-rdm)
-    ))
+(add-hook 'c++-mode-hook
+          (lambda () (setq flycheck-clang-language-standard "c++17")))
 
-;; TODO: Has no coloring! How can I get coloring?
-(use-package ivy-rtags
-  :config
-  (progn
-    (setq rtags-display-result-backend 'ivy)
-    ))
+(Require 'yasnippet)
+(yas-reload-all)
+(add-hook 'prog-mode-hook #'yas-minor-mode)
 
-;; Use rtags for auto-completion.
-(use-package company-rtags
-  :config
-  (progn
-    (setq rtags-autostart-diagnostics t)
-    (rtags-diagnostics)
-    (setq rtags-completions-enabled t)
-    (push 'company-rtags company-backends)
-    ))
-
-;; Live code checking.
-(use-package flycheck-rtags
-  :config
-  (progn
-    ;; ensure that we use only rtags checking
-    ;; https://github.com/Andersbakken/rtags#optional-1
-    (defun setup-flycheck-rtags ()
-      (flycheck-select-checker 'rtags)
-      (setq-local flycheck-highlighting-mode nil) ;; RTags creates more accurate overlays.
-      (setq-local flycheck-check-syntax-automatically nil)
-      (rtags-set-periodic-reparse-timeout 2.0)  ;; Run flycheck 2 seconds after being idle.
-      )
-    (add-hook 'c-mode-hook #'setup-flycheck-rtags)
-    (add-hook 'c++-mode-hook #'setup-flycheck-rtags)
-    ))
-    
 #+END_SRC
+
 ** lisp
 #+BEGIN_SRC emacs-lisp
 
@@ -241,6 +213,9 @@
      (setq inferior-lisp-program "sbcl"))
 
 (setq geiser-active-implementations '(guile))
+
+
+(add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
 
 #+END_SRC
 ** Misc
