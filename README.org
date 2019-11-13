@@ -1,0 +1,14 @@
+#+TITLE: Dotfiles
+#+AUTHOR: Ryan Jeffrey
+
+My dotfiles. The current programs I use are zsh for my shell,
+emacs as my text editor, and i3 as my WM.
+
+* .zshrc
+Uses oh-my-zsh
+* Emacs
+.emacs loads the file called .econfig.org. Both of the 
+config.org files are smiliar files, but for different
+configurations.
+* i3
+.config/i3/config and .config/i3bar/config.
