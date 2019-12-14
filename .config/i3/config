@@ -15,15 +15,14 @@ gaps outer 15
 
 # Thinkpad multimedia keys
 
-bindsym $mod+Return exec xterm 
-bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume 0 +5% #increase sound volume
-bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume 0 -5% #decrease sound volume
-bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute 0 toggle # mute sound
-bindsym $mod+e exec emacsclient -c .zshrc
+bindsym $mod+Return exec st
+bindsym $mod+m  exec --no-startup-id pactl set-sink-mute 0 toggle # mute sound
+bindsym $mod+t  exec emacsclient -c
+
 
 # Font for window titles. Will also be used by the bar unless a different font
 # is used in the bar {} block below.
-font pango:DejaVu Sans:style=regular
+font pango:Ubuntu-M:style=regular
 
 # This font is widely installed, provides lots of unicode glyphs, right-to-left
 # text rendering and scalability on retina/hidpi displays (thanks to pango).
@@ -68,10 +67,10 @@ bindsym $mod+Up focus up
 bindsym $mod+Right focus right
 
 # move focused window
-bindsym $mod+Shift+j move left
-bindsym $mod+Shift+k move down
-bindsym $mod+Shift+l move up
-bindsym $mod+Shift+semicolon move right
+bindsym $mod+Shift+h move left
+bindsym $mod+Shift+j move down
+bindsym $mod+Shift+k move up
+bindsym $mod+Shift+l move right
 
 # alternatively, you can use the cursor keys:
 bindsym $mod+Shift+Left move left
@@ -89,7 +88,7 @@ bindsym $mod+v split v
 bindsym $mod+f fullscreen toggle
 
 # change container layout (stacked, tabbed, toggle split)
-bindsym $mod+s layout stacking
+#bindsym $mod+s layout stacking
 bindsym $mod+w layout tabbed
 bindsym $mod+p layout toggle split
 
@@ -102,21 +101,23 @@ bindsym $mod+space focus mode_toggle
 # focus the parent container
 bindsym $mod+a focus parent
 
+exec --no-startup-id /home/ryan/src/scripts/monset.zsh
+
 # focus the child container
 #bindsym $mod+d focus child
 
 # Define names for default workspaces for which we configure key bindings later on.
 # We use variables to avoid repeating the names in multiple places.
-set $ws1 "1"
-set $ws2 "2"
-set $ws3 "3"
-set $ws4 "4"
-set $ws5 "5"
-set $ws6 "6"
-set $ws7 "7"
-set $ws8 "8"
-set $ws9 "9"
-set $ws10 "10"
+set $ws1 "1:Web"
+set $ws2 "2:Discord"
+set $ws3 "3:Misc"
+set $ws4 "4:Misc"
+set $ws5 "5:Misc"
+set $ws6 "5:Steam"
+set $ws7 "6:Emacs"
+set $ws8 "8:Misc"
+set $ws9 "9:Unity"
+set $ws10 "10:Misc"
 
 # switch to workspace
 bindsym $mod+1 workspace $ws1
@@ -141,6 +142,24 @@ bindsym $mod+Shift+7 move container to workspace $ws7
 bindsym $mod+Shift+8 move container to workspace $ws8
 bindsym $mod+Shift+9 move container to workspace $ws9
 bindsym $mod+Shift+0 move container to workspace $ws10
+
+
+set $left_mon "HDMI-A-2"
+set $right_mon "DisplayPort-2"
+
+workspace 1 output $left_mon
+workspace 2 output $left_mon
+workspace 3 output $left_mon
+workspace 4 output $left_mon
+workspace 5 output $left_mon
+
+workspace 6 output $right_mon
+workspace 7 output $right_mon
+workspace 8 output $right_mon
+workspace 9 output $right_mon
+workspace 10 output $right_mon
+
+bindsym $mod+b exec --no-startup-id i3-msg 'workspace $ws1; exec /usr/bin/firefox'
 
 # reload the configuration file
 bindsym $mod+Shift+c reload
@@ -180,8 +199,24 @@ bindsym $mod+r mode "resize"
 # finds out, if available)
  bar {
         status_command i3status
+        strip_workspace_numbers yes
 }
+
 
 exec --no-startup-id compton -b
 
-exec --no-startup-id feh --bg-scale /home/ryan/Pictures/Gnu_wallpaper.png
+assign [class="firefox"] $ws1
+assign [class="emacs"] $ws7
+assign [class="Unity"] $ws9
+assign [class="discord"] $ws2
+assign [class="Steam"] $ws6
+
+exec --no-startup-id firefox
+exec --no-startup-id discord
+exec --no-startup-id steam
+#exec --no-startup-id emacsclient -c
+
+exec --no-startup-id 'i3-msg workspace $ws6; i3-msg layout tabbed'
+exec --no-startup-id 'i3-msg workspace $ws9; i3-msg layout tabbed'
+
+# exec --no-startup-id feh --bg-fill --no-xinerama /home/ryan/Pictures/Gnu_wallpaper.png
