@@ -1,0 +1,8 @@
+#!/usr/bin/env zsh
+
+
+# Starts a Sven coop dedicated server
+
+cd ~/.local/share/Steam/steamapps/common/Sven\ Co-op\ Dedicated\ Server
+./svends_run +ip 25.17.249.130 +port 27015
+
