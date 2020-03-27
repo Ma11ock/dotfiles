@@ -1,9 +1,0 @@
-#!/usr/bin/env sh
-
-# Sets up GMDX mod for Deus Ex on Linux
-
-xgamma -gamma 1.5
-
-STEAM_COMPAT_DATA_PATH=~/.proton/ ~/.local/share/Steam/steamapps/common/Proton\ 4.2/proton run /home/ryan/.local/share/Steam/steamapps/common/Deus\ Ex/System/GMDXv10.exe
-
-xgamma -gamma 1.0
