@@ -1,0 +1,2 @@
+0 12 * * * /usr/bin/pacman -Syuw --noconfirm
+
