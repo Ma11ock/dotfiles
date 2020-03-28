@@ -1,0 +1,3 @@
+#!/usr/bin/env zsh
+
+java -jar ~/bin/TechnicLauncher.jar
