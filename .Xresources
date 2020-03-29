@@ -77,4 +77,4 @@ XTerm*metaSendsEscape: true
 
 ! xscreensaver
 xscreensaver.fade:        false
-xscreensaver.unfade:      false
+xscreensaver.unfade:      falseXcursor.theme:Breeze-Snow
