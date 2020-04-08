@@ -5,10 +5,9 @@ My dotfiles. The current programs I use are zsh for my shell,
 emacs as my text editor, and i3 as my WM.
 
 * .zshrc
-Uses oh-my-zsh
+.zshrc. Uses oh-my-zsh. Remember to change the pathnames depending on the username (ie /home/<name>)
 * Emacs
-.emacs loads the file called .econfig.org. Both of the 
-config.org files are smiliar files, but for different
-configurations.
-* i3
-.config/i3/config and .config/i3bar/config.
+.emacs loads the file called .econfig.org. The file called .econfig.org is for my Thinkpad as it is the main computer I use. 
+The speconf.org file is the configuration for emacs on my desktop. It is stripped down with fewer features.
+* dwm
+Look for my fork of dwm.

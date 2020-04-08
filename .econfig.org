@@ -7,27 +7,132 @@
 ** init
 #+BEGIN_SRC emacs-lisp
 
+(server-start) 
+
 (eval-when-compile
     (require 'use-package))
 
 (defalias 'yes-or-no-p 'y-or-n-p)
 
+ (set-frame-parameter (selected-frame) 'alpha '(90 . 50))
+ (add-to-list 'default-frame-alist '(alpha . (90 . 50)))
+
 #+END_SRC
 ** font and theme
 #+BEGIN_SRC emacs-lisp
-   
+
+(add-to-list 'load-path "~/.emacs.d/lisp/")
+
+ (require 'popup-pos-tip)
+ (defadvice popup-tip
+   (around popup-pos-tip-wrapper (string &rest args) activate)
+   (if (eq window-system 'x)
+       (apply 'popup-pos-tip string args)
+     ad-do-it))
+
+(setq x-gtk-use-system-tooltips nil)     
+
+
   (add-to-list 'default-frame-alist
-     '(font . "Fira Code:antialias=true:size=18:style=Regular"))
+     '(font . "FuraCode Nerd Font Mono:antialias=true:size=16:style=Regular")
+     '(font . "Fira Code Symbol:antialias=true:size=16:style=Regular"))
+
+(defun fira-code-mode--make-alist (list)
+  "Generate prettify-symbols alist from LIST."
+  (let ((idx -1))
+    (mapcar
+     (lambda (s)
+       (setq idx (1+ idx))
+       (let* ((code (+ #Xe100 idx))
+          (width (string-width s))
+          (prefix ())
+          (suffix '(?\s (Br . Br)))
+          (n 1))
+     (while (< n width)
+       (setq prefix (append prefix '(?\s (Br . Bl))))
+       (setq n (1+ n)))
+     (cons s (append prefix suffix (list (decode-char 'ucs code))))))
+     list)))
+
+(defconst fira-code-mode--ligatures
+  '("www" "**" "***" "**/" "*>" "*/" "\\\\" "\\\\\\"
+    "{-" "[]" "::" ":::" ":=" "!!" "!=" "!==" "-}"
+    "--" "---" "-->" "->" "->>" "-<" "-<<" "-~"
+    "#{" "#[" "##" "###" "####" "#(" "#?" "#_" "#_("
+    ".-" ".=" ".." "..<" "..." "?=" "??" ";;" "/*"
+    "/**" "/=" "/==" "/>" "//" "///" "&&" "||" "||="
+    "|=" "|>" "^=" "$>" "++" "+++" "+>" "=:=" "=="
+    "===" "==>" "=>" "=>>" "<=" "=<<" "=/=" ">-" ">="
+    ">=>" ">>" ">>-" ">>=" ">>>" "<*" "<*>" "<|" "<|>"
+    "<$" "<$>" "<!--" "<-" "<--" "<->" "<+" "<+>" "<="
+    "<==" "<=>" "<=<" "<>" "<<" "<<-" "<<=" "<<<" "<~"
+    "<~~" "</" "</>" "~@" "~-" "~=" "~>" "~~" "~~>" "%%"
+    "x" ":" "+" "+" "*"))
+
+(defvar fira-code-mode--old-prettify-alist)
+
+(defun fira-code-mode--enable ()
+  "Enable Fira Code ligatures in current buffer."
+  (setq-local fira-code-mode--old-prettify-alist prettify-symbols-alist)
+  (setq-local prettify-symbols-alist (append (fira-code-mode--make-alist fira-code-mode--ligatures) fira-code-mode--old-prettify-alist))
+  (prettify-symbols-mode t))
+
+(defun fira-code-mode--disable ()
+  "Disable Fira Code ligatures in current buffer."
+  (setq-local prettify-symbols-alist fira-code-mode--old-prettify-alist)
+  (prettify-symbols-mode -1))
+
+(define-minor-mode fira-code-mode
+  "Fira Code ligatures minor mode"
+  :lighter ""
+  (setq-local prettify-symbols-unprettify-at-point 'right-edge)
+  (if fira-code-mode
+      (fira-code-mode--enable)
+    (fira-code-mode--disable)))
+
+(defun fira-code-mode--setup ()
+  "Setup Fira Code Symbols"
+  (set-fontset-font t '(#Xe100 . #Xe16f) "Fira Code Symbol"))
+
+(add-hook 'rust-mode-hook 'fira-code-mode)
+
+(defun my/create-greek-ligatures ()
+    "Create greek ligatures."
+    (push '("lambda" . ?λ ) prettify-symbols-alist)
+    (push '("alpha" . ?α ) prettify-symbols-alist)
+    (push '("beta" . ?β ) prettify-symbols-alist)
+    (push '("theta" . ?θ ) prettify-symbols-alist)
+    (push '("omega" . ?ω ) prettify-symbols-alist))
+
+(add-hook 'after-init-hook 'my/create-greek-ligatures)
 
   (add-to-list 'load-path "~/.emacs.d/themes/")
-  
-  (load-theme 'molokai t)
 
-  (global-set-key (kbd "S-<right>") 'next-buffer)
-  (global-set-key (kbd "S-<left>") 'previous-buffer)
+  (load-theme 'modus-vivendi t)
 
-  (set-frame-parameter (selected-frame) 'alpha '(100 . 95))
-  (add-to-list 'default-frame-alist '(alpha . (100 . 95)))
+  ;; (use-package telephone-line
+  ;;     :init
+
+  ;;     (setq telephone-line-primary-right-separator 'telephone-line-abs-left
+  ;;       telephone-line-secondary-right-separator 'telephone-line-abs-hollow-left)
+
+  ;;     (setq telephone-line-height 24
+  ;;       telephone-line-evil-use-short-tag t)
+
+  ;;    :config
+
+  ;;    (telephone-line-mode t))
+
+  ;; 
+  (use-package powerline
+     :ensure t
+
+     :init
+     (powerline-default-theme))
+
+(global-set-key (kbd "M-<up>") 'text-scale-increase)
+(global-set-key (kbd "M-<down>") 'text-scale-decrease)
+(scroll-bar-mode nil)
 
 #+END_SRC
 ** Ivy-mode
@@ -55,7 +160,6 @@
 
 ** Misc
 #+BEGIN_SRC emacs-lisp
-
 (put 'upcase-region 'disabled nil)
 (electric-pair-mode t)
 (show-paren-mode 1)
@@ -64,60 +168,71 @@
 (setq column-number-mode t)
 (display-time-mode 1)
 (tool-bar-mode -1)
-(scroll-bar-mode -1)
+(menu-bar-mode -1) 
+
+;(scroll-bar-mode -1)
 (setq ring-bell-function 'ignore)
 (blink-cursor-mode 0)
 (set-language-environment "UTF-8")
 (setq redisplay-dont-pause t)
-
-
-(require 'neotree)
-(global-set-key [f8] 'neotree-toggle)
-(global-set-key (kbd "s-i") 'ido-switch-buffer)
-
-(global-set-key (kbd "s-+") 'text-scale-increase)
-(global-set-key (kbd "s--") 'text-scale-decrease)
-
 #+END_SRC
 
 ** Filename-mode associations
 #+BEGIN_SRC emacs-lisp
 
-(add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode)) 
+(add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
+;(add-to-list 'auto-mode-alist '(".\\'" . conf-mode)) ; run conf mode on dotfiles
+(add-to-list 'auto-mode-alist '("\\config\\'" . conf-mode)) 
+(add-to-list 'auto-mode-alist '("\\.service\\'" . systemd-mode)) 
 (add-to-list 'auto-mode-alist '("\\.fish\\'" . fish-mode))
 (add-to-list 'auto-mode-alist '("\\.rs\\'" . rust-mode))
+(add-to-list 'auto-mode-alist '("\\.Xdefaults'" . conf-xdefaults-mode))
+(add-to-list 'auto-mode-alist '("\\.Xresources'" . conf-xdefaults-mode))
 
 #+END_SRC
 ** joestar
 #+BEGIN_SRC emacs-lisp
 
-  (use-package joestar
-  :init
-  (progn
-     (defvar undo-tree-map
-          (let ((map (make-sparse-keymap)))
-              ;; remap `undo' and `undo-only' to `undo-tree-undo'
-              (define-key map [remap undo] 'undo-tree-undo)
-              (define-key map [remap undo-only] 'undo-tree-undo)
-              ;; bind standard undo bindings (since these match redo counterparts)
-              (define-key map (kbd "C-/") 'undo-tree-undo)
-              (define-key map "\C-_" 'undo-tree-undo)
-              ;; redo doesn't exist normally, so define our own keybindings
-              (define-key map (kbd "C-?") 'undo-tree-redo)
-              (define-key map (kbd "M-_") 'undo-tree-redo)
-              ;; just in case something has defined `redo'...
-              (define-key map [remap redo] 'undo-tree-redo)
-              ;; we use "C-x u" for the undo-tree visualizer
-              (define-key map (kbd "s-x u") 'undo-tree-visualize)
-              ;; bind register commands
-              (define-key map (kbd "s-x r u") 'undo-tree-save-state-to-register)
-              (define-key map (kbd "s-x r U") 'undo-tree-restore-state-from-register)
-              ;; set keymap
-          (setq undo-tree-map map))))
-  :load-path 
-      "~/.emacs.d/joestar/"
-  :config
-      (global-joestar-mode t))
+    (use-package joestar
+    :init
+    (progn
+       (defvar undo-tree-map
+            (let ((map (make-sparse-keymap)))
+                ;; remap `undo' and `undo-only' to `undo-tree-undo'
+                (define-key map [remap undo] 'undo-tree-undo)
+                (define-key map [remap undo-only] 'undo-tree-undo)
+                ;; bind standard undo bindings (since these match redo counterparts)
+                (define-key map (kbd "C-/") 'undo-tree-undo)
+                (define-key map "\C-_" 'undo-tree-undo)
+                ;; redo doesn't exist normally, so define our own keybindings
+                (define-key map (kbd "C-?") 'undo-tree-redo)
+                (define-key map (kbd "M-_") 'undo-tree-redo)
+                ;; just in case something has defined `redo'...
+                (define-key map [remap redo] 'undo-tree-redo)
+                ;; we use "C-x u" for the undo-tree visualizer
+                (define-key map (kbd "s-x u") 'undo-tree-visualize)
+                ;; bind register commands
+                (define-key map (kbd "s-x r u") 'undo-tree-save-state-to-register)
+                (define-key map (kbd "s-x r U") 'undo-tree-restore-state-from-register)
+                ;; set keymap
+            (setq undo-tree-map map))))
+
+    :load-path 
+       "~/.emacs.d/joestar/")
+
+  (global-joestar-mode)
+
+  ;; global move window keys so non joestar buffers can still have these bindings
+  (global-set-key (kbd "M-<left>")             #'(lambda ()
+                                                           (interactive)
+                                                           (other-window -1)))
+
+  (global-set-key (kbd "M-<right>")             #'(lambda ()
+                                                           (interactive)
+                                                           (other-window 1)))
+
+  (global-set-key (kbd "S-<right>") 'joe-nbuf)
+  (global-set-key (kbd "S-<left>") 'joe-pbuf)
 
 #+END_SRC
 ** org
@@ -132,6 +247,45 @@
 * IDE
 ** company-mode and flycheck 
 #+BEGIN_SRC emacs-lisp
+(use-package irony-mode
+:config
+     (irony-mode t)
+:init
+     (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
+     (eval-after-load 'flycheck
+        '(add-hook 'flycheck-mode-hook #'flycheck-irony-setup))
+
+     (eval-after-load 'company
+        '(add-to-list 'company-backends 'company-irony))
+
+     :hook c++-mode)
+
+(use-package company-mode
+    :config
+    (company-mode t)
+    (require 'company-c-headers)
+    (require 'company-irony-c-headers)
+    (require 'company-irony)
+    (require 'color)
+    (require 'company-quickhelp)
+  
+  (let ((bg (face-attribute 'default :background)))
+    (custom-set-faces
+     `(company-tooltip ((t (:inherit default :background ,(color-lighten-name bg 2)))))
+     `(company-scrollbar-bg ((t (:background ,(color-lighten-name bg 10)))))
+     `(company-scrollbar-fg ((t (:background ,(color-lighten-name bg 5)))))
+     `(company-tooltip-selection ((t (:inherit font-lock-function-name-face))))
+     `(company-tooltip-common ((t (:inherit font-lock-constant-face))))))
+
+    (eval-after-load 'irony
+       '((add-to-list 'company-backends 'company-irony)
+         (add-to-list 'company-backends 'company-c-headers)
+         (add-to-list 'company-backends 'company-irony-c-headers)))
+    (company-quickhelp-mode t)
+
+
+
+     :hook (prog-mode))
              
   (use-package flycheck-mode
          :config
@@ -145,175 +299,73 @@
          :hook (prog-mode))
 
        
-;  (use-package auto-complete
-;  :config (ac-config-default))
-
-
-(require 'company)
-
-(add-hook 'after-init-hook 'global-company-mode)
-
-(add-to-list 'company-backends 'company-c-headers)
-
-  (require 'color)
-
-(let ((bg (face-attribute 'default :background)))
-(custom-set-faces
- `(company-tooltip ((t (:inherit default :background ,(color-lighten-name bg 2)))))
- `(company-scrollbar-bg ((t (:background ,(color-lighten-name bg 10)))))
- `(company-scrollbar-fg ((t (:background ,(color-lighten-name bg 5)))))
- `(company-tooltip-selection ((t (:inherit font-lock-function-name-face))))
- `(company-tooltip-common ((t (:inherit font-lock-constant-face))))))
-
-;(use-package company-quickhelp
-;    :ensure t
-;    :config
-;    (company-quickhelp-mode)
-;
-;    :hook
-;    (company-mode))
-
-#+END_SRC
-** C#
-#+BEGIN_SRC emacs-lisp
-
-(use-package omnisharp
-    :ensure t
-    :config
-         
-    (omnisharp-start-omnisharp-server)
-    (omnisharp-mode)
-    (eval-after-load
-      'company
-      '(add-to-list 'company-backends 'company-omnisharp))
-
-           :hook (csharp-mode))
-
-  ;; (require 'omnisharp)
-
-
-  ;; (defun omnisharp-init ()
-  ;;     (omnisharp-start-omnisharp-server)
-  ;;     (omnisharp-mode)
-  ;;     (eval-after-load
-  ;;         'company
-  ;;         '(add-to-list 'company-backends 'company-omnisharp))
-
-  ;;     (add-hook 'csharp-mode-hook #'company-mode))
-
-  ;;    (add-hook 'csharp-mode-hook #'omnisharp-init)
-
 #+END_SRC
 ** all programming languages
-*** comments
-#+BEGIN_SRC emacs-lisp
-
-(require 'rebox2)
-(rebox-register-template
- 75
- 999
- '("?*************?"
-   "?* box123456 *?"
-   "?*************?"))
-
-#+END_SRC
 *** todos
 #+BEGIN_SRC emacs-lisp
 
-  (use-package fic-mode
-  :config
-       (fic-mode t)
-  :hook prog-mode)
+(use-package fic-mode
+:config
+     (fic-mode t)
+:hook prog-mode)
 
 #+END_SRC
 ** C/C++
 *** style and font-lock
+
 #+BEGIN_SRC emacs-lisp
 
-(setq c-default-style "bsd"
+(setq c-default-style "linux"
       c-basic-offset 4)
+
+(c-set-offset 'substatement-open 0)
 
 (require 'modern-cpp-font-lock)
 (modern-c++-font-lock-global-mode t)
 
-(add-hook 'prog-mode-hook 'yas-minor-mode)
-#+END_SRC
-*** irony
-#+BEGIN_SRC emacs-lisp
-
-(require 'irony)
-
 (add-hook 'c++-mode-hook 'irony-mode)
 (add-hook 'c-mode-hook 'irony-mode)
-(add-hook 'objc-mode-hook 'irony-mode)
-
-(add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
-
-(eval-after-load 'flycheck
-  '(add-hook 'flycheck-mode-hook #'flycheck-irony-setup))
-
-(eval-after-load 'company
-  '(add-to-list 'company-backends 'company-irony))
-
 
 #+END_SRC
+*** company and yasnippet
+#+BEGIN_SRC emacs-lisp
+
+
+(add-hook 'c++-mode-hook
+          (lambda () (setq flycheck-clang-language-standard "c++17")))
+
+(require 'yasnippet)
+(yas-reload-all)
+(add-hook 'prog-mode-hook #'yas-minor-mode)
+
+#+END_SRC
+
 ** lisp
 #+BEGIN_SRC emacs-lisp
 
-(use-package slime
-     :init
-     (setq inferior-lisp-program "/opt/sbcl/bin/sbcl") 
-     (setq slime-contribs '(slime-fancy))
-     (load (expand-file-name "~/quicklisp/slime-helper.el"))
-     ;; Replace "sbcl" with the path to your implementation
-     (setq inferior-lisp-program "sbcl"))
+   (use-package slime
+   :config
+        (setq inferior-lisp-program "/opt/sbcl/bin/sbcl") 
+        (setq slime-contribs '(slime-fancy))
+        (load (expand-file-name "~/quicklisp/slime-helper.el"))
+        ;; Replace "sbcl" with the path to your implementation
+        (setq inferior-lisp-program "sbcl"))
 
-(setq geiser-active-implementations '(guile))
+  (setq geiser-active-implementations '(guile))
 
-(use-package miracle
-    ;:ensure t
-    :load-path "~/.emacs.d/miracle"
-    
-    :config 
-    (clojure-enable-miracle)
-    (define-key clojure-mode-map (kbd "C-c C-k") 'miracle-eval-buffer)
-    (define-key clojure-mode-map (kbd "C-c C-e") 'miracle-eval-expression-at-point)
-    (define-key clojure-mode-map (kbd "C-c C-n") 'miracle-eval-namespace)
-    (define-key clojure-mode-map (kbd "C-c C-d") 'miracle-job)
-    (define-key clojure-mode-map (kbd "C-c C-g") 'miracle-eval-defun)
-    
-    
-    :hook clojure-mode)
+
+  (add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
 
 #+END_SRC
 ** Misc
+
 #+BEGIN_SRC emacs-lisp
 
-(add-to-list 'load-path "~/.emacs.d/i3wm-Config-Mode/")
-(require 'i3wm-config-mode)
+(require 'neotree)                                                                                      ;;
+(global-set-key [f8] 'neotree-toggle)
 
-(add-to-list 'auto-mode-alist '("~/.config/i3/config" . i3wm-config-mode))
-  ;; (custom-set-faces
-  ;;  ;; ...
-  ;;  '(company-preview ((t (:background "black" :foreground "red"))))
-  ;;  '(company-preview-common ((t (:foreground "red"))))
-  ;;  '(company-preview-search ((t (:inherit company-preview))))
-  ;;  '(company-scrollbar-bg ((t (:background "brightwhite"))))
-  ;;  '(company-scrollbar-fg ((t (:background "red"))))
-  ;;  '(company-template-field ((t (:background "magenta" :foreground "black"))))
-  ;;  '(company-tooltip ((t (:background "brightwhite" :foreground "black"))))
-  ;;  '(company-tooltip-annotation ((t (:background "brightwhite" :foreground "black"))))
-  ;;  '(company-tooltip-annotation-selection ((t (:background "color-253"))))
-  ;;  '(company-tooltip-common ((t (:background "brightwhite" :foreground "red"))))
-  ;;  '(company-tooltip-common-selection ((t (:background "color-253" :foreground "red"))))
-  ;;  '(company-tooltip-mouse ((t (:foreground "black"))))
-  ;;  '(company-tooltip-search ((t (:background "brightwhite" :foreground "black"))))
-  ;;  '(company-tooltip-selection ((t (:background "color-253" :foreground
-  ;;  "black"))))
-  ;;  ;; ...
-  ;; )
-
-
+; emojis
+(global-emojify-mode)
 #+END_SRC
 ** scripts
 *** Perl
@@ -352,9 +404,9 @@
 
 (when window-system (set-exec-path-from-shell-PATH))
 
-(setenv "GOPATH" "/home/ryan/CSProjects/goproj/")
+(setenv "GOPATH" "/home/rmj/src/goproj/")
 
-(add-to-list 'exec-path "/home/ryan/CSProjects/goproj/bin/")
+(add-to-list 'exec-path "/home/rmj/src/goproj/bin/")
 (add-hook 'before-save-hook 'gofmt-before-save)
 
 (defun my-go-mode-hook ()
@@ -363,111 +415,94 @@
   ; Godef jump key binding                                                      
   (local-set-key (kbd "M-.") 'godef-jump)
   (local-set-key (kbd "M-*") 'pop-tag-mark)
-  )
-  (add-hook 'go-mode-hook 'my-go-mode-hook)
 
-(defun auto-complete-for-go ()
-  (auto-complete-mode 1))
-(add-hook 'go-mode-hook 'auto-complete-for-go)
-
-(with-eval-after-load 'go-mode
-   (require 'go-autocomplete))
-
-(defun my-go-mode-hook ()
-  ; Call Gofmt before saving
-  (add-hook 'before-save-hook 'gofmt-before-save)
+  (add-to-list 'company-backends 'company-go)
   ; Customize compile command to run go build
   (if (not (string-match "go" compile-command))
       (set (make-local-variable 'compile-command)
-           "go build -v && go test -v && go vet"))
-  ; Godef jump key binding
-  (local-set-key (kbd "M-.") 'godef-jump)
-  (local-set-key (kbd "M-*") 'pop-tag-mark)
-)
+           "go build -v && go test -v && go vet")))
+           
 (add-hook 'go-mode-hook 'my-go-mode-hook)
 
-(defun my-go-mode-hook ()
-  ; Use goimports instead of go-fmt
-  (setq gofmt-command "goimports")
-  ; Call Gofmt before saving
-  (add-hook 'before-save-hook 'gofmt-before-save)
-  ; Customize compile command to run go build
-  (if (not (string-match "go" compile-command))
-      (set (make-local-variable 'compile-command)
-           "go build -v && go test -v && go vet"))
-  ; Godef jump key binding
-  (local-set-key (kbd "M-.") 'godef-jump)
-  (local-set-key (kbd "M-*") 'pop-tag-mark)
-)
-(add-hook 'go-mode-hook 'my-go-mode-hook)
 
 #+END_SRC
 ** rust
 #+BEGIN_SRC emacs-lisp
 
-  (require 'rust-mode)
-  (define-key rust-mode-map (kbd "TAB") #'company-indent-or-complete-common)
-  (setq company-tooltip-align-annotations t)
+(use-package cargo
+    :config
+    (cargo-minor-mode t)
+    
+    :hook
+    (rust-mode))
+   
+   (use-package racer
+   :ensure t
+   :init
+   
+   (setq racer-cmd "~/.cargo/bin/racer")
+   (setq racer-rust-src-path "/home/rmj/src/rust/src/")
+      :config
+      (progn
+          (racer-mode t)
+          (eldoc-mode t)
+          (company-mode t)
+          (flycheck-rust-setup)
+          (define-key rust-mode-map (kbd "TAB") #'company-indent-or-complete-common)
+          (setq company-tooltip-align-annotations t)
+          (local-set-key (kbd "C-c <tab>") #'rust-format-buffer))
 
-  (add-hook 'rust-mode-hook 'cargo-minor-mode)
+      :hook
+      (rust-mode))
 
-  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-  ;; (use-package racer-mode                                      ;;
-  ;; :init                                                        ;;
-  ;; (setq racer-cmd "~/.cargo/bin/racer")                        ;;
-  ;; (setq racer-rust-src-path "/home/ryan/CSProjects/rust/src/") ;;
-  ;;                                                              ;;
-  ;;    :config                                                   ;;
-  ;;    (racer-mode t)                                            ;;
-  ;;    (define-key racer-mode-map (kbd "C-x 5 .") nil)           ;;
-  ;;    (define-key racer-mode-map (kbd "C-x 4 .") nil)           ;;
-  ;;                                                              ;;
-  ;;    :hook                                                     ;;
-  ;;    (rust-mode))                                              ;;
-  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-  (add-hook 'rust-mode-hook #'eldoc-mode)
-  (add-hook 'rust-mode-hook #'company-mode)
-
-  (add-hook 'flycheck-mode-hook #'flycheck-rust-setup)
-
-#+END_SRC
-** java
-#+BEGIN_SRC emacs-lisp
-(require 'eclim)
-(require 'eclimd)
-(require 'gradle-mode)
-(require 'company-emacs-eclim)
-(require 'company)
-
-(defun java-mode-init()
-    (auto-complete-mode nil)
-    (gradle-mode 1)
-    (setq c-default-style "bsd")
-    (eclim-mode 1)
-    (company-mode 1)
-    (company-emacs-eclim-setup))
-
-(add-hook 'java-mode-hook 'java-mode-init)
 
 #+END_SRC
-** web
+** HTML/CSS/JS
 #+BEGIN_SRC emacs-lisp
 
-(add-hook 'sgml-mode-hook 'emmet-mode) ;; Auto-start on any markup modes
-(add-hook 'css-mode-hook  'emmet-mode) ;; enable Emmet's css abbreviation.
-(add-hook 'emmet-mode-hook (lambda () (setq emmet-indentation 4))) ;; indent 2 spaces.
-(setq emmet-self-closing-tag-style "/") ;; default "/"
+(add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
+(setq web-mode-ac-sources-alist
+    '(("css" . (ac-source-css-property))
+     ("html" . (ac-source-words-in-buffer ac-source-abbrev))))
+(setq web-mode-enable-auto-quoting t)
+
+(use-package emmet-mode
+    :ensure t
+
+    :config
+    (add-hook 'emmet-mode-hook (lambda () (setq emmet-indentation 4))) ;; indent 4 spaces.
+    (setq emmet-self-closing-tag-style "/") ;; default "/"
+    (setq emmet-move-cursor-between-quotes t) ;; default nil
+
+    :hook (sgml-mode css-mode html-mode web-mode))
+
+#+END_SRC
+** Python
+#+BEGIN_SRC emacs-lisp
+
+(defun my-init-elpy ()
+    "Init elpy."
+    (elpy-enable)
+    (add-to-list 'company-backends 'elpy-company-backend)
+    
+    (when (require 'flycheck nil t)
+        (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
+        (add-hook 'elpy-mode-hook 'flycheck-mode))
+
+    (flymake-mode nil)
+    (eldoc-mode nil))
+
+(add-hook 'python-mode-hook 'my-init-elpy)
 
 
 
 #+END_SRC
+** 
 * Text-editor
 ** spellcheck
 #+BEGIN_SRC emacs-lisp
 
-
-(setq ispell-program-name "hunspell")
+(setq ispell-program-name (executable-find "hunspell"))
 (setq ispell-local-dictionary "en_US")
 (setq ispell-local-dictionary-alist
       '(("en_US" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil nil nil utf-8)))
@@ -495,88 +530,231 @@
                          (find-alternate-file (concat "/sudo:root@localhost:" buffer-file-name))))
 
 #+END_SRC
-** ligatures
-#+BEGIN_SRC emacs-lisp
-
-(defun pretty-greek ()
-  "Prettify greek symbols."
-  (let ((greek '("alpha" "beta" "gamma" "delta" "epsilon" "zeta" "eta" "theta" "iota" "kappa" "lambda" "mu" "nu" "xi" "omicron" "pi" "rho" "sigma_final" "sigma" "tau" "upsilon" "phi" "chi" "psi" "omega")))
-    (loop for word in greek
-          for code = 97 then (+ 1 code)
-          do  (let ((greek-char (make-char 'greek-iso8859-7 code))) 
-                (font-lock-add-keywords nil
-                                        `((,(concatenate 'string "\\(^\\|[^a-zA-Z0-9]\\)\\(" word "\\)[a-zA-Z]")
-                                           (0 (progn (decompose-region (match-beginning 2) (match-end 2))
-                                                     nil)))))
-                (font-lock-add-keywords nil 
-                                        `((,(concatenate 'string "\\(^\\|[^a-zA-Z0-9]\\)\\(" word "\\)[^a-zA-Z]")
-                                           (0 (progn (compose-region (match-beginning 2) (match-end 2)
-                                                                     ,greek-char)
-                                                     nil)))))))))  
-(add-hook 'lisp-mode-hook 'pretty-greek)
-(add-hook 'emacs-lisp-mode-hook 'pretty-greek)
-
-(defun my/create-basic-ligatures ()
-  "Create basic ligatures."
-  (prettify-symbols-mode t)
-  ;; boolean and math symbols
-  (push '(">=" . ?≥) prettify-symbols-alist)
-  (push '("<=" . ?≤) prettify-symbols-alist)
-  (push '("!=" . ?≠) prettify-symbols-alist)
-
-  (pretty-greek))
-
-(defun my/create-advanced-ligatures ()
-  "Create more invasive ligatures."
-  (my/create-basic-ligatures)
-  (push '("<-" . ?←) prettify-symbols-alist)
-  (push '("->" . ?→) prettify-symbols-alist))
-
-(setq backup-directory-alist `(("." . "~/.saves")))
-
-
-#+END_SRC
 ** misc
 #+BEGIN_SRC emacs-lisp
 
 ;; tell emacs not to use the clipboard
 ;(setq x-select-enable-clipboard nil)
 
+(global-set-key (kbd "s-i") 'ido-switch-buffer)
+
 #+END_SRC
 ** latex
 #+BEGIN_SRC emacs-lisp
 
-     (setq auto-revert-interval 0.5)
-     (require 'company-auctex)
-     (company-auctex-init)
-     
-     (add-hook 'TeX-after-compilation-finished-functions #'TeX-revert-document-buffer)
-  
-     (setq auctex-latexmk-inherit-TeX-PDF-mode t)
-     (require 'auctex-latexmk)
-     (auctex-latexmk-setup)
-     
+(setq auto-revert-interval 0.5)
+
+(require 'company-auctex)
+(company-auctex-init)
+
+(add-hook 'TeX-after-compilation-finished-functions #'TeX-revert-document-buffer)
+
+(setq auctex-latexmk-inherit-TeX-PDF-mode t)
+(require 'auctex-latexmk)
+(auctex-latexmk-setup)
+
+(add-hook 'latex-mode #'flyspell-mode)
+
 #+END_SRC
 ** highlighting
 #+BEGIN_SRC emacs-lisp
-
 ;; rainbow delimeters
-(use-package rainbow-mode
-  :config (rainbow-mode t)
 
-  :hook (lisp-mode c-mode-common web-mode )
-)
+(use-package rainbow-mode
+     :config (rainbow-mode t)
+      
+
+     :hook (web-mode c-mode c++-mode js2-mode))
 
 
 #+END_SRC
 * emacs-os
+** email
+#+BEGIN_SRC emacs-lisp
+
+  (require 'org-mime)
+
+  (add-to-list 'load-path "/usr/local/share/emacs/site-lisp/mu4e/")
+  (require 'mu4e)
+
+  (setq mu4e-maildir (expand-file-name "~/Maildir"))
+
+  ; get mail
+  (setq mu4e-get-mail-command "mbsync pwishie-gmail"
+    ;; mu4e-html2text-command "w3m -T text/html" ;;using the default mu4e-shr2text
+    mu4e-view-prefer-html t
+    mu4e-update-interval 300
+    mu4e-headers-auto-update t
+    mu4e-compose-signature-auto-include nil
+    mu4e-compose-format-flowed t)
+
+  ;; to view selected message in the browser, no signin, just html mail
+  (add-to-list 'mu4e-view-actions
+    '("ViewInBrowser" . mu4e-action-view-in-browser) t)
+
+  ;; enable inline images
+  (setq mu4e-view-show-images t)
+  ;; use imagemagick, if available
+  (when (fboundp 'imagemagick-register-types)
+    (imagemagick-register-types))
+
+  ;; every new email composition gets its own frame!
+  (setq mu4e-compose-in-new-frame t)
+
+  ;; don't save message to Sent Messages, IMAP takes care of this
+  (setq mu4e-sent-messages-behavior 'delete)
+
+  (add-hook 'mu4e-view-mode-hook #'visual-line-mode)
+
+  ;; <tab> to navigate to links, <RET> to open them in browser
+  (add-hook 'mu4e-view-mode-hook
+    (lambda()
+  ;; try to emulate some of the eww key-bindings
+  (local-set-key (kbd "<RET>") 'mu4e~view-browse-url-from-binding)
+  (local-set-key (kbd "<tab>") 'shr-next-link)
+  (local-set-key (kbd "<backtab>") 'shr-previous-link)))
+
+  ;; from https://www.reddit.com/r/emacs/comments/bfsck6/mu4e_for_dummies/elgoumx
+  (add-hook 'mu4e-headers-mode-hook
+        (defun my/mu4e-change-headers ()
+      (interactive)
+      (setq mu4e-headers-fields
+            `((:human-date . 25) ;; alternatively, use :date
+          (:flags . 6)
+          (:from . 22)
+          (:thread-subject . ,(- (window-body-width) 70)) ;; alternatively, use :subject
+          (:size . 7)))))
+
+  ;; if you use date instead of human-date in the above, use this setting
+  ;; give me ISO(ish) format date-time stamps in the header list
+  ;(setq mu4e-headers-date-format "%Y-%m-%d %H:%M")
+
+  ;; spell check
+  (add-hook 'mu4e-compose-mode-hook
+      (defun my-do-compose-stuff ()
+         "My settings for message composition."
+         (visual-line-mode)
+         ;(org-mu4e-compose-org-mode)
+         (use-hard-newlines -1)
+ (flyspell-mode)))
+
+  (require 'smtpmail)
+
+  ;;rename files when moving
+  ;;NEEDED FOR MBSYNC
+  (setq mu4e-change-filenames-when-moving t)
+
+  ;;set up queue for offline email
+  ;;use mu mkdir  ~/Maildir/acc/queue to set up first
+  (setq smtpmail-queue-mail nil)  ;; start in normal mode
+
+  ;;from the info manual
+  (setq mu4e-attachment-dir  "~/Downloads")
+
+  (setq message-kill-buffer-on-exit t)
+  (setq mu4e-compose-dont-reply-to-self t)
+
+  (require 'org-mu4e)
+
+  ;; convert org mode to HTML automatically
+  (setq org-mu4e-convert-to-html t)
+
+  ;;from vxlabs config
+  ;; show full addresses in view message (instead of just names)
+  ;; toggle per name with M-RET
+  (setq mu4e-view-show-addresses 't)
+
+  ;; don't ask when quitting
+  (setq mu4e-confirm-quit nil)
+
+  (require 'smtpmail-multi)
+
+  (require 'feedmail)
+
+  ;; mu4e-context
+  (setq mu4e-context-policy 'pick-first)
+  (setq mu4e-compose-context-policy 'always-ask)
+  (setq mu4e-contexts
+    (list
+     (make-mu4e-context
+      :name "personal" ;;for pwishie-gmail
+      :enter-func (lambda () (mu4e-message "Entering context personal"))
+      :leave-func (lambda () (mu4e-message "Leaving context personal"))
+      :match-func (lambda (msg)
+            (when msg
+          (mu4e-message-contact-field-matches
+           msg '(:from :to :cc :bcc) "pwishie@gmail.com")))
+      :vars '((user-mail-address . "pwishie@gmail.com")
+          (user-full-name . "Ryan")
+          (mu4e-sent-folder . "/pwishie-gmail/[pwishie].Sent Mail")
+          (mu4e-drafts-folder . "/pwishie-gmail/[pwishie].drafts")
+          (mu4e-trash-folder . "/pwishie-gmail/[pwishie].Bin")
+          (mu4e-compose-signature . (concat "Formal Signature\n" "Emacs 25, org-mode 9, mu4e 1.0\n"))
+          (mu4e-compose-format-flowed . t)
+          (smtpmail-queue-dir . "~/Maildir/pwishie-gmail/queue/cur")
+          (setq message-send-mail-function 'message-send-mail-with-sendmail
+              sendmail-program "/usr/bin/msmtp"
+	          user-full-name "Ryan Jeffrey")
+
+          (setq message-sendmail-envelope-from 'header)
+          (add-hook 'message-send-mail-hook 'choose-msmtp-account)
+          (smtpmail-smtp-user . "pwishie")
+          (smtpmail-starttls-credentials . (("smtp.gmail.com" 587 nil nil)))
+          (smtpmail-auth-credentials . (expand-file-name "~/.emacs.d/.authinfo.gpg"))
+          (smtpmail-default-smtp-server . "smtp.gmail.com")
+          (smtpmail-smtp-server . "smtp.gmail.com")
+          (smtpmail-smtp-service . 587)
+          (smtpmail-debug-info . t)
+          (smtpmail-debug-verbose . t)
+          (mu4e-maildir-shortcuts . ( ("/pwishie-gmail/INBOX"            . ?i)
+                      ("/pwishie-gmail/[pwishie].Sent Mail" . ?s)
+                      ("/pwishie-gmail/[pwishie].Bin"       . ?t)
+                      ("/pwishie-gmail/[pwishie].All Mail"  . ?a)
+                      ("/pwishie-gmail/[pwishie].Starred"   . ?r)
+                      ("/pwishie-gmail/[pwishie].drafts"    . ?d)
+                      ))))
+     ;; (make-mu4e-context
+     ;;  :name "personal" ;;for rmjxyz-gmail
+     ;;  :enter-func (lambda () (mu4e-message "Entering context personal"))
+     ;;  :leave-func (lambda () (mu4e-message "Leaving context personal"))
+     ;;  :match-func (lambda (msg)
+     ;;  	  (when msg
+     ;;  	(mu4e-message-contact-field-matches
+     ;;  	 msg '(:from :to :cc :bcc) "rmjxyz@gmail.com")))
+     ;;  :vars '((user-mail-address . "rmjxyz@gmail.com")
+     ;;      (user-full-name . "User Account2")
+     ;;      (mu4e-sent-folder . "/rmjxyz-gmail/[rmjxyz].Sent Mail")
+     ;;      (mu4e-drafts-folder . "/rmjxyz-gmail/[rmjxyz].drafts")
+     ;;      (mu4e-trash-folder . "/rmjxyz-gmail/[rmjxyz].Trash")
+     ;;      (mu4e-compose-format-flowed . t)
+     ;;      (smtpmail-queue-dir . "~/Maildir/rmjxyz-gmail/queue/cur")
+     ;;      (message-send-mail-function . smtpmail-send-it)
+     ;;      (smtpmail-smtp-user . "rmjxyz")
+     ;;      (smtpmail-starttls-credentials . (("smtp.gmail.com" 587 nil nil)))
+     ;;      (smtpmail-auth-credentials . (expand-file-name "~/.emacs.d/.authinfo.gpg"))
+     ;;      (smtpmail-default-smtp-server . "smtp.gmail.com")
+     ;;      (smtpmail-smtp-server . "smtp.gmail.com")
+     ;;      (smtpmail-smtp-service . 587)
+     ;;      (smtpmail-debug-info . t)
+     ;;      (smtpmail-debug-verbose . t)
+     ;;      (mu4e-maildir-shortcuts . ( ("/rmjxyz-gmail/INBOX"            . ?i)
+     ;;  				("/rmjxyz-gmail/[rmjxyz].Sent Mail" . ?s)
+     ;;  				("/rmjxyz-gmail/[rmjxyz].Trash"     . ?t)
+     ;;  				("/rmjxyz-gmail/[rmjxyz].All Mail"  . ?a)
+     ;;  				("/rmjxyz-gmail/[rmjxyz].Starred"   . ?r)
+     ;;  				("/rmjxyz-gmail/[rmjxyz].drafts"    . ?d)
+     ;;  				))))
+  ))
+
+#+END_SRC
 ** rss
 #+BEGIN_SRC emacs-lisp
 
-(setq elfeed-db-directory "~/.elrss")
+(setq elfeed-db-directory (expand-file-name "~/.elrss"))
 
 (require 'elfeed)
 (global-set-key (kbd "s-x w") 'elfeed)
+
 
 ;; Load elfeed-org
 (require 'elfeed-org)
@@ -589,13 +767,23 @@
 ;; Optionally specify a number of files containing elfeed
 ;; configuration. If not set then the location below is used.
 ;; Note: The customize interface is also supported.
-(setq rmh-elfeed-org-files (list "~/.emacs.d/elfeed.org"))
+(setq rmh-elfeed-org-files (list "/home/rmj/.emacs.d/elfeed.org"))
 
 #+END_SRC
 ** pdf
 #+BEGIN_SRC emacs-lisp
 
 (pdf-tools-install)
+
+(add-hook 'pdf-view-hook #'auto-revert-mode)
+
+#+END_SRC
+** filesystem
+#+BEGIN_SRC emacs-lisp
+  ;; (add-to-list 'load-path "~/.emacs.d/lisp/")
+  ;; (require 'dired-details)
+  ;; (setq-default dired-details-hidden-string "[-]")
+  ;; (dired-details-install)
 
 #+END_SRC
 * Misc
@@ -611,8 +799,12 @@
 *** vterm
 #+BEGIN_SRC emacs-lisp
 
-(require 'vterm)
-(require 'color)
+(use-package vterm
+:load-path "/home/ryan/CSProjects/emacs-libvterm/"
+:config 
+    (let (vterm-install)
+       (require 'vterm)))
+
 (custom-set-faces
 
  '(vterm-color-black ((t (:foreground "#3F3F3F" :background "#2B2B2B"))))
@@ -628,16 +820,6 @@
  '(vterm-default-bg-color ((t (:inherit vterm-color-black)))))
 
 #+END_SRC
-*** crontab
-#+BEGIN_SRC emacs-lisp
-(add-to-list 'auto-mode-alist '("crontab." . crontab-mode))  ; TEST
-#+END_SRC
-*** emojis
-#+BEGIN_SRC emacs-lisp
-(add-hook 'after-init-hook #'global-emojify-mode)
-
-#+END_SRC
-
 ** ssh
 #+BEGIN_SRC emacs-lisp
 
@@ -653,5 +835,12 @@
 #+BEGIN_SRC emacs-lisp
 
 (require 'highlight-indentation)
+
+#+END_SRC
+** scripts
+#+BEGIN_SRC emacs-lisp
+
+  (defun insert-current-date () (interactive)
+    (insert (shell-command-to-string "echo -n $(date +\"%d %b %Y %X\")")))
 
 #+END_SRC
