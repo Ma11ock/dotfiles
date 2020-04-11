@@ -23,16 +23,17 @@
 
 (add-to-list 'load-path "~/.emacs.d/lisp/")
 
- (require 'popup-pos-tip)
- (defadvice popup-tip
+(require 'popup-pos-tip)
+
+(defadvice popup-tip
    (around popup-pos-tip-wrapper (string &rest args) activate)
-   (if (eq window-system 'x)
+       (if (eq window-system 'x)
        (apply 'popup-pos-tip string args)
-     ad-do-it))
+          ad-do-it))
 
 (setq x-gtk-use-system-tooltips nil)     
 
-
+;; font
   (add-to-list 'default-frame-alist
      '(font . "Hack:antialias=true:size=16:style=Regular")
      '(font . "Fira Code Symbol:antialias=true:size=16:style=Regular"))
@@ -106,9 +107,15 @@
 
 (add-hook 'after-init-hook 'my/create-greek-ligatures)
 
-  (add-to-list 'load-path "~/.emacs.d/themes/")
+(add-to-list 'load-path "~/.emacs.d/themes/")
 
-  (load-theme 'modus-vivendi t)
+(use-package modus-vivendi-theme
+   :ensure t)
+
+(use-package dracula-theme
+   :ensure t)
+
+(load-theme 'modus-vivendi t)
 
   ;; (use-package telephone-line
   ;;     :init
@@ -148,25 +155,35 @@
 #+END_SRC
 ** Ivy-mode
 #+BEGIN_SRC emacs-lisp
-  (ivy-mode 1)
-  (setq ivy-use-virtual-buffers t)
-  (setq enable-recursive-minibuffers t)
-  ;; enable this if you want `swiper' to use it
-  ;; (setq search-default-mode #'char-fold-to-regexp)
-  (global-set-key "\C-s" 'swiper)
-  (global-set-key (kbd "<f6>") 'ivy-resume)
-  (global-set-key (kbd "M-x") 'counsel-M-x)
-  (global-set-key (kbd "<f5> f") 'counsel-describe-function)
-  (global-set-key (kbd "<f5> v") 'counsel-describe-variable)
-  (global-set-key (kbd "<f5> l") 'counsel-find-library)
-  (global-set-key (kbd "<f5> i") 'counsel-info-lookup-symbol)
-  (global-set-key (kbd "<f5> u") 'counsel-unicode-char)
-  (global-set-key (kbd "s-c g") 'counsel-git)
-  (global-set-key (kbd "s-c j") 'counsel-git-grep)
-  (global-set-key (kbd "s-c k") 'counsel-ag)
-  (global-set-key (kbd "s-x l") 'counsel-locate)
-  (global-set-key (kbd "s-S-o") 'counsel-rhythmbox)
-  (define-key minibuffer-local-map (kbd "s-r") 'counsel-minibuffer-history)
+(use-package counsel
+    :ensure t)
+
+(use-package swiper
+    :ensure t)
+
+(use-package ivy
+    :ensure t
+    :init
+    
+      (ivy-mode 1)
+      (setq ivy-use-virtual-buffers t)
+      (setq enable-recursive-minibuffers t)
+      ;; enable this if you want `swiper' to use it
+      ;; (setq search-default-mode #'char-fold-to-regexp)
+      (global-set-key "\C-s" 'swiper)
+      (global-set-key (kbd "<f6>") 'ivy-resume)
+      (global-set-key (kbd "M-x") 'counsel-M-x)
+      (global-set-key (kbd "<f5> f") 'counsel-describe-function)
+      (global-set-key (kbd "<f5> v") 'counsel-describe-variable)
+      (global-set-key (kbd "<f5> l") 'counsel-find-library)
+      (global-set-key (kbd "<f5> i") 'counsel-info-lookup-symbol)
+      (global-set-key (kbd "<f5> u") 'counsel-unicode-char)
+      (global-set-key (kbd "s-c g") 'counsel-git)
+      (global-set-key (kbd "s-c j") 'counsel-git-grep)
+      (global-set-key (kbd "s-c k") 'counsel-ag)
+      (global-set-key (kbd "s-x l") 'counsel-locate)
+      (global-set-key (kbd "s-S-o") 'counsel-rhythmbox)
+      (define-key minibuffer-local-map (kbd "s-r") 'counsel-minibuffer-history)) 
 #+END_SRC
 
 ** Misc
@@ -334,9 +351,11 @@
 
 (c-set-offset 'substatement-open 0)
 
-(require 'modern-cpp-font-lock)
-(modern-c++-font-lock-global-mode t)
-
+(use-package modern-cpp-font-lock
+    :ensure t
+    :init
+    (modern-c++-font-lock-global-mode t))
+    
 (add-hook 'c++-mode-hook 'irony-mode)
 (add-hook 'c-mode-hook 'irony-mode)
 
@@ -357,36 +376,44 @@
 ** lisp
 #+BEGIN_SRC emacs-lisp
 
-   (use-package slime
-   :config
-        (setq inferior-lisp-program "/opt/sbcl/bin/sbcl") 
-        (setq slime-contribs '(slime-fancy))
-        (load (expand-file-name "~/quicklisp/slime-helper.el"))
-        ;; Replace "sbcl" with the path to your implementation
-        (setq inferior-lisp-program "sbcl"))
+ (use-package slime
+     :config
+     (setq inferior-lisp-program "/opt/sbcl/bin/sbcl") 
+     (setq slime-contribs '(slime-fancy))
+     (load (expand-file-name "~/quicklisp/slime-helper.el"))
+     ;; Replace "sbcl" with the path to your implementation
+     (setq inferior-lisp-program "sbcl"))
 
-  (setq geiser-active-implementations '(guile))
+        
+(setq geiser-active-implementations '(guile))
+(use-package rainbow-delimiters
+    :ensure t
+    :init
+    (add-hook 'prog-mode-hook #'rainbow-delimiters-mode))
 
-
-  (add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
-
-(dolist (hook '(emacs-lisp-mode-hook ielm-mode-hook))
-  (add-hook hook #'elisp-def-mode))
+(use-package elisp-def
+    :ensure t
+    :init
+    (dolist (hook '(emacs-lisp-mode-hook ielm-mode-hook))
+    (add-hook hook #'elisp-def-mode)))
 
 #+END_SRC
 ** Misc
 
 #+BEGIN_SRC emacs-lisp
 
-(require 'neotree)                                                                                      ;;
-(global-set-key [f8] 'neotree-toggle)
+(use-package neotree
+    :ensure t
+    :init (global-set-key [f8] 'neotree-toggle))
 
-; emojis
-(global-emojify-mode)
+(use-package emojify
+    :ensure t
+    :init (global-emojify-mode))
 #+END_SRC
 ** scripts
 *** Perl
 #+BEGIN_SRC emacs-lisp
+
 
 (fset 'perl-mode 'cperl-mode)
 (setq cperl-indent-level 4)
@@ -426,21 +453,23 @@
 (add-to-list 'exec-path "/home/rmj/src/goproj/bin/")
 (add-hook 'before-save-hook 'gofmt-before-save)
 
-(defun my-go-mode-hook ()
-  ; Call Gofmt before saving                                                    
-  (add-hook 'before-save-hook 'gofmt-before-save)
-  ; Godef jump key binding                                                      
-  (local-set-key (kbd "M-.") 'godef-jump)
-  (local-set-key (kbd "M-*") 'pop-tag-mark)
+(use-package go-mode
+   :ensure t
+   :init
+   (defun my-go-mode-hook ()
+      ; Call Gofmt before saving                                                    
+      (add-hook 'before-save-hook 'gofmt-before-save)
+      ; Godef jump key binding                                                      
+      (local-set-key (kbd "M-.") 'godef-jump)
+      (local-set-key (kbd "M-*") 'pop-tag-mark)
 
-  (add-to-list 'company-backends 'company-go)
-  ; Customize compile command to run go build
-  (if (not (string-match "go" compile-command))
-      (set (make-local-variable 'compile-command)
-           "go build -v && go test -v && go vet")))
-           
-(add-hook 'go-mode-hook 'my-go-mode-hook)
+      (add-to-list 'company-backends 'company-go)
+      ; Customize compile command to run go build
+      (if (not (string-match "go" compile-command))
+          (set (make-local-variable 'compile-command)
+               "go build -v && go test -v && go vet")))
 
+               (add-hook 'go-mode-hook 'my-go-mode-hook))
 
 #+END_SRC
 ** rust
@@ -477,11 +506,14 @@
 ** HTML/CSS/JS
 #+BEGIN_SRC emacs-lisp
 
-(add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
-(setq web-mode-ac-sources-alist
-    '(("css" . (ac-source-css-property))
-     ("html" . (ac-source-words-in-buffer ac-source-abbrev))))
-(setq web-mode-enable-auto-quoting t)
+(use-package web-mode
+   :ensure t
+   :init
+    (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
+    (setq web-mode-ac-sources-alist
+        '(("css" . (ac-source-css-property))
+         ("html" . (ac-source-words-in-buffer ac-source-abbrev))))
+    (setq web-mode-enable-auto-quoting t))
 
 (use-package emmet-mode
     :ensure t
@@ -497,24 +529,26 @@
 ** Python
 #+BEGIN_SRC emacs-lisp
 
-(defun my-init-elpy ()
-    "Init elpy."
-    (elpy-enable)
-    (add-to-list 'company-backends 'elpy-company-backend)
-    
-    (when (require 'flycheck nil t)
-        (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
-        (add-hook 'elpy-mode-hook 'flycheck-mode))
+(use-package elpy
+    :ensure t
+    :init
+    (defun my-init-elpy ()
+        "Init elpy."
+        (elpy-enable)
+        (add-to-list 'company-backends 'elpy-company-backend)
 
-    (flymake-mode nil)
-    (eldoc-mode nil))
+        (when (require 'flycheck nil t)
+            (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
+            (add-hook 'elpy-mode-hook 'flycheck-mode))
 
-(add-hook 'python-mode-hook 'my-init-elpy)
+        (flymake-mode nil)
+        (eldoc-mode nil))
+
+    (add-hook 'python-mode-hook 'my-init-elpy))
 
 
 
 #+END_SRC
-** 
 * Text-editor
 ** spellcheck
 #+BEGIN_SRC emacs-lisp
@@ -561,16 +595,20 @@
 
 (setq auto-revert-interval 0.5)
 
-(require 'company-auctex)
-(company-auctex-init)
+(use-package company-auctex
+    :ensure t
+    :init
+    (company-auctex-init)
 
-(add-hook 'TeX-after-compilation-finished-functions #'TeX-revert-document-buffer)
+    (add-hook 'TeX-after-compilation-finished-functions #'TeX-revert-document-buffer)
 
-(setq auctex-latexmk-inherit-TeX-PDF-mode t)
-(require 'auctex-latexmk)
-(auctex-latexmk-setup)
+    (setq auctex-latexmk-inherit-TeX-PDF-mode t))
+(use-package auctex-latexmk
+    :ensure t
+    :init
+    (auctex-latexmk-setup)
 
-(add-hook 'latex-mode #'flyspell-mode)
+    (add-hook 'latex-mode #'flyspell-mode))
 
 #+END_SRC
 ** highlighting
@@ -589,14 +627,13 @@
 ** email
 #+BEGIN_SRC emacs-lisp
 
-  (use-package shrface
-    :after shr
-    :quelpa
-    (shrface :repo "chenyanming/shrface" :fetcher github))
+    (use-package shrface
+        :after shr
+        :quelpa
+        (shrface :repo "chenyanming/shrface" :fetcher github))
 
-    (require 'shrface)
-
-    (require 'org-mime)
+    (use-package org-mime
+        :ensure t)    
 
     (add-to-list 'load-path "/usr/local/share/emacs/site-lisp/mu4e/")
     (require 'mu4e)
@@ -789,31 +826,25 @@
 ** rss
 #+BEGIN_SRC emacs-lisp
 
-(setq elfeed-db-directory (expand-file-name "~/.elrss"))
+(use-package elfeed
+     :ensure t
+     :init
+     (setq elfeed-db-directory (expand-file-name "~/.elrss"))
+     (define-key elfeed-search-mode-map (kbd "u") '(lambda ()
+                                                       (interactive)
+                                                       (message "Updating elfeed database.")
+                                                       (elfeed-update)))
+    
+     (setq-default elfeed-search-filter "@6-months-ago +unread -reddit"))
 
-(require 'elfeed)
-(global-set-key (kbd "s-x w") 'elfeed)
+(use-package elfeed-org
+    :ensure t
+    :init
+    (global-set-key (kbd "s-x w") 'elfeed)
+    (elfeed-org)
+    (setq rmh-elfeed-org-files (list "/home/rmj/.emacs.d/elfeed.org")))
 
 
-;; Load elfeed-org
-(require 'elfeed-org)
-
-;; Initialize elfeed-org
-;; This hooks up elfeed-org to read the configuration when elfeed
-;; is started with =M-x elfeed=
-(elfeed-org)
-
-;; Optionally specify a number of files containing elfeed
-;; configuration. If not set then the location below is used.
-;; Note: The customize interface is also supported.
-(setq rmh-elfeed-org-files (list "/home/rmj/.emacs.d/elfeed.org"))
-
-(define-key elfeed-search-mode-map (kbd "u") '(lambda ()
-                                               (interactive)
-                                               (message "Updating elfeed database.")
-                                               (elfeed-update)))
-
-(setq-default elfeed-search-filter "@6-months-ago +unread -reddit")
  
 ;; from https://github.com/ravarspath/emacs-conf/blob/master/lisp/ravar-custom.el
 (setq ravar/elfeed-podcast-dir "/home/rmj/Music/podcast")
@@ -842,9 +873,12 @@ mpc next; mpc play "
 ** pdf
 #+BEGIN_SRC emacs-lisp
 
-(pdf-tools-install)
+(use-package pdf-tools
+    :ensure t
+    :init
+    (pdf-tools-install)
+    (add-hook 'pdf-view-hook #'auto-revert-mode))
 
-(add-hook 'pdf-view-hook #'auto-revert-mode)
 
 #+END_SRC
 ** filesystem
@@ -869,11 +903,8 @@ mpc next; mpc play "
 #+BEGIN_SRC emacs-lisp
 
 (use-package vterm
-:load-path "/home/ryan/CSProjects/emacs-libvterm/"
-:config 
-    (let (vterm-install)
-       (require 'vterm)))
-
+:ensure t
+:init 
 (custom-set-faces
 
  '(vterm-color-black ((t (:foreground "#3F3F3F" :background "#2B2B2B"))))
@@ -886,24 +917,26 @@ mpc next; mpc play "
  '(vterm-color-white ((t (:foreground "#DCDCCC" :background "#656555"))))
 
  '(vterm-default-fg-color ((t (:inherit vterm-color-white))))
- '(vterm-default-bg-color ((t (:inherit vterm-color-black)))))
+ '(vterm-default-bg-color ((t (:inherit vterm-color-black))))))
 
 #+END_SRC
 ** ssh
 #+BEGIN_SRC emacs-lisp
-
- (require 'ssh)
+(use-package ssh
+:ensure t
+:init
     (add-hook 'ssh-mode-hook
               (lambda ()
                 (setq ssh-directory-tracking-mode t)
                 (shell-dirtrack-mode t)
-                (setq dirtrackp nil)))
+                (setq dirtrackp nil))))
 
 #+END_SRC
 ** misc
 #+BEGIN_SRC emacs-lisp
 
-(require 'highlight-indentation)
+(use-package highlight-indendation
+    :ensure t)
 
 #+END_SRC
 ** scripts
