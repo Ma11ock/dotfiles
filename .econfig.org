@@ -34,7 +34,7 @@
 
 
   (add-to-list 'default-frame-alist
-     '(font . "FuraCode Nerd Font Mono:antialias=true:size=16:style=Regular")
+     '(font . "Hack:antialias=true:size=16:style=Regular")
      '(font . "Fira Code Symbol:antialias=true:size=16:style=Regular"))
 
 (defun fira-code-mode--make-alist (list)
@@ -133,6 +133,17 @@
 (global-set-key (kbd "M-<up>") 'text-scale-increase)
 (global-set-key (kbd "M-<down>") 'text-scale-decrease)
 (scroll-bar-mode nil)
+
+(use-package shr
+  :commands (eww
+             eww-browse-url)
+  :config
+  ;(setq browse-url-browser-function 'eww-browse-url)
+  (setq shr-use-fonts nil)
+  (setq shr-use-colors nil)
+  (setq shr-max-image-proportion 0.2)
+  (setq shr-width (current-fill-column)))
+
 
 #+END_SRC
 ** Ivy-mode
@@ -242,6 +253,9 @@
     :config
     (org-indent-mode t)
     :hook org-mode)
+
+(use-package org-bullets
+    :ensure t)
 
 #+END_SRC
 * IDE
@@ -355,6 +369,9 @@
 
 
   (add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
+
+(dolist (hook '(emacs-lisp-mode-hook ielm-mode-hook))
+  (add-hook hook #'elisp-def-mode))
 
 #+END_SRC
 ** Misc
@@ -572,179 +589,201 @@
 ** email
 #+BEGIN_SRC emacs-lisp
 
-  (require 'org-mime)
+  (use-package shrface
+    :after shr
+    :quelpa
+    (shrface :repo "chenyanming/shrface" :fetcher github))
 
-  (add-to-list 'load-path "/usr/local/share/emacs/site-lisp/mu4e/")
-  (require 'mu4e)
+    (require 'shrface)
 
-  (setq mu4e-maildir (expand-file-name "~/Maildir"))
+    (require 'org-mime)
 
-  ; get mail
-  (setq mu4e-get-mail-command "mbsync pwishie-gmail"
-    ;; mu4e-html2text-command "w3m -T text/html" ;;using the default mu4e-shr2text
-    mu4e-view-prefer-html t
-    mu4e-update-interval 300
-    mu4e-headers-auto-update t
-    mu4e-compose-signature-auto-include nil
-    mu4e-compose-format-flowed t)
+    (add-to-list 'load-path "/usr/local/share/emacs/site-lisp/mu4e/")
+    (require 'mu4e)
 
-  ;; to view selected message in the browser, no signin, just html mail
-  (add-to-list 'mu4e-view-actions
-    '("ViewInBrowser" . mu4e-action-view-in-browser) t)
+    (setq mu4e-maildir (expand-file-name "~/Maildir"))
 
-  ;; enable inline images
-  (setq mu4e-view-show-images t)
-  ;; use imagemagick, if available
-  (when (fboundp 'imagemagick-register-types)
-    (imagemagick-register-types))
+    ; get mail
+    (setq mu4e-get-mail-command "mbsync pwishie-gmail"
+      ;; mu4e-html2text-command "w3m -T text/html" ;;using the default mu4e-shr2text
+      mu4e-view-prefer-html t
+      mu4e-update-interval 300
+      mu4e-headers-auto-update t
+      mu4e-compose-signature-auto-include nil
+      mu4e-compose-format-flowed t)
 
-  ;; every new email composition gets its own frame!
-  (setq mu4e-compose-in-new-frame t)
+    ;; to view selected message in the browser, no signin, just html mail
+    (add-to-list 'mu4e-view-actions
+      '("ViewInBrowser" . mu4e-action-view-in-browser) t)
 
-  ;; don't save message to Sent Messages, IMAP takes care of this
-  (setq mu4e-sent-messages-behavior 'delete)
+    ;; enable inline images
+    (setq mu4e-view-show-images t)
+    ;; use imagemagick, if available
+    (when (fboundp 'imagemagick-register-types)
+      (imagemagick-register-types))
 
-  (add-hook 'mu4e-view-mode-hook #'visual-line-mode)
+    ;; every new email composition gets its own frame!
+    (setq mu4e-compose-in-new-frame t)
 
-  ;; <tab> to navigate to links, <RET> to open them in browser
-  (add-hook 'mu4e-view-mode-hook
-    (lambda()
-  ;; try to emulate some of the eww key-bindings
-  (local-set-key (kbd "<RET>") 'mu4e~view-browse-url-from-binding)
-  (local-set-key (kbd "<tab>") 'shr-next-link)
-  (local-set-key (kbd "<backtab>") 'shr-previous-link)))
+    ;; don't save message to Sent Messages, IMAP takes care of this
+    (setq mu4e-sent-messages-behavior 'delete)
 
-  ;; from https://www.reddit.com/r/emacs/comments/bfsck6/mu4e_for_dummies/elgoumx
-  (add-hook 'mu4e-headers-mode-hook
-        (defun my/mu4e-change-headers ()
-      (interactive)
-      (setq mu4e-headers-fields
-            `((:human-date . 25) ;; alternatively, use :date
-          (:flags . 6)
-          (:from . 22)
-          (:thread-subject . ,(- (window-body-width) 70)) ;; alternatively, use :subject
-          (:size . 7)))))
+    (add-hook 'mu4e-view-mode-hook #'visual-line-mode)
 
-  ;; if you use date instead of human-date in the above, use this setting
-  ;; give me ISO(ish) format date-time stamps in the header list
-  ;(setq mu4e-headers-date-format "%Y-%m-%d %H:%M")
+    ;; (defun my-render-html-message ()
+    ;; (let ((dom (libxml-parse-html-region (point-min) (point-max))))
+    ;;   (erase-buffer)
+    ;;   (shr-insert-document dom)
+    ;;   (goto-char (point-min))))
 
-  ;; spell check
-  (add-hook 'mu4e-compose-mode-hook
-      (defun my-do-compose-stuff ()
-         "My settings for message composition."
-         (visual-line-mode)
-         ;(org-mu4e-compose-org-mode)
-         (use-hard-newlines -1)
- (flyspell-mode)))
+    ;; (setq mu4e-html2text-command 'my-render-html-message)
 
-  (require 'smtpmail)
 
-  ;;rename files when moving
-  ;;NEEDED FOR MBSYNC
-  (setq mu4e-change-filenames-when-moving t)
+    ;; <tab> to navigate to links, <RET> to open them in browser
+    (add-hook 'mu4e-view-mode-hook
+      (lambda()
+    ;; try to emulate some of the eww key-bindings
+    (local-set-key (kbd "<RET>") 'mu4e~view-browse-url-from-binding)
+    (local-set-key (kbd "<tab>") 'shr-next-link)
+    (local-set-key (kbd "<backtab>") 'shr-previous-link)))
 
-  ;;set up queue for offline email
-  ;;use mu mkdir  ~/Maildir/acc/queue to set up first
-  (setq smtpmail-queue-mail nil)  ;; start in normal mode
+    ;; from https://www.reddit.com/r/emacs/comments/bfsck6/mu4e_for_dummies/elgoumx
+    (add-hook 'mu4e-headers-mode-hook
+          (defun my/mu4e-change-headers ()
+        (interactive)
+        (setq mu4e-headers-fields
+              `((:human-date . 25) ;; alternatively, use :date
+            (:flags . 6)
+            (:from . 22)
+            (:thread-subject . ,(- (window-body-width) 70)) ;; alternatively, use :subject
+            (:size . 7)))))
 
-  ;;from the info manual
-  (setq mu4e-attachment-dir  "~/Downloads")
+    ;; if you use date instead of human-date in the above, use this setting
+    ;; give me ISO(ish) format date-time stamps in the header list
+    ;(setq mu4e-headers-date-format "%Y-%m-%d %H:%M")
 
-  (setq message-kill-buffer-on-exit t)
-  (setq mu4e-compose-dont-reply-to-self t)
+    ;; spell check
+    (add-hook 'mu4e-compose-mode-hook
+        (defun my-do-compose-stuff ()
+           "My settings for message composition."
+           (visual-line-mode)
+           ;(org-mu4e-compose-org-mode)
+           (use-hard-newlines -1)
+   (flyspell-mode)))
 
-  (require 'org-mu4e)
+    (require 'smtpmail)
 
-  ;; convert org mode to HTML automatically
-  (setq org-mu4e-convert-to-html t)
+    ;;rename files when moving
+    ;;NEEDED FOR MBSYNC
+    (setq mu4e-change-filenames-when-moving t)
 
-  ;;from vxlabs config
-  ;; show full addresses in view message (instead of just names)
-  ;; toggle per name with M-RET
-  (setq mu4e-view-show-addresses 't)
+    ;;set up queue for offline email
+    ;;use mu mkdir  ~/Maildir/acc/queue to set up first
+    (setq smtpmail-queue-mail nil)  ;; start in normal mode
 
-  ;; don't ask when quitting
-  (setq mu4e-confirm-quit nil)
+    ;;from the info manual
+    (setq mu4e-attachment-dir  "~/Downloads")
 
-  (require 'smtpmail-multi)
+    (setq message-kill-buffer-on-exit t)
+    (setq mu4e-compose-dont-reply-to-self t)
 
-  (require 'feedmail)
+    (require 'org-mu4e)
 
-  ;; mu4e-context
-  (setq mu4e-context-policy 'pick-first)
-  (setq mu4e-compose-context-policy 'always-ask)
-  (setq mu4e-contexts
-    (list
-     (make-mu4e-context
-      :name "personal" ;;for pwishie-gmail
-      :enter-func (lambda () (mu4e-message "Entering context personal"))
-      :leave-func (lambda () (mu4e-message "Leaving context personal"))
-      :match-func (lambda (msg)
-            (when msg
-          (mu4e-message-contact-field-matches
-           msg '(:from :to :cc :bcc) "pwishie@gmail.com")))
-      :vars '((user-mail-address . "pwishie@gmail.com")
-          (user-full-name . "Ryan")
-          (mu4e-sent-folder . "/pwishie-gmail/[pwishie].Sent Mail")
-          (mu4e-drafts-folder . "/pwishie-gmail/[pwishie].drafts")
-          (mu4e-trash-folder . "/pwishie-gmail/[pwishie].Bin")
-          (mu4e-compose-signature . (concat "Formal Signature\n" "Emacs 25, org-mode 9, mu4e 1.0\n"))
-          (mu4e-compose-format-flowed . t)
-          (smtpmail-queue-dir . "~/Maildir/pwishie-gmail/queue/cur")
-          (setq message-send-mail-function 'message-send-mail-with-sendmail
-              sendmail-program "/usr/bin/msmtp"
-	          user-full-name "Ryan Jeffrey")
+    ;; convert org mode to HTML automatically
+    (setq org-mu4e-convert-to-html t)
+  
+    (setq mu4e-org-contacts-file  (expand-file-name "~/.emacs.d/contacts.org"))
+    (add-to-list 'mu4e-headers-actions
+      '("org-contact-add" . mu4e-action-add-org-contact) t)
+    (add-to-list 'mu4e-view-actions
+      '("org-contact-add" . mu4e-action-add-org-contact) t)
+ 
+    ;;from vxlabs config
+    ;; show full addresses in view message (instead of just names)
+    ;; toggle per name with M-RET
+    (setq mu4e-view-show-addresses 't)
 
-          (setq message-sendmail-envelope-from 'header)
-          (add-hook 'message-send-mail-hook 'choose-msmtp-account)
-          (smtpmail-smtp-user . "pwishie")
-          (smtpmail-starttls-credentials . (("smtp.gmail.com" 587 nil nil)))
-          (smtpmail-auth-credentials . (expand-file-name "~/.emacs.d/.authinfo.gpg"))
-          (smtpmail-default-smtp-server . "smtp.gmail.com")
-          (smtpmail-smtp-server . "smtp.gmail.com")
-          (smtpmail-smtp-service . 587)
-          (smtpmail-debug-info . t)
-          (smtpmail-debug-verbose . t)
-          (mu4e-maildir-shortcuts . ( ("/pwishie-gmail/INBOX"            . ?i)
-                      ("/pwishie-gmail/[pwishie].Sent Mail" . ?s)
-                      ("/pwishie-gmail/[pwishie].Bin"       . ?t)
-                      ("/pwishie-gmail/[pwishie].All Mail"  . ?a)
-                      ("/pwishie-gmail/[pwishie].Starred"   . ?r)
-                      ("/pwishie-gmail/[pwishie].drafts"    . ?d)
-                      ))))
-     ;; (make-mu4e-context
-     ;;  :name "personal" ;;for rmjxyz-gmail
-     ;;  :enter-func (lambda () (mu4e-message "Entering context personal"))
-     ;;  :leave-func (lambda () (mu4e-message "Leaving context personal"))
-     ;;  :match-func (lambda (msg)
-     ;;  	  (when msg
-     ;;  	(mu4e-message-contact-field-matches
-     ;;  	 msg '(:from :to :cc :bcc) "rmjxyz@gmail.com")))
-     ;;  :vars '((user-mail-address . "rmjxyz@gmail.com")
-     ;;      (user-full-name . "User Account2")
-     ;;      (mu4e-sent-folder . "/rmjxyz-gmail/[rmjxyz].Sent Mail")
-     ;;      (mu4e-drafts-folder . "/rmjxyz-gmail/[rmjxyz].drafts")
-     ;;      (mu4e-trash-folder . "/rmjxyz-gmail/[rmjxyz].Trash")
-     ;;      (mu4e-compose-format-flowed . t)
-     ;;      (smtpmail-queue-dir . "~/Maildir/rmjxyz-gmail/queue/cur")
-     ;;      (message-send-mail-function . smtpmail-send-it)
-     ;;      (smtpmail-smtp-user . "rmjxyz")
-     ;;      (smtpmail-starttls-credentials . (("smtp.gmail.com" 587 nil nil)))
-     ;;      (smtpmail-auth-credentials . (expand-file-name "~/.emacs.d/.authinfo.gpg"))
-     ;;      (smtpmail-default-smtp-server . "smtp.gmail.com")
-     ;;      (smtpmail-smtp-server . "smtp.gmail.com")
-     ;;      (smtpmail-smtp-service . 587)
-     ;;      (smtpmail-debug-info . t)
-     ;;      (smtpmail-debug-verbose . t)
-     ;;      (mu4e-maildir-shortcuts . ( ("/rmjxyz-gmail/INBOX"            . ?i)
-     ;;  				("/rmjxyz-gmail/[rmjxyz].Sent Mail" . ?s)
-     ;;  				("/rmjxyz-gmail/[rmjxyz].Trash"     . ?t)
-     ;;  				("/rmjxyz-gmail/[rmjxyz].All Mail"  . ?a)
-     ;;  				("/rmjxyz-gmail/[rmjxyz].Starred"   . ?r)
-     ;;  				("/rmjxyz-gmail/[rmjxyz].drafts"    . ?d)
-     ;;  				))))
-  ))
+    ;; don't ask when quitting
+    (setq mu4e-confirm-quit nil)
+
+    (require 'smtpmail-multi)
+
+    (require 'feedmail)
+
+    ;; mu4e-context
+    (setq mu4e-context-policy 'pick-first)
+    (setq mu4e-compose-context-policy 'always-ask)
+    (setq mu4e-contexts
+      (list
+       (make-mu4e-context
+        :name "personal" ;;for pwishie-gmail
+        :enter-func (lambda () (mu4e-message "Entering context personal"))
+        :leave-func (lambda () (mu4e-message "Leaving context personal"))
+        :match-func (lambda (msg)
+              (when msg
+            (mu4e-message-contact-field-matches
+             msg '(:from :to :cc :bcc) "pwishie@gmail.com")))
+        :vars '((user-mail-address . "pwishie@gmail.com")
+            (user-full-name . "Ryan")
+            (mu4e-sent-folder . "/pwishie-gmail/[pwishie].Sent Mail")
+            (mu4e-drafts-folder . "/pwishie-gmail/[pwishie].drafts")
+            (mu4e-trash-folder . "/pwishie-gmail/[pwishie].Bin")
+            (mu4e-compose-signature . (concat "Formal Signature\n" "Emacs 25, org-mode 9, mu4e 1.0\n"))
+            (mu4e-compose-format-flowed . t)
+            (smtpmail-queue-dir . "~/Maildir/pwishie-gmail/queue/cur")
+            (setq message-send-mail-function 'message-send-mail-with-sendmail
+                sendmail-program "/usr/bin/msmtp"
+                user-full-name "Ryan Jeffrey")
+
+            (setq message-sendmail-envelope-from 'header)
+            (add-hook 'message-send-mail-hook 'choose-msmtp-account)
+            (smtpmail-smtp-user . "pwishie")
+            (smtpmail-starttls-credentials . (("smtp.gmail.com" 587 nil nil)))
+            (smtpmail-auth-credentials . (expand-file-name "~/.emacs.d/.authinfo.gpg"))
+            (smtpmail-default-smtp-server . "smtp.gmail.com")
+            (smtpmail-smtp-server . "smtp.gmail.com")
+            (smtpmail-smtp-service . 587)
+            (smtpmail-debug-info . t)
+            (smtpmail-debug-verbose . t)
+            (mu4e-maildir-shortcuts . ( ("/pwishie-gmail/INBOX"            . ?i)
+                        ("/pwishie-gmail/[pwishie].Sent Mail" . ?s)
+                        ("/pwishie-gmail/[pwishie].Bin"       . ?t)
+                        ("/pwishie-gmail/[pwishie].All Mail"  . ?a)
+                        ("/pwishie-gmail/[pwishie].Starred"   . ?r)
+                        ("/pwishie-gmail/[pwishie].drafts"    . ?d)
+                        ))))
+       ;; (make-mu4e-context
+       ;;  :name "personal" ;;for rmjxyz-gmail
+       ;;  :enter-func (lambda () (mu4e-message "Entering context personal"))
+       ;;  :leave-func (lambda () (mu4e-message "Leaving context personal"))
+       ;;  :match-func (lambda (msg)
+       ;;  	  (when msg
+       ;;  	(mu4e-message-contact-field-matches
+       ;;  	 msg '(:from :to :cc :bcc) "rmjxyz@gmail.com")))
+       ;;  :vars '((user-mail-address . "rmjxyz@gmail.com")
+       ;;      (user-full-name . "User Account2")
+       ;;      (mu4e-sent-folder . "/rmjxyz-gmail/[rmjxyz].Sent Mail")
+       ;;      (mu4e-drafts-folder . "/rmjxyz-gmail/[rmjxyz].drafts")
+       ;;      (mu4e-trash-folder . "/rmjxyz-gmail/[rmjxyz].Trash")
+       ;;      (mu4e-compose-format-flowed . t)
+       ;;      (smtpmail-queue-dir . "~/Maildir/rmjxyz-gmail/queue/cur")
+       ;;      (message-send-mail-function . smtpmail-send-it)
+       ;;      (smtpmail-smtp-user . "rmjxyz")
+       ;;      (smtpmail-starttls-credentials . (("smtp.gmail.com" 587 nil nil)))
+       ;;      (smtpmail-auth-credentials . (expand-file-name "~/.emacs.d/.authinfo.gpg"))
+       ;;      (smtpmail-default-smtp-server . "smtp.gmail.com")
+       ;;      (smtpmail-smtp-server . "smtp.gmail.com")
+       ;;      (smtpmail-smtp-service . 587)
+       ;;      (smtpmail-debug-info . t)
+       ;;      (smtpmail-debug-verbose . t)
+       ;;      (mu4e-maildir-shortcuts . ( ("/rmjxyz-gmail/INBOX"            . ?i)
+       ;;  				("/rmjxyz-gmail/[rmjxyz].Sent Mail" . ?s)
+       ;;  				("/rmjxyz-gmail/[rmjxyz].Trash"     . ?t)
+       ;;  				("/rmjxyz-gmail/[rmjxyz].All Mail"  . ?a)
+       ;;  				("/rmjxyz-gmail/[rmjxyz].Starred"   . ?r)
+       ;;  				("/rmjxyz-gmail/[rmjxyz].drafts"    . ?d)
+       ;;  				))))
+    ))
 
 #+END_SRC
 ** rss
@@ -768,6 +807,36 @@
 ;; configuration. If not set then the location below is used.
 ;; Note: The customize interface is also supported.
 (setq rmh-elfeed-org-files (list "/home/rmj/.emacs.d/elfeed.org"))
+
+(define-key elfeed-search-mode-map (kbd "u") '(lambda ()
+                                               (interactive)
+                                               (message "Updating elfeed database.")
+                                               (elfeed-update)))
+
+(setq-default elfeed-search-filter "@6-months-ago +unread -reddit")
+ 
+;; from https://github.com/ravarspath/emacs-conf/blob/master/lisp/ravar-custom.el
+(setq ravar/elfeed-podcast-dir "/home/rmj/Music/podcast")
+
+(defun ravar/elfeed-play-enclosure-mpd ()
+  "Downloads the item in the enclosure and starts in playing in mpd using mpc"
+  (interactive)
+  (let* ((entry elfeed-show-entry)
+	 (enclosure-index (elfeed--get-enclosure-num
+			   "Enclosure to save" entry))
+         (url-enclosure (car (elt (elfeed-entry-enclosures entry)
+                                  (- enclosure-index 1))))
+	 (fname
+          (funcall elfeed-show-enclosure-filename-function
+                   entry url-enclosure)))
+    (start-process-shell-command
+     "play enclosure" nil
+     (format "cd %s; wget %s;mpc update; mpc search filename %s | mpc insert; 
+mpc next; mpc play "
+	     ravar/elfeed-podcast-dir url-enclosure fname))))
+
+ (define-key elfeed-show-mode-map (kbd "o") 'ravar/elfeed-play-enclosure-mpd)
+
 
 #+END_SRC
 ** pdf
