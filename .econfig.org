@@ -109,11 +109,17 @@
 
 (add-to-list 'load-path "~/.emacs.d/themes/")
 
-(use-package modus-vivendi-theme
-   :ensure t)
-
-(use-package dracula-theme
-   :ensure t)
+(setq modus-vivendi-theme-slanted-constructs nil
+      modus-vivendi-theme-bold-constructs nil
+      modus-vivendi-theme-visible-fringes nil
+      modus-vivendi-theme-subtle-diffs nil
+      modus-vivendi-theme-distinct-org-blocks nil
+      modus-vivendi-theme-proportional-fonts nil
+      modus-vivendi-theme-scale-headings nil
+      modus-vivendi-theme-scale-1 1
+      modus-vivendi-theme-scale-2 1
+      modus-vivendi-theme-scale-3 1
+      modus-vivendi-theme-scale-4 1)
 
 (load-theme 'modus-vivendi t)
 
@@ -131,6 +137,12 @@
   ;;    (telephone-line-mode t))
 
   ;; 
+  (use-package powerline
+     :ensure t
+
+     :init
+     (powerline-default-theme))
+
 (global-set-key (kbd "M-<up>") 'text-scale-increase)
 (global-set-key (kbd "M-<down>") 'text-scale-decrease)
 (scroll-bar-mode nil)
@@ -929,7 +941,7 @@ mpc next; mpc play "
 ** misc
 #+BEGIN_SRC emacs-lisp
 
-(use-package highlight-indendation
+(use-package highlight-indentation
     :ensure t)
 
 #+END_SRC
