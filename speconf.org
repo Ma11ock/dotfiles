@@ -17,17 +17,28 @@
 #+BEGIN_SRC emacs-lisp
    
   (add-to-list 'default-frame-alist
-     '(font . "Fira Code:antialias=true:size=18:style=Regular"))
+     '(font . "Hack:antialias=true:size=18:style=Regular"))
 
   (add-to-list 'load-path "~/.emacs.d/themes/")
   
-  (load-theme 'molokai t)
+  (load-theme 'modus-vivendi t)
+  (menu-bar-mode nil)
 
   (global-set-key (kbd "S-<right>") 'next-buffer)
   (global-set-key (kbd "S-<left>") 'previous-buffer)
 
-  (set-frame-parameter (selected-frame) 'alpha '(100 . 95))
-  (add-to-list 'default-frame-alist '(alpha . (100 . 95)))
+  (set-frame-parameter (selected-frame) 'alpha '(100 . 100))
+  (add-to-list 'default-frame-alist '(alpha . (100 . 100)))
+
+  ;; telephone-line
+  (setq telephone-line-primary-left-separator 'telephone-line-cubed-left
+      telephone-line-secondary-left-separator 'telephone-line-cubed-hollow-left
+      telephone-line-primary-right-separator 'telephone-line-cubed-right
+      telephone-line-secondary-right-separator 'telephone-line-cubed-hollow-right)
+  (setq telephone-line-height 24
+      telephone-line-evil-use-short-tag t)
+
+  ;(telephone-line-mode t)
 
 #+END_SRC
 ** Ivy-mode
@@ -285,7 +296,8 @@
     
     :hook clojure-mode)
 
-#+END_SRC
+
+    #+END_SRC
 ** Misc
 #+BEGIN_SRC emacs-lisp
 
@@ -570,32 +582,58 @@
 
 #+END_SRC
 * emacs-os
-** rss
+** rss elfeed
 #+BEGIN_SRC emacs-lisp
 
-(setq elfeed-db-directory "~/.elrss")
+(setq elfeed-db-directory (expand-file-name "~/.elrss"))
 
 (require 'elfeed)
-(global-set-key (kbd "s-x w") 'elfeed)
-
-;; Load elfeed-org
 (require 'elfeed-org)
-
-;; Initialize elfeed-org
-;; This hooks up elfeed-org to read the configuration when elfeed
-;; is started with =M-x elfeed=
 (elfeed-org)
+(setq rmh-elfeed-org-files (list (expand-file-name "~/.emacs.d/elfeed.org")))
 
-;; Optionally specify a number of files containing elfeed
-;; configuration. If not set then the location below is used.
-;; Note: The customize interface is also supported.
-(setq rmh-elfeed-org-files (list "~/.emacs.d/elfeed.org"))
+(define-key elfeed-search-mode-map (kbd "u") '(lambda ()
+                                               (interactive)
+                                               (message "Updating elfeed database.")
+                                               (elfeed-update)))
 
+(setq-default elfeed-search-filter "@6-months-ago +unread -reddit")
 #+END_SRC
-** pdf
+*** theme, colors, font settings
 #+BEGIN_SRC emacs-lisp
+  (require 'color)
 
-(pdf-tools-install)
+  (defface comics-tag
+    '((t :foreground "#AE6486"))
+    "Marks comic tags")
+
+
+  (defface podcast-tag
+  '((t :foreground "#6699CC"))
+    "Marks podcast tags")
+
+  (push '(comics comics-tag)
+        elfeed-search-face-alist)
+
+  (push '(podcast podcast-tag)
+        elfeed-search-face-alist)
+
+  ;; from https://github.com/skeeto/elfeed/issues/190#issuecomment-384346895
+  (setq elfeed-show-mode-hook
+        (lambda ()
+        (set-face-attribute 'variable-pitch (selected-frame) :font (font-spec :family "Ubuntu" :size 22))
+        (setq fill-column 120)
+        (setq elfeed-show-entry-switch #'my-show-elfeed)))
+
+  (defun my-show-elfeed (buffer)
+    (with-current-buffer buffer
+      (setq buffer-read-only nil)
+      (goto-char (point-min))
+      (re-search-forward "\n\n")
+      (fill-individual-paragraphs (point) (point-max))
+      (setq buffer-read-only t))
+    (switch-to-buffer buffer))
+  
 
 #+END_SRC
 * Misc
@@ -611,13 +649,10 @@
 *** vterm
 #+BEGIN_SRC emacs-lisp
 
-(use-package vterm
-:load-path "/home/ryan/src/emacs-libvterm/"
-:config 
-    (let (vterm-install)
-    (require 'vterm))
-(custom-set-faces
+(require 'vterm)
+(require 'color)
 
+(custom-set-faces
  '(vterm-color-black ((t (:foreground "#3F3F3F" :background "#2B2B2B"))))
  '(vterm-color-red ((t (:foreground "#AC7373" :background "#8C5353"))))
  '(vterm-color-green ((t (:foreground "#7F9F7F" :background "#9FC59F"))))
@@ -628,9 +663,19 @@
  '(vterm-color-white ((t (:foreground "#DCDCCC" :background "#656555"))))
 
  '(vterm-default-fg-color ((t (:inherit vterm-color-white))))
- '(vterm-default-bg-color ((t (:inherit vterm-color-black))))))
+ '(vterm-default-bg-color ((t (:inherit vterm-color-black)))))
 
 #+END_SRC
+*** crontab
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'auto-mode-alist '("crontab." . crontab-mode))  ; TEST
+#+END_SRC
+*** emojis
+#+BEGIN_SRC emacs-lisp
+(add-hook 'after-init-hook #'global-emojify-mode)
+
+#+END_SRC
+
 ** ssh
 #+BEGIN_SRC emacs-lisp
 
