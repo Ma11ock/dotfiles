@@ -131,12 +131,6 @@
   ;;    (telephone-line-mode t))
 
   ;; 
-  (use-package powerline
-     :ensure t
-
-     :init
-     (powerline-default-theme))
-
 (global-set-key (kbd "M-<up>") 'text-scale-increase)
 (global-set-key (kbd "M-<down>") 'text-scale-decrease)
 (scroll-bar-mode nil)
