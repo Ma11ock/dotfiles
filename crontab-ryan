@@ -1,4 +1,4 @@
 * * * * * /usr/bin/pgrep Discord > /dev/null || DISPLAY=:0 XDG_RUNTIME_DIR=/run/user/`id -u` /usr/bin/discord
-* * * * * ( sleep 0.5 ; /usr/bin/pgrep Discord > /dev/null || DISPLAY=:0 XDG_RUNTIME_DIR=/run/user/`id -u` /usr/bin/discord )
+* * * * * sleep 0.5m ; /usr/bin/pgrep Discord > /dev/null || DISPLAY=:0 XDG_RUNTIME_DIR=/run/user/`id -u` /usr/bin/discord
 */15 * * * * /usr/bin/mpc update
 
