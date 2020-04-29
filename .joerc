@@ -154,7 +154,7 @@
 
 -guess_crlf     Automatically detect MS-DOS files and set -crlf appropriately
 
--guess_indent	Guess indent character (tab or space).
+ -guess_indent	Guess indent character (tab or space).
 
 -menu_above	Position menu/list above prompt when enabled.  Otherwise position
 		below prompt.
@@ -322,7 +322,7 @@
 				'indentc's if cursor is at first non-space
 				character.
 
-	-tab 2		Tab width
+-tab 4		Tab width
 
 	-indentc nnn		Indentation character (32 for space, 9 for tab)
 
@@ -720,12 +720,12 @@ mode,"spaces",rtn	% % No tabs %Zspaces%
  \| Dec  \u 0123 4567  8901 2345    0123 4567  8901 2345 \u  Dec \| 
  \|   0 | \u@ABC\u \uDEFG\u  \uHIJK\u \uLMNO\u    \i\u@ABC\u\i \i\uDEFG\u\i  \i\uHIJK\u\i \i\uLMNO\u\i | 128 \| 
  \|  16 | \uPQRS\u \uTUVW\u  \uXYZ[\u \u\\]^_\u    \i\uPQRS\u\i \i\uTUVW\u\i  \i\uXYZ[\u\i \i\u\\]^_\u\i | 144 \| 
- \|  32 |  !"# $%&'  ()*+ ,-./     ¡¢£ ¤¥¦§  ¨©ª« ¬X®¯ | 160 \| 
- \|  48 | 0123 4567  89:; <=>?    °±²³ ´µ¶·  ¸¹º» ¼½¾¿ | 176 \| 
- \|  64 | @ABC DEFG  HIJK LMNO    ÀÁÂÃ ÄÅÆÇ  ÈÉÊË ÌÍÎÏ | 192 \| 
- \|  80 | PQRS TUVW  XYZ[ \\]^_    ÐÑÒÓ ÔÕÖ×  ØÙÚÛ ÜÝÞß | 208 \| 
- \|  96 | `abc defg  hijk lmno    àáâã äåæç  èéêë ìíîï | 224 \| 
- \| 112 | pqrs tuvw  xyz{ |}~    ðñòó ôõö÷  øùúû üýþÿ | 240 \| 
+ \|  32 |  !"# $%&'  ()*+ ,-./    ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½  ï¿½ï¿½ï¿½ï¿½ ï¿½Xï¿½ï¿½ | 160 \| 
+ \|  48 | 0123 4567  89:; <=>?    ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½  ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ | 176 \| 
+ \|  64 | @ABC DEFG  HIJK LMNO    ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½  ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ | 192 \| 
+ \|  80 | PQRS TUVW  XYZ[ \\]^_    ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½  ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ | 208 \| 
+ \|  96 | `abc defg  hijk lmno    ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½  ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ | 224 \| 
+ \| 112 | pqrs tuvw  xyz{ |}~    ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½  ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ | 240 \| 
 }
 
 {Joe
@@ -919,7 +919,7 @@ aspellword	^[ n
 :def shell_release release
 :def shell_math maths
 :def shell_abort abort
-:def shell_typemath txt,maths,"ins",rtn,rtn,txt,"",rtn,txt,quote,"d",rtn
+",rtn,txt,quote,"d",rtn
 :def shell_rtn rtn
 :def shell_edit edit
 :def shell_dellin dellin
@@ -1326,7 +1326,7 @@ type		U+0 TO U+10FFFF
 ""		^D		Eof
 "	"	^I		Tab
 ""		^H		Backspace
-""		^M		Return
+""		^M		Return
 ""		^?		Backspace
 
 :vtshell		Input to ANSI shell windows
@@ -1345,5 +1345,5 @@ type		U+0 TO U+10FFFF
 ""		^E		EOL for bash
 "	"	^I		Tab
 ""		^H		Backspace
-""		^M		Return
+""		^M		Return
 ""		^?		Backspace
