@@ -1,0 +1,354 @@
++TITLE: Ryan Jeffrey's Emacs config
+#+AUTHOR: Ryan Jeffrey
+#+EMAIL: pwishie@gmail.com
+#+OPTIONS: num:nil
+    
+* Emacs
+** init
+#+BEGIN_SRC emacs-lisp
+
+(server-start) 
+
+(eval-when-compile
+  (require 'use-package))
+
+(defalias 'yes-or-no-p 'y-or-n-p)
+
+(set-frame-parameter (selected-frame) 'alpha '(100 . 100))
+(add-to-list 'default-frame-alist '(alpha . (100 . 100)))
+
+#+END_SRC
+** font and theme
+#+BEGIN_SRC emacs-lisp
+
+(add-to-list 'load-path "~/.emacs.d/lisp/")
+
+(setq x-gtk-use-system-tooltips nil)     
+
+;; font
+(add-to-list 'default-frame-alist
+             '(font . "Hack:antialias=true:size=16:style=Regular"))
+
+
+(defun my/create-greek-ligatures ()
+  "Create greek ligatures."
+  (push '("lambda" . ?λ ) prettify-symbols-alist)
+  (push '("alpha" . ?α ) prettify-symbols-alist)
+  (push '("beta" . ?β ) prettify-symbols-alist)
+  (push '("theta" . ?θ ) prettify-symbols-alist)
+  (push '("omega" . ?ω ) prettify-symbols-alist))
+
+(add-hook 'after-init-hook 'my/create-greek-ligatures)
+
+(add-to-list 'load-path "~/.emacs.d/themes/")
+
+(setq modus-vivendi-theme-slanted-constructs nil
+      modus-vivendi-theme-bold-constructs nil
+      modus-vivendi-theme-visible-fringes nil
+      modus-vivendi-theme-subtle-diffs nil
+      modus-vivendi-theme-distinct-org-blocks nil
+      modus-vivendi-theme-proportional-fonts nil
+      modus-vivendi-theme-scale-headings nil
+      modus-vivendi-theme-scale-1 1
+      modus-vivendi-theme-scale-2 1
+      modus-vivendi-theme-scale-3 1
+      modus-vivendi-theme-scale-4 1)
+
+(use-package modus-vivendi-theme
+  :ensure t)
+(use-package modus-operandi-theme
+  :ensure t)
+(load-theme 'modus-vivendi t)
+
+(global-set-key (kbd "M-<up>") 'text-scale-increase)
+(global-set-key (kbd "M-<down>") 'text-scale-decrease)
+(scroll-bar-mode nil)
+
+(use-package shr
+  :commands (eww
+             eww-browse-url)
+  :config
+                                        ;(setq browse-url-browser-function 'eww-browse-url)
+  (setq shr-use-fonts nil)
+  (setq shr-use-colors nil)
+  (setq shr-max-image-proportion 0.2)
+  (setq shr-width (current-fill-column)))
+
+
+#+END_SRC
+** Ivy-mode
+#+BEGIN_SRC emacs-lisp
+(use-package counsel
+  :ensure t)
+
+(use-package swiper
+  :ensure t)
+
+(use-package ivy
+  :ensure t
+  :init
+
+  (ivy-mode 1)
+  (setq ivy-use-virtual-buffers t)
+  (setq enable-recursive-minibuffers t)
+  ;; enable this if you want `swiper' to use it
+  ;; (setq search-default-mode #'char-fold-to-regexp)
+  (global-set-key "\C-s" 'swiper)
+  (global-set-key (kbd "<f6>") 'ivy-resume)
+  (global-set-key (kbd "M-x") 'counsel-M-x)
+  (global-set-key (kbd "<f5> f") 'counsel-describe-function)
+  (global-set-key (kbd "<f5> v") 'counsel-describe-variable)
+  (global-set-key (kbd "<f5> l") 'counsel-find-library)
+  (global-set-key (kbd "<f5> i") 'counsel-info-lookup-symbol)
+  (global-set-key (kbd "<f5> u") 'counsel-unicode-char)
+  (global-set-key (kbd "s-c g") 'counsel-git)
+  (global-set-key (kbd "s-c j") 'counsel-git-grep)
+  (global-set-key (kbd "s-c k") 'counsel-ag)
+  (global-set-key (kbd "s-x l") 'counsel-locate)
+  (global-set-key (kbd "s-S-o") 'counsel-rhythmbox)
+  (define-key minibuffer-local-map (kbd "s-r") 'counsel-minibuffer-history)) 
+#+END_SRC
+
+** Misc
+#+BEGIN_SRC emacs-lisp
+(put 'upcase-region 'disabled nil)
+(electric-pair-mode t)
+(show-paren-mode 1)
+(setq-default indent-tabs-mode nil)
+(setq-default tab-width 4)
+(setq column-number-mode t)
+(display-time-mode 1)
+(tool-bar-mode -1)
+(menu-bar-mode -1) 
+(scroll-bar-mode -1)
+(setq ring-bell-function 'ignore)
+(blink-cursor-mode 0)
+(set-language-environment "UTF-8")
+(setq redisplay-dont-pause t)
+#+END_SRC
+
+** Filename-mode associations
+#+BEGIN_SRC emacs-lisp
+
+(add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
+                                        ;(add-to-list 'auto-mode-alist '(".\\'" . conf-mode)) ; run conf mode on dotfiles
+(add-to-list 'auto-mode-alist '("\\config\\'" . conf-mode)) 
+(add-to-list 'auto-mode-alist '("\\.service\\'" . systemd-mode)) 
+(add-to-list 'auto-mode-alist '("\\.fish\\'" . fish-mode))
+(add-to-list 'auto-mode-alist '("\\.rs\\'" . rust-mode))
+(add-to-list 'auto-mode-alist '("\\.Xdefaults'" . conf-xdefaults-mode))
+(add-to-list 'auto-mode-alist '("\\.Xresources'" . conf-xdefaults-mode))
+
+#+END_SRC
+** joestar
+#+BEGIN_SRC emacs-lisp
+(use-package undo-tree
+  :ensure t)
+(use-package highlight
+  :ensure t)
+(use-package joestar
+  :load-path 
+  "~/.emacs.d/joestar/"
+  :init
+  (progn
+    (defvar undo-tree-map
+      (let ((map (make-sparse-keymap)))
+        ;; remap `undo' and `undo-only' to `undo-tree-undo'
+        (define-key map [remap undo] 'undo-tree-undo)
+        (define-key map [remap undo-only] 'undo-tree-undo)
+        ;; bind standard undo bindings (since these match redo counterparts)
+        (define-key map (kbd "C-/") 'undo-tree-undo)
+        (define-key map "\C-_" 'undo-tree-undo)
+        ;; redo doesn't exist normally, so define our own keybindings
+        (define-key map (kbd "C-?") 'undo-tree-redo)
+        (define-key map (kbd "M-_") 'undo-tree-redo)
+        ;; just in case something has defined `redo'...
+        (define-key map [remap redo] 'undo-tree-redo)
+        ;; we use "C-x u" for the undo-tree visualizer
+        (define-key map (kbd "s-x u") 'undo-tree-visualize)
+        ;; bind register commands
+        (define-key map (kbd "s-x r u") 'undo-tree-save-state-to-register)
+        (define-key map (kbd "s-x r U") 'undo-tree-restore-state-from-register)
+        ;; set keymap
+        (setq undo-tree-map map)))))
+
+(global-joestar-mode)
+
+;; global move window keys so non joestar buffers can still have these bindings
+(global-set-key (kbd "M-<left>") #'(lambda ()
+                                     (interactive)
+                                     (other-window -1)))
+
+(global-set-key (kbd "M-<right>") #'(lambda ()
+                                      (interactive)
+                                      (other-window 1)))
+
+(global-set-key (kbd "S-<right>") 'joe-nbuf)
+(global-set-key (kbd "S-<left>") 'joe-pbuf)
+
+#+END_SRC
+** markdown
+#+begin_src emacs-lisp
+
+(use-package markdown-mode
+  :ensure t
+  :mode (("README\\.md\\'" . gfm-mode)
+         ("\\.md\\'" . markdown-mode)
+         ("\\.markdown\\'" . markdown-mode))
+  :init (setq markdown-command "multimarkdown"))
+
+#+end_src
+** org
+#+BEGIN_SRC emacs-lisp
+
+(require 'org-tempo)
+
+(setq org-src-preserve-indentation nil 
+      org-edit-src-content-indentation 0)
+
+(use-package org-indent-mode
+  :config
+  (org-indent-mode t)
+  :hook org-mode)
+
+(use-package org-bullets
+  :ensure t)
+
+(use-package wc-mode
+  :ensure t)
+
+(setq org-src-tab-acts-natively t)
+(add-hook 'org-mode-hook 'display-line-numbers-mode)
+(add-hook 'org-mode-hook 'visual-line-mode)
+(add-hook 'org-mode-hook 'wc-mode)
+
+
+#+End_src
+* IDE
+** all programming languages
+*** todos
+#+BEGIN_SRC emacs-lisp
+(use-package fic-mode
+  :ensure t
+  :init (add-hook 'prog-mode-hook 'fic-mode)
+  :config
+  (fic-mode t))
+
+#+END_SRC
+*** company
+#+begin_src emacs-lisp
+(use-package company
+  :ensure t
+  :init (add-hook 'prog-mode-hook 'company-mode)
+  :bind (:map company-active-map
+              ("C-n" . company-select-next)
+              ("C-p" . company-select-previous))
+  :config
+  (setq company-idle-delay 0.3)
+  (setq company-tooltip-align-annotations t) ; aligns annotation to the right hand side
+  (setq company-minimum-prefix-length 1))
+#+end_src
+*** flycheck
+#+begin_src emacs-lisp
+(use-package flycheck
+  :ensure t
+  :init (add-hook 'prog-mode-hook 'flycheck-mode)) ; global 
+
+#+end_src
+
+** magit
+#+begin_src emacs-lisp
+(use-package magit
+  :ensure t)
+#+end_src
+** Misc
+#+BEGIN_SRC emacs-lisp
+(use-package emojify
+  :ensure t
+  :init (global-emojify-mode))
+
+(use-package gitignore-mode
+  :ensure t
+  :init
+  (add-to-list 'auto-mode-alist '("\\.gitignore\\'" . gitignore-mode)) )
+#+END_SRC
+** html 
+#+BEGIN_SRC emacs-lisp
+(use-package web-mode
+  :ensure t
+  :config
+  (add-to-list 'auto-mode-alist '("\\.api\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("/some/react/path/.*\\.js[x]?\\'" . web-mode))
+
+  (setq web-mode-content-types-alist
+        '(("json" . "/some/path/.*\\.api\\'")
+          ("xml"  . "/other/path/.*\\.api\\'")
+          ("jsx"  . "/some/react/path/.*\\.js[x]?\\'")))
+  (setq web-mode-markup-indent-offset 4)
+  (add-to-list 'auto-mode-alist '("\\.phtml\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.tpl\\.php\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.[agj]sp\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.as[cp]x\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.css\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.html\\'" . web-mode))
+  (define-key web-mode-map (kbd "C-n") 'web-mode-tag-match)
+  (setq web-mode-enable-current-column-highlight t)
+  (setq web-mode-enable-current-element-highlight t)
+  (setq web-mode-enable-auto-closing t))
+#+END_SRC
+*** Emmet
+#+BEGIN_SRC emacs-lisp
+
+(use-package emmet-mode
+  :ensure t
+  :config
+  (define-key web-mode-map (kbd "C-j") 'emmet-expand-line)
+  (emmet-mode)
+                                        ;      (emmet-preview-mode)
+  :hook web-mode)
+
+#+END_SRC
+* Text-editor
+** spellcheck
+#+BEGIN_SRC emacs-lisp
+
+(setq ispell-program-name (executable-find "hunspell"))
+(setq ispell-local-dictionary "en_US")
+(setq ispell-local-dictionary-alist
+      '(("en_US" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil nil nil utf-8)))
+
+
+
+#+END_SRC
+** sudo edit
+#+BEGIN_SRC emacs-lisp
+
+(defun er-sudo-edit (&optional arg)
+  "Edit currently visited file as root With a prefix ARG prompt for a file to visit.  Will also prompt for a file to visit if current buffer is not visiting a file."
+  (interactive "P")
+  (if (or arg (not buffer-file-name))
+      (find-file (concat "/sudo:root@localhost:"
+                         (ido-read-file-name "Find file(as root): ")))
+    (find-alternate-file (concat "/sudo:root@localhost:" buffer-file-name))))
+
+#+END_SRC
+** misc
+#+BEGIN_SRC emacs-lisp
+
+;; tell emacs not to use the clipboard
+                                        ;(setq x-select-enable-clipboard nil)
+
+(global-set-key (kbd "s-i") 'ido-switch-buffer)
+
+#+END_SRC
+* emacs-os
+#+begin_src emacs-lisp
+(when 
+    (or (string= system-name "Southpark") (string= system-name "Springfield"))
+  (require 'ryan-os))
+#+end_src
+
+
