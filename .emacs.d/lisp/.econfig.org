@@ -266,6 +266,11 @@
 (use-package emojify
   :ensure t
   :init (global-emojify-mode))
+
+(use-package gitignore-mode
+  :ensure t
+  :init
+  (add-to-list 'auto-mode-alist '("\\.gitignore\\'" . gitignore-mode)) )
 #+END_SRC
 ** html 
 #+BEGIN_SRC emacs-lisp
