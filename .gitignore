@@ -82,6 +82,7 @@ flycheck_*.el
 .emacs.d/elpa
 .emacs.d/emojis
 .emacs.d/joestar
+.emacs.d/url
 .emacs.d/places
 .emacs.d/quelpa
 .emacs.d/recentf
