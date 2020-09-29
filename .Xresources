@@ -1,79 +1,39 @@
-URxvt.termName: rxvt-256color
-
-XTerm.vt100.saveLines: 4096
-
-*faceName: Ubuntu Mono
-*faceSize: 12
-*renderFont: true
-
-URxvt*depth: 32
-
-! URxvt*foreground: grey
-!URxvt*background: rgba:0000/0000/0200/e500
-
-!// URxvt*background: rgba:
-
-
 *selectToClipboard: true
 
-URxvt*font: xft:Monaco:style=Regular:size=12:antialias=true
-! // URxvt.font: xft:Menlo:size=12:antialias=true
-URxvt*boldFont: xft:Monaco:bold:size=12:antialias=true
-
-URxvt*background: black
-URxvt*foreground: grey
-
-URxvt.scrollBar: false
-
-URxvt.keysym.Control-Left:\033[1;5D
-
-URxvt.keysym.Control-Right:\033[1;5C
-
-URxvt.perl-ext-common: ...,font-size
-
-URxvt.keysym.Meta-Up:     perl:font-size:increase
-URxvt.keysym.Meta-Down:   perl:font-size:decrease
-
-xterm*background: black
-xterm*foreground: lightgray
-
-! // URxvt.keysym.Meta:
-
-Emacs.FontBackend: xft,x
-Emacs.font: Monaco:size=10:weight=light
 XTerm*metaSendsEscape: true
 
-*.font:UbuntuMono-R:size=16:antialias=true:autohint=true
+st.font:Hack:size=12:antialias=true:autohint=true:family=mono
 
 ! Black
-st*.color0: #2e3436
-st*.color8: #6e706b
+st.color0: #2e3436
+st.color8: #6e706b
 ! Red
-st*.color1: #cc0000
-st*.color9: #ef2929
+st.color1: #cc0000
+st.color9: #ef2929
 ! Green
-st*.color2: #9ece9e
-st*.color10: #9ece9e
+st.color2: #9ece9e
+st.color10: #9ece9e
 ! Yellow
-st*.color3: #f0dfaf
-st*.color11: #f0dfaf
+st.color3: #f0dfaf
+st.color11: #f0dfaf
 ! Blue
-st*.color4: #4169E1
-st*.color12: #4169E1
+st.color4: #4169E1
+st.color12: #4169E1
 ! Magenta
 !*.color5: #c0bed1
 !*.color13: #c0bed1
 ! Cyan
-st*.color6: #07c7ca
-st*.color14: #63e9e9
+st.color6: #07c7ca
+st.color14: #63e9e9
 ! White
-st*.color7: #808080
-st*.color15: #808080
+st.color7: #808080
+st.color15: #808080
 
-*.alpha: 0.8
+st.alpha: 0.8
 
 
-st*.background: #000
+st.background: #1f1f2a
+st.foreground: #bcbcc6
 
 ! xscreensaver
 xscreensaver.fade:        false

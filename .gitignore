@@ -85,6 +85,9 @@ flycheck_*.el
 !/.config/dunst/
 !/.config/dunst/dunstrc
 !/.config/mimeapps.list
+!/.config/zsh/
+!/.config/zsh/zshrc
+
 /.emacs.d/**/*
 !/.emacs.d/init.el
 !/.emacs.d/lisp/
