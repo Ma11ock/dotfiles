@@ -76,3 +76,15 @@ flycheck_*.el
 .config/mpd/pid
 .config/mpd/state
 .config/mpd/sticker.sql
+.emacs.d/auto-save-list
+.emacs.d/contacts.org
+.emacs.d/elfeed.org
+.emacs.d/elpa
+.emacs.d/emojis
+.emacs.d/joestar
+.emacs.d/places
+.emacs.d/quelpa
+.emacs.d/recentf
+.emacs.d/recentf~
+.emacs.d/transient
+.emacs.d/lisp/ryan-os.el
