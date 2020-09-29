@@ -1,4 +1,4 @@
-;==========================================================
+==========================================================
 ;
 ;
 ;   ██████╗  ██████╗ ██╗  ██╗   ██╗██████╗  █████╗ ██████╗
@@ -17,12 +17,12 @@
 ;==========================================================
 
 [colors]
-;background = ${xrdb:color0:#222}
+background = ${xrdb:background}
 ;background = #222
 ;background = #aa000
 ;background-alt = #444
 
-background = ${xrdb:color0:#222}
+;background = ${xrdb:color0:#222}
 background-alt = ${xrdb:color0:#222}
 foreground = ${xrdb:color7:#222}
 foreground-alt = ${xrdb:color7:#222}
@@ -51,7 +51,8 @@ alert = ${xrdb:color3:#222}
 ;monitor = ${env:MONITOR:DisplayPort-2}
 monitor = ${env:MONITOR:DisplayPort-3}
 
-bottom = true
+bottom = false
+top = true
 
 width = 100%
 height = 27
@@ -67,7 +68,7 @@ foreground = ${colors.foreground}
 line-size = 3
 line-color = #f00
 
-border-size = 4
+border-size = 0
 border-color = #00000000
 
 padding-left = 0
@@ -77,13 +78,13 @@ module-margin-left = 1
 module-margin-right = 2
 
 ;font-0 = :pixelsize=12;1
-font-1 = "NotoEmoji:Style=Regular:scale=12;1"
-font-0 = "ubuntu:fontformat=truetype:size=12:antialias=true;0"
-font-2 = "NotoEmoji:scale=10;1"
+font-0 = "Inconsolata:fontformat=truetype:size=13:antialias=true;0"
+font-1 = "Inconsolata:Style=Regular:scale=13;1"
+font-2 = "Siji:scale=13;1"
 
 modules-left = i3
 modules-center = date
-modules-right = mpd filesystem pulseaudio memory cpu wlan eth temperature powermenu
+modules-right = mpd pulseaudio battery eth wlan temperature
 
 tray-position = right
 tray-padding = 2
@@ -234,9 +235,9 @@ label-urgent-padding = 2
 
 [module/mpd]
 type = internal/mpd
-format-online = <label-song>  <icon-prev> <icon-stop> <toggle> <icon-next>
+format-online = <label-song>  
 format-online-prefix = "🎵 "
-format-online-underline = #fff
+format-online-underline = ${colors.foreground-alt}
 
 icon-prev = 
 icon-stop = 
@@ -244,8 +245,10 @@ icon-play = 
 icon-pause = 
 icon-next = 
 
-label-song-maxlen = 25
+label-song-maxlen = 15
 label-song-ellipsis = true
+
+label-song = %title%
 
 [module/xbacklight]
 type = internal/xbacklight
@@ -272,7 +275,7 @@ card = intel_backlight
 [module/cpu]
 type = internal/cpu
 interval = 2
-format-prefix = "🖥️ "
+format-prefix = "🖥 "
 format-prefix-foreground = ${colors.foreground-alt}
 format-underline = #f90000
 label = %percentage:2%%
@@ -287,7 +290,7 @@ label = %percentage_used%%
 
 [module/wlan]
 type = internal/network
-interface = wlp5s0
+interface = wlp3s0
 interval = 3.0
 
 format-connected = 🌐 <ramp-signal> <label-connected>
@@ -309,7 +312,7 @@ ramp-signal-foreground = ${colors.foreground-alt}
 
 [module/eth]
 type = internal/network
-interface = enp6s0
+interface = enp0s25
 interval = 3.0
 
 format-connected-underline = #55aa55
@@ -450,7 +453,7 @@ label-warn = %temperature-c%
 label-warn-foreground = ${colors.secondary}
 
 interval = 1
-hwmon-path = /sys/devices/platform/coretemp.0/hwmon/hwmon1/temp1_input
+hwmon-path = /sys/class/thermal/thermal_zone0/temp
 
 ramp-0 = 
 ramp-1 = 

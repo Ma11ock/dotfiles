@@ -65,6 +65,8 @@
 
  -nolocks	If you don't want file locks to be used
 
+-colors default
+
 -linum_mode 3
 
  -nomodcheck	Disable periodic checking of disk file newer than buffer

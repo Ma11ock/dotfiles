@@ -82,7 +82,9 @@ flycheck_*.el
 !/.config/joestar/**/*
 !/.config/polybar/
 !/.config/polybar/config
-!/.config/polybar/
+!/.config/dunst/
+!/.config/dunst/dunstrc
+!/.config/mimeapps.list
 /.emacs.d/**/*
 !/.emacs.d/init.el
 !/.emacs.d/lisp/

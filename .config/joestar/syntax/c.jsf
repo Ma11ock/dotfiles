@@ -84,7 +84,7 @@
 
 
 =Background    	
-=CPreproc 		cyan
+=CPreproc 	    bold cyan
 =CPreprocKW 		bold cyan
 =CPreproc_cKW	bold cyan
 =CPreproc_sym	bold blue
@@ -715,6 +715,10 @@ done
     "switch"    kw
     "while"     kw
     "bitand"    kw   #c++
+    "nullptr"    kw   #c++
+    "module"    kw   #c++
+    "import"    kw   #c++
+    "constexpr" kw   #c++
     "bitor"     kw   #c++
     "catch"     kw   #c++
     "compl"     kw   #c++
