@@ -1,14 +1,19 @@
 #+TITLE: Dotfiles
 #+AUTHOR: Ryan Jeffrey
 
-My dotfiles. The current programs I have are Arch Linux (which I use, btw), zsh for my shell,
-emacs as my text editor/userland replacement, and dwm as my WM.
+My dotfiles. My current setup is based on Arch Linux (which I use, btw), zsh for my shell, emacs as my text editor/userland replacement, and i3 as my WM.
+
+I recommend symlinking the files to their proper place in order to use them: 
+
+#+begin_src shell
+ln -s $(pwd)/.emacs.d ~/.emacs.d
+#+end_src
+
+..for example.
+
+Some of the files, such as the crontabs, need to be installed manually.
 
 * .zshrc
-.zshrc. Uses oh-my-zsh. Remember to change the pathnames depending on the username (ie /home/<name>)
+~.config/zsh~. Remember to change the pathnames depending on the username (ie /home/<name>)
 * Emacs
-.emacs loads the file called .econfig.org. The file in this repo called .econfig.org is for my Thinkpad as it is the main computer I use. 
-The speconf.org file is the configuration for emacs on my desktop. It is stripped down with fewer features. Rename to .econfig.org to use it.
-* dwm
-Look for my fork of dwm.
-
+~init.el~ loads ~lisp/config.org~, which contains most of the configuration. My email and RSS configs are private.

@@ -25,7 +25,7 @@
     (package-install 'quelpa-use-package))
 
 (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
-(org-babel-load-file "~/.econfig.org")
+(org-babel-load-file "~/.emacs.d/lisp/config.org")
 
 (put 'narrow-to-region 'disabled nil)
 
