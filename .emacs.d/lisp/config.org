@@ -201,7 +201,7 @@
 ** org
 #+BEGIN_SRC emacs-lisp
 
-(require 'org-tempo)
+;(require 'org-tempo)
 
 (setq org-src-preserve-indentation nil 
       org-edit-src-content-indentation 0)

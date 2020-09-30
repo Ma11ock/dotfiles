@@ -87,6 +87,12 @@ flycheck_*.el
 !/.config/mimeapps.list
 !/.config/zsh/
 !/.config/zsh/zshrc
+!/.config/systemd
+!/.config/systemd/user
+!/.config/systemd/user/emacs.service
+!/.config/youtube-dl
+!/.config/youtube-dl/config
+
 
 /.emacs.d/**/*
 !/.emacs.d/init.el
