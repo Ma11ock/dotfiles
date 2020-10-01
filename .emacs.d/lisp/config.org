@@ -26,8 +26,11 @@
 (setq x-gtk-use-system-tooltips nil)     
 
 ;; font
-(add-to-list 'default-frame-alist
-             '(font . "Hack:antialias=true:size=16:style=Regular"))
+(if (string= system-name "Southpark")
+    (add-to-list 'default-frame-alist
+                 '(font . "JetBrainsMono-Medium:size=20:antialias=true:autohint=true:family=mono"))
+  (add-to-list 'default-frame-alist
+               '(font . "JetBrainsMono-Medium:size=13:antialias=true:autohint=true:family=mono")))
 
 
 (defun my/create-greek-ligatures ()
@@ -60,8 +63,8 @@
   :ensure t)
 (load-theme 'modus-vivendi t)
 
-(global-set-key (kbd "M-<up>") 'text-scale-increase)
-(global-set-key (kbd "M-<down>") 'text-scale-decrease)
+(global-set-key (kbd "M-S-<up>") 'text-scale-increase)
+(global-set-key (kbd "M-S-<down>") 'text-scale-decrease)
 (scroll-bar-mode nil)
 
 (use-package shr
@@ -203,8 +206,13 @@
 
 ;(require 'org-tempo)
 
-(setq org-src-preserve-indentation nil 
-      org-edit-src-content-indentation 0)
+(use-package org
+  :init (setq org-src-preserve-indentation nil 
+              org-edit-src-content-indentation 0)
+  (setq org-src-tab-acts-natively t)
+  :bind (:map org-mode-map
+              ("M-S-<up>" . 'text-scale-increase)
+              ("M-S-<down>" . 'text-scale-decrease)))
 
 (use-package org-indent-mode
   :config
@@ -215,12 +223,15 @@
   :ensure t)
 
 (use-package wc-mode
-  :ensure t)
+  :ensure t
+  :hook (org-mode tex-mode))
 
-(setq org-src-tab-acts-natively t)
-(add-hook 'org-mode-hook 'display-line-numbers-mode)
-(add-hook 'org-mode-hook 'visual-line-mode)
-(add-hook 'org-mode-hook 'wc-mode)
+(use-package display-line-numbers-mode
+  :hook (org-mode tex-mode))
+
+(use-package visual-line-mode
+  :hook (org-mode tex-mode))
+
 
 
 #+End_src

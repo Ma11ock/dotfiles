@@ -24,8 +24,8 @@ background = ${xrdb:background}
 
 ;background = ${xrdb:color0:#222}
 background-alt = ${xrdb:color0:#222}
-foreground = ${xrdb:color7:#222}
-foreground-alt = ${xrdb:color7:#222}
+foreground = #fff
+foreground-alt = #bbb
 primary = ${xrdb:color1:#222}
 secondary = ${xrdb:color2:#222}
 alert = ${xrdb:color3:#222}
@@ -78,11 +78,11 @@ module-margin-left = 1
 module-margin-right = 2
 
 ;font-0 = :pixelsize=12;1
-font-0 = "Inconsolata:fontformat=truetype:size=13:antialias=true;0"
-font-1 = "Inconsolata:Style=Regular:scale=13;1"
-font-2 = "Siji:scale=13;1"
+font-0 = "Hack:fontformat=truetype:size=13:antialias=true;0"
+font-1 = "Hack:Style=Regular:scale=13;1"
+font-2 = "Noto Sans:size=13;1"
 
-modules-left = i3
+modules-left = bspwm
 modules-center = date
 modules-right = mpd pulseaudio battery eth wlan temperature
 
@@ -140,13 +140,19 @@ type = internal/bspwm
 
 format = <label-state> <label-mode>
 
+ws-icon-0 = Web;🌐
+ws-icon-1 = office;♛
+ws-icon-2 = graphics;♜
+ws-icon-3 = mail;♝
+ws-icon-4 = web;♞
+ws-icon-default = ♟
 
 ; Available tokens:
 ;   %name%
 ; Default: %name%
 label-monitor = %name%
 
-label-focused = %name%
+label-focused = %icon%
 label-focused-background = ${colors.background-alt}
 label-focused-underline= ${colors.primary}
 label-focused-padding = 2
@@ -167,7 +173,7 @@ label-empty-padding = 2
 ; But if you rename your bspwm monitors with bspc -n this option will no longer
 ; behave correctly.
 ; Default: true
-pin-workspaces = true
+pin-workspaces = false
 
 ; Output mode flags after focused state label
 ; Default: false
@@ -194,6 +200,7 @@ fuzzy-match = true
 
 ; Separator in between workspaces
 ; label-separator = |
+
 
 [module/i3]
 type = internal/i3

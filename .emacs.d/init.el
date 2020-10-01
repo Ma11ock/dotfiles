@@ -42,7 +42,7 @@
  '(org-time-stamp-custom-formats (quote ("<%b %e %G>" . "<%m/%d/%y %a %H:%M>")))
  '(package-selected-packages
    (quote
-    (gitignore-mode company flycheck wc-mode htmlize fic-mode emojify org-bullets use-package-hydra use-package-ensure-system-package use-package-el-get use-package-chords undo-tree quelpa-use-package mu4e-query-fragments mu4e-overview mu4e-maildirs-extension mu4e-jump-to-list mu4e-conversation mu4e-alert modus-vivendi-theme modus-operandi-theme ivy-ycmd ivy-avy highlight fish-mode elfeed-web elfeed-score elfeed-protocol elfeed-org elfeed-goodies csgo-conf-mode counsel))))
+    (yasnippet-snippets yasnippet gitignore-mode company flycheck wc-mode htmlize fic-mode emojify org-bullets use-package-hydra use-package-ensure-system-package use-package-el-get use-package-chords undo-tree quelpa-use-package mu4e-query-fragments mu4e-overview mu4e-maildirs-extension mu4e-jump-to-list mu4e-conversation mu4e-alert modus-vivendi-theme modus-operandi-theme ivy-ycmd ivy-avy highlight fish-mode elfeed-web elfeed-score elfeed-protocol elfeed-org elfeed-goodies csgo-conf-mode counsel))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

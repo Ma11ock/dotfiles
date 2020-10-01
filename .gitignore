@@ -92,6 +92,10 @@ flycheck_*.el
 !/.config/systemd/user/emacs.service
 !/.config/youtube-dl
 !/.config/youtube-dl/config
+!/.config/bspwm/
+!/.config/bspwm/bspwmrc
+!/.config/sxhkd/
+!/.config/sxhkd/sxhkdrc
 
 
 /.emacs.d/**/*
