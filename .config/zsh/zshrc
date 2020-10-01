@@ -1,0 +1,185 @@
+autoload -U colors && colors	# Load colors
+autoload -Uz vcs_info
+precmd() { vcs_info }
+
+setopt PROMPT_SUBST
+
+ssh_info() {
+  [[ "$SSH_CONNECTION" != '' ]] && echo '%(!.%{$fg[red]%}.%{$fg[yellow]%})%n%{$reset_color%}@%{$fg[green]%}%m%{$reset_color%}:' || echo ''
+}
+
+color_codes=(1 2 4 5 6 9 10 12 13 14)
+
+
+color_code_from_str() {
+    local h=$(sum <<< "$1" | cut -f1 -d' ')
+    local i=$((h % ${#color_codes}))
+    printf ${color_codes[i]}
+}
+
+
+user="%F{$(color_code_from_str "$USER")}%n"
+host="%F{$(color_code_from_str "$HOST")}%m"
+PROMPT='%(?.%F{243}.%F{red})%U${(l:COLUMNS:: :)?}%u
+%B%{$fg[red]%}[%{$fg[yellow]%}%n%{$fg[green]%}@%{$fg[blue]%}%M %{$fg[magenta]%}%~%{$fg[red]%}]%{$reset_color%}$%b '
+
+function check_last_exit_code() {
+  local LAST_EXIT_CODE=$?
+  if [[ $LAST_EXIT_CODE -ne 0 ]]; then
+    local EXIT_CODE_PROMPT=' '
+    EXIT_CODE_PROMPT+="%{$fg[red]%}-%{$reset_color%}"
+    EXIT_CODE_PROMPT+="%{$fg_bold[red]%}$LAST_EXIT_CODE%{$reset_color%}"
+    EXIT_CODE_PROMPT+="%{$fg[red]%}-%{$reset_color%}"
+    echo "$EXIT_CODE_PROMPT"
+  fi
+}
+
+# TODO make this better
+function git_prompt_string() {
+    stat .git &>/dev/null && git status | head -n1 | awk '{print $3}'
+}
+
+RPROMPT='$(git_prompt_string)'
+
+setopt autocd
+stty stop undef
+
+autoload -U compinit
+zstyle ':completion:*' menu select
+zmodload zsh/complist
+compinit
+#_comp_options+=(globdots)		# Include hidden files.
+
+# Ctrl-Arrow keys
+bindkey "^[[1;5C" forward-word
+bindkey "^[[1;5D" backward-word
+
+bindkey '^[[P' delete-char
+
+HISTSIZE=10000
+SAVEHIST=10000
+# Make sure to create this dir and touch history when installing on new system
+HISTFILE=~/.cache/zsh/history
+
+# Write to history immediately
+setopt inc_append_history
+# History shared among terminals
+setopt share_history
+# Save extended info in history
+setopt extended_history
+# Ignore duplicates
+setopt hist_ignoredups
+
+# Directory stack
+export DIRSTACKSIZE=9
+setopt autopushd pushdminus pushdsilent pushdtohome
+
+# Aliases for directory stack
+alias 1='cd -1'
+alias 2='cd -2'
+alias 3='cd -3'
+alias 4='cd -4'
+alias 5='cd -5'
+alias 6='cd -6'
+alias 7='cd -7'
+alias 8='cd -8'
+alias 9='cd -9'
+
+COMPLETION_WAITING_DOTS="true"
+
+# Reload piwal theme
+(cat ~/.cache/wal/sequences &)
+
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
+
+
+#  en_US.UTF-8 UTF-8
+export DICPATH='/usr/share/hunspell'
+
+# User configuration
+
+export LANG='en_US.UTF-8'
+export SCRIPTS="$HOME/src/scripts/"
+export GOARCH="amd64"
+export GOOS="linux"
+export CC="gcc"
+export CXX="g++"
+export CGO_ENABLED="1"
+export GOROOT="/usr/lib/go"
+export GOBIN="$HOME/src/goproj/bin/"
+export GOPATH="$HOME/src/goproj/"
+export PATH="$PATH:$GOROOT/bin:/usr/lib/go/bin/:$SCRIPTS:$HOME/bin/"
+export MUSIC='~/Music/'
+export TERMINAL='xterm-256color'
+export TERM='xterm-256color'
+export EDITOR='joestar'
+export BROWSER='brave'
+export COLORTERM='truecolor'
+
+# Editor and zsh
+alias srz='source ~/.zshrc'
+alias jrc='joestar $HOME/.config/joestar/joestarrc'
+alias joe='joestar'
+alias vim='nvim'
+alias j='joestar'
+alias cfz='joe ~/.zshrc'
+alias cfe='joe ~/.emacs ~/.econfig.org'
+alias jrd='joe -rdonly'
+# default options and shortcuts
+alias rip='abcde -o opus'
+alias ls='ls --color -h --group-directories-first'
+alias up='sudo pacman -Syu && yay -Syu'
+alias pac='sudo pacman -Syu'
+alias aur='yay -Syu'
+alias latex='lualatex'
+alias cls='clear'
+alias mkd='mkdir -pv'
+alias mkdir='mkdir -pv'
+alias technic="$HOME/bin/techniclaunch.zsh"
+alias dvdtube="youtube-dl -f 'bestvideo[height<=480,ext=mp4]+bestaudio/best[ext=mp3]/mp4'"
+alias youaud='youtube-dl --output "%(title)s.%(ext)s" --extract-audio --audio-format mp3 --audio-quality 0'
+alias otheru="youtube-dl -f 'bestvideo[height<=480,ext=mp4]+bestaudio[ext=mp3]/mp4' --write-all-thumbnails --merge-output-format mp4"
+alias you7="youtube-dl -f 'bestvideo[height<=720,ext=mp4]+bestaudio[ext=mp3]/mp4' --write-all-thumbnails --merge-output-format mp4"
+alias rm='rm -v'
+# Shortcuts to config files and folders
+alias jsrc='cd ~/src/joestar/src'
+alias jcfg='cd ~/.config/joestar'
+alias i3cfg='joe ~/.config/i3/config'
+alias jrz='joe ~/.zshrc'
+alias comicv='ls -v | sxiv -'
+
+
+# Easy extraction
+inflate () {
+    if [ -f $1 ] ; then
+        case $1 in
+            *.tar.bz2)   tar xvjf $1;;
+            *.tar.gz)    tar xvzf $1;;
+            *.bz2)       bunzip2 $1 ;;
+            *.rar)       unrar x $1 ;;
+            *.gz)        gunzip $1  ;;
+            *.tar)       tar xvf $1 ;;
+            *.tbz2)      tar xvjf $1;;
+            *.tgz)       tar xvzf $1;;
+            *.zip)       unzip $1   ;;
+            *.Z)         uncompress $1  ;;
+            *.7z)        7z x $1;;
+            *tar.xz)		tar xf $1;;
+            *) echo "don't know how to extract '$1'..." ;;
+        esac
+    else
+        echo "'$1' is not a valid file!"
+    fi
+}
+
+setopt interactivecomments
+
+setopt HIST_IGNORE_ALL_DUPS
+autoload -U history-search-end
+zle -N history-beginning-search-backward-end history-search-end
+zle -N history-beginning-search-forward-end history-search-end
+bindkey "^[[A" history-beginning-search-backward-end
+bindkey "^[[B" history-beginning-search-forward-end
+unset HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND
+
+source /usr/share/zsh/plugins/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh  2>/dev/null

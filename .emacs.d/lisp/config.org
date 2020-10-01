@@ -30,18 +30,15 @@
     (add-to-list 'default-frame-alist
                  '(font . "JetBrainsMono-Medium:size=20:antialias=true:autohint=true:family=mono"))
   (add-to-list 'default-frame-alist
-               '(font . "JetBrainsMono-Medium:size=13:antialias=true:autohint=true:family=mono")))
+               '(font . "JetBrainsMono-Medium:size=16:antialias=true:autohint=true:family=mono")))
 
+(use-package prettify-symbols-mode
+  :init 
+  (defconst lisp--prettify-symbols-alist
+    '(("lambda"  . ?λ)))
+  :hook
+  (lisp-mode))
 
-(defun my/create-greek-ligatures ()
-  "Create greek ligatures."
-  (push '("lambda" . ?λ ) prettify-symbols-alist)
-  (push '("alpha" . ?α ) prettify-symbols-alist)
-  (push '("beta" . ?β ) prettify-symbols-alist)
-  (push '("theta" . ?θ ) prettify-symbols-alist)
-  (push '("omega" . ?ω ) prettify-symbols-alist))
-
-(add-hook 'after-init-hook 'my/create-greek-ligatures)
 
 (add-to-list 'load-path "~/.emacs.d/themes/")
 
@@ -79,37 +76,13 @@
 
 
 #+END_SRC
-** Ivy-mode
+** swiper
 #+BEGIN_SRC emacs-lisp
-(use-package counsel
-  :ensure t)
-
 (use-package swiper
+  :init
+  (global-set-key (kbd "C-s") 'swiper)
   :ensure t)
 
-(use-package ivy
-  :ensure t
-  :init
-
-  (ivy-mode 1)
-  (setq ivy-use-virtual-buffers t)
-  (setq enable-recursive-minibuffers t)
-  ;; enable this if you want `swiper' to use it
-  ;; (setq search-default-mode #'char-fold-to-regexp)
-  (global-set-key "\C-s" 'swiper)
-  (global-set-key (kbd "<f6>") 'ivy-resume)
-  (global-set-key (kbd "M-x") 'counsel-M-x)
-  (global-set-key (kbd "<f5> f") 'counsel-describe-function)
-  (global-set-key (kbd "<f5> v") 'counsel-describe-variable)
-  (global-set-key (kbd "<f5> l") 'counsel-find-library)
-  (global-set-key (kbd "<f5> i") 'counsel-info-lookup-symbol)
-  (global-set-key (kbd "<f5> u") 'counsel-unicode-char)
-  (global-set-key (kbd "s-c g") 'counsel-git)
-  (global-set-key (kbd "s-c j") 'counsel-git-grep)
-  (global-set-key (kbd "s-c k") 'counsel-ag)
-  (global-set-key (kbd "s-x l") 'counsel-locate)
-  (global-set-key (kbd "s-S-o") 'counsel-rhythmbox)
-  (define-key minibuffer-local-map (kbd "s-r") 'counsel-minibuffer-history)) 
 #+END_SRC
 
 ** Misc
@@ -130,17 +103,29 @@
 (setq redisplay-dont-pause t)
 #+END_SRC
 
-** Filename-mode associations
+** Filename-mode associations, modes for specific file types
 #+BEGIN_SRC emacs-lisp
 
-(add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
-                                        ;(add-to-list 'auto-mode-alist '(".\\'" . conf-mode)) ; run conf mode on dotfiles
-(add-to-list 'auto-mode-alist '("\\config\\'" . conf-mode)) 
-(add-to-list 'auto-mode-alist '("\\.service\\'" . systemd-mode)) 
-(add-to-list 'auto-mode-alist '("\\.fish\\'" . fish-mode))
-(add-to-list 'auto-mode-alist '("\\.rs\\'" . rust-mode))
-(add-to-list 'auto-mode-alist '("\\.Xdefaults'" . conf-xdefaults-mode))
-(add-to-list 'auto-mode-alist '("\\.Xresources'" . conf-xdefaults-mode))
+(use-package conf-mode
+  :init
+  (add-to-list 'auto-mode-alist '("\\config\\'" . conf-mode)) 
+  (add-to-list 'auto-mode-alist '("\\.Xdefaults'" . conf-xdefaults-mode))
+  (add-to-list 'auto-mode-alist '("\\.Xresources'" conf-xdefaults-mode))
+  (add-to-list 'auto-mode-alist '("\\.Xdefaults'" . conf-xdefaults-mode))
+  (add-to-list 'auto-mode-alist '("\\sxhkd\\'" . conf-unix-mode)))
+
+
+(use-package systemd
+  :ensure t
+  :mode (("\\.service\\'" . systemd-mode)))
+
+(use-package fish-mode
+  :ensure t
+  :mode (("\\.fish\\'" . fish-mode)))
+
+(use-package rust-mode
+  :ensure t
+  :mode (("\\.rs\\'" . rust-mode)))
 
 #+END_SRC
 ** joestar
@@ -204,8 +189,6 @@
 ** org
 #+BEGIN_SRC emacs-lisp
 
-;(require 'org-tempo)
-
 (use-package org
   :init (setq org-src-preserve-indentation nil 
               org-edit-src-content-indentation 0)
@@ -235,6 +218,11 @@
 
 
 #+End_src
+** vterm
+#+BEGIN_SRC emacs-lisp
+(use-package vterm
+    :ensure t)
+#+END_SRC
 * IDE
 ** all programming languages
 *** todos

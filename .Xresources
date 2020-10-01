@@ -32,8 +32,8 @@ st.color15: #808080
 st.alpha: 0.8
 
 
-st.background: #1f1f2a
-st.foreground: #bcbcc6
+*.background: #1f1f2a
+*.foreground: #bcbcc6
 
 ! xscreensaver
 xscreensaver.fade:        false

@@ -76,10 +76,13 @@ flycheck_*.el
 !/.config/mpd/mpd.conf
 !/.config/i3/
 !/.config/i3/config
-!/.config/bspwm/
 !/.config/joestar
-!/.config/bspwm/bspwmrc
-!/.config/joestar/**/*
+!/.config/joestar/colors/
+!/.config/joestar/colors/*.jcf
+!/.config/joestar/syntax/
+!/.config/joestar/syntax/*.jsf
+!/.config/joestar/ftyperc
+!/.config/joestar/joestarrc
 !/.config/polybar/
 !/.config/polybar/config
 !/.config/dunst/
