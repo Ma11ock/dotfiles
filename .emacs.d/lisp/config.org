@@ -221,8 +221,10 @@
 #+End_src
 ** vterm
 #+BEGIN_SRC emacs-lisp
-(use-package vterm
-    :ensure t)
+
+(when module-file-suffix
+  (use-package vterm
+    :ensure t))
 #+END_SRC
 * IDE
 ** all programming languages
