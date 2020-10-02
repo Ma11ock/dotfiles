@@ -365,7 +365,9 @@
 (use-package yasnippet
   :ensure t
   :init
-  (add-hook 'prog-mode-hook 'yas-minor-mode))
+  (require 'yasnippet)
+  (yas-reload-all)
+  (add-hook 'prog-mode-hook #'yas-minor-mode))
 
 (use-package yasnippet-snippets
   :ensure t)
