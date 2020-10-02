@@ -31,11 +31,17 @@ super + shift + q
 
 # alternate between the tiled and monocle layout
 super + m
-	bspc desktop -l next
+	bspc desktop -f '^9' && emacsclient -c -e '(mu4e)'
+
+super + e
+    nemo
 
 # send the newest marked node to the newest preselected node
+# super + y
+# 	bspc node newest.marked.local -n newest.!automatic.local
+
 super + y
-	bspc node newest.marked.local -n newest.!automatic.local
+    bspc desktop -f '^8' && st -e zsh -ic ncmpcpp
 
 # swap the current node and the biggest window
 super + g

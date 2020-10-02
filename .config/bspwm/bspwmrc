@@ -40,6 +40,7 @@ bspc rule -a Screenkey manage=off
 
 
 
-sleep 3s && init-polybar.sh
+sleep 3s && init-polybar.sh &
 
-xdo above -t $(xdo id -n root) $(xdo id -n polybar)
+picom -b
+
