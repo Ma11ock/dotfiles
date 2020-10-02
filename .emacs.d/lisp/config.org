@@ -191,8 +191,10 @@
 #+BEGIN_SRC emacs-lisp
 
 (use-package org
-  :init (setq org-src-preserve-indentation nil 
-              org-edit-src-content-indentation 0)
+  :init 
+  (setq org-src-preserve-indentation nil 
+        org-edit-src-content-indentation 0)
+  (require 'org-tempo)
   (setq org-src-tab-acts-natively t)
   :bind (:map org-mode-map
               ("M-S-<up>" . 'text-scale-increase)
@@ -358,6 +360,15 @@
 (global-set-key (kbd "s-i") 'ido-switch-buffer)
 
 #+END_SRC
+** snippets
+#+begin_src emacs-lisp
+(use-package yasnippet
+  :ensure t
+  :hook prog-mode)
+
+(use-package yasnippet-snippets
+  :ensure t)
+#+end_src
 * emacs-os
 #+begin_src emacs-lisp
 (when 
