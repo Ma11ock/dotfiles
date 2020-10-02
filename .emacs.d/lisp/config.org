@@ -7,8 +7,6 @@
 ** init
 #+BEGIN_SRC emacs-lisp
 
-(server-start) 
-
 (eval-when-compile
   (require 'use-package))
 
@@ -81,6 +79,9 @@
 (use-package swiper
   :init
   (global-set-key (kbd "C-s") 'swiper)
+  :ensure t)
+
+(use-package counsel
   :ensure t)
 
 #+END_SRC
@@ -262,6 +263,10 @@
 #+end_src
 ** Misc
 #+BEGIN_SRC emacs-lisp
+(defun insert-current-date ()
+  (interactive)
+  (insert (shell-command-to-string "echo -n $(date +%Y-%m-%d)")))
+
 (use-package emojify
   :ensure t
   :init (global-emojify-mode))
@@ -270,6 +275,10 @@
   :ensure t
   :init
   (add-to-list 'auto-mode-alist '("\\.gitignore\\'" . gitignore-mode)) )
+
+(use-package rainbow-mode
+  :ensure t
+  :hook (web-mode emacs-lisp-mode))
 #+END_SRC
 ** html 
 #+BEGIN_SRC emacs-lisp
@@ -297,6 +306,10 @@
   (setq web-mode-enable-current-column-highlight t)
   (setq web-mode-enable-current-element-highlight t)
   (setq web-mode-enable-auto-closing t))
+
+(use-package impatient-mode
+  :ensure t
+  :hook web-mode)
 #+END_SRC
 *** Emmet
 #+BEGIN_SRC emacs-lisp
