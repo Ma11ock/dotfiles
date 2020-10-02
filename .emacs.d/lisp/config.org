@@ -357,14 +357,15 @@
 ;; tell emacs not to use the clipboard
                                         ;(setq x-select-enable-clipboard nil)
 
-(global-set-key (kbd "s-i") 'ido-switch-buffer)
+(global-set-key (kbd "M-i") 'ido-switch-buffer)
 
 #+END_SRC
 ** snippets
 #+begin_src emacs-lisp
 (use-package yasnippet
   :ensure t
-  :hook prog-mode)
+  :init
+  (add-hook 'prog-mode-hook 'yas-minor-mode))
 
 (use-package yasnippet-snippets
   :ensure t)
