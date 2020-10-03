@@ -1,3 +1,3 @@
-0 */2 * * * DISPLAY=:0 XDG_RUNTIME_DIR=/run/user/`id -u` /usr/bin/wal -i $(/home/ryan/src/scripts/ranwal)
+0 */2 * * * DISPLAY=:0 XDG_RUNTIME_DIR=/run/user/`id -u` /usr/bin/wal -i $(/home/ryan/src/dotfiles/scripts/ranwal)
 0 */12 * * * /usr/local/bin/emacsclient -e '(elfeed-update)'
 

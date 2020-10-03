@@ -1,0 +1,14 @@
+#!/usr/bin/env zsh
+
+papes=(/home/ryan/Pictures/walls/*(.))
+
+function func() {
+    for file in $(find /home/ryan/Pictures/walls/ -type f)
+    do
+        [[ $(( $RANDOM % ${#papes[@]} )) -eq 1 ]] && echo "$file" && exit 0
+    done
+}
+
+while true; do
+    func
+done

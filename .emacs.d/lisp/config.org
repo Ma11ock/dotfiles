@@ -1,4 +1,4 @@
-+TITLE: Ryan Jeffrey's Emacs config
+#+TITLE: Ryan Jeffrey's Emacs config
 #+AUTHOR: Ryan Jeffrey
 #+EMAIL: pwishie@gmail.com
 #+OPTIONS: num:nil
@@ -102,6 +102,10 @@
 (blink-cursor-mode 0)
 (set-language-environment "UTF-8")
 (setq redisplay-dont-pause t)
+
+(use-package crontab-mode
+  :ensure t)
+
 #+END_SRC
 
 ** Filename-mode associations, modes for specific file types
@@ -109,11 +113,11 @@
 
 (use-package conf-mode
   :init
-  (add-to-list 'auto-mode-alist '("\\config\\'" . conf-mode)) 
+  (add-to-list 'auto-mode-alist '("/sxhkdrc\\'" . conf-unix-mode))
+  (add-to-list 'auto-mode-alist '("\\config\\'" . conf-mode))
   (add-to-list 'auto-mode-alist '("\\.Xdefaults'" . conf-xdefaults-mode))
   (add-to-list 'auto-mode-alist '("\\.Xresources'" conf-xdefaults-mode))
-  (add-to-list 'auto-mode-alist '("\\.Xdefaults'" . conf-xdefaults-mode))
-  (add-to-list 'auto-mode-alist '("\\sxhkd\\'" . conf-unix-mode)))
+  (add-to-list 'auto-mode-alist '("\\.Xdefaults'" . conf-xdefaults-mode)))
 
 
 (use-package systemd
@@ -223,10 +227,14 @@
 #+End_src
 ** vterm
 #+BEGIN_SRC emacs-lisp
-
 (when module-file-suffix
   (use-package vterm
-    :ensure t))
+    :ensure t
+    :init (setq vterm-always-compile-module t)
+    :bind (:map vterm-mode-map
+                ("M-c" . 'vterm-copy-mode)
+                ("M-i" . 'ido-switch-buffer))))
+
 #+END_SRC
 * IDE
 ** all programming languages
@@ -263,7 +271,10 @@
 ** magit
 #+begin_src emacs-lisp
 (use-package magit
-  :ensure t)
+  :ensure t
+  :init
+  (add-hook 'after-init-hook '(lambda ()
+                                (global-magit-file-mode -1))))
 #+end_src
 ** Misc
 #+BEGIN_SRC emacs-lisp
