@@ -22,10 +22,10 @@ background = ${xrdb:background}
 ;background = #aa000
 ;background-alt = #444
 
-;background = ${xrdb:color0:#222}
-background-alt = ${xrdb:color0:#222}
+;background = #aaa
+background-alt = #222
 foreground = #fff
-foreground-alt = #bbb
+foreground-alt = #fff
 primary = ${xrdb:color1:#222}
 secondary = ${xrdb:color2:#222}
 alert = ${xrdb:color3:#222}
@@ -152,7 +152,7 @@ ws-icon-default = ♟
 ; Default: %name%
 label-monitor = %name%
 
-label-focused = %icon%
+label-focused = %name%
 label-focused-background = ${colors.background-alt}
 label-focused-underline= ${colors.primary}
 label-focused-padding = 2
@@ -242,7 +242,7 @@ label-urgent-padding = 2
 
 [module/mpd]
 type = internal/mpd
-format-online = <label-song>  
+format-online =  <bar-progress> <label-song>
 format-online-prefix = "🎵 "
 format-online-underline = ${colors.foreground-alt}
 
@@ -256,6 +256,12 @@ label-song-maxlen = 15
 label-song-ellipsis = true
 
 label-song = %title%
+
+
+bar-progress-width = 10
+bar-progress-indicator = |
+bar-progress-fill = -
+bar-progress-empty = -
 
 [module/xbacklight]
 type = internal/xbacklight
