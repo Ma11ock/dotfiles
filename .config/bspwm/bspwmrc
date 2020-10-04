@@ -35,6 +35,9 @@ bspc rule -a brave desktop='^1' focus=on follow=on
 bspc rule -a discord desktop='^5'
 bspc rule -a slack desktop='^5'
 bspc rule -a element desktop='^5'
+bspc rule -a Emacs state=tiled follow=on
+bspc rule -a emacsclient state=tiled follow=on
+bspc rule -a emacs state=tiled follow=on
 bspc rule -a Steam desktop='^10'
 bspc rule -a Screenkey manage=off
 
