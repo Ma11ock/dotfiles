@@ -114,6 +114,7 @@
 (use-package conf-mode
   :init
   (add-to-list 'auto-mode-alist '("/sxhkdrc\\'" . conf-unix-mode))
+  (add-to-list 'auto-mode-alist '("/zshrc\\'" . shell-script-mode))
   (add-to-list 'auto-mode-alist '("\\config\\'" . conf-mode))
   (add-to-list 'auto-mode-alist '("\\.Xdefaults'" . conf-xdefaults-mode))
   (add-to-list 'auto-mode-alist '("\\.Xresources'" conf-xdefaults-mode))

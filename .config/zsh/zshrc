@@ -109,6 +109,10 @@ export GOROOT="/usr/lib/go"
 export GOBIN="$HOME/src/goproj/bin/"
 export GOPATH="$HOME/src/goproj/"
 export PATH="$PATH:$GOROOT/bin:/usr/lib/go/bin/:$SCRIPTS:$HOME/bin/"
+
+# The HURD does have /sbin in its path
+(uname -a | grep "gnu-mach" -qi) && export PATH="$PATH:/sbin"
+
 export MUSIC='~/Music/'
 export TERMINAL='xterm-256color'
 export TERM='xterm-256color'
@@ -130,9 +134,18 @@ alias jrd='joe -rdonly'
 # default options and shortcuts
 alias rip='abcde -o opus'
 alias ls='ls --color -h --group-directories-first'
-alias up='sudo pacman -Syu && yay -Syu'
-alias pac='sudo pacman -Syu'
-alias aur='yay -Syu'
+
+# Arch based vs debian based package manager aliases
+if type "pacman" &>/dev/null; then
+    alias up='sudo pacman -Syu && yay -Syu'
+    alias pac='sudo pacman -Syu'
+    alias aur='yay -Syu'
+elif type "apt" &>/dev/null; then
+    alias up='sudo apt-get update && sudo apt-get upgrade'
+    alias inst='sudo apt-get install'
+fi
+
+
 alias latex='lualatex'
 alias cls='clear'
 alias mkd='mkdir -pv'
