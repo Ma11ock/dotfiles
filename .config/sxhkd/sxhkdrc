@@ -6,13 +6,16 @@ XF86Audio{Prev,Next}
 	mpc -q {prev,next}
 
 XF86AudioLowerVolume
-    pactl set-sink-volume 0 +5%
+    pactl set-sink-volume 0 -5%
 
 XF86AudioRaiseVolume
-    pactl set-sink-volume 0 -5%
+    pactl set-sink-volume 0 +5%
 
 XF86AudioMute
     pactl set-sink-mute 0 toggle
+
+XF86AudioMicMute
+    pactl set-source-mute 1 toggle
 
 # terminal emulator
 super + Return
