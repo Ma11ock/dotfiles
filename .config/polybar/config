@@ -49,7 +49,7 @@ alert = ${xrdb:color3:#222}
 [bar/main]
 ;monitor = ${env:MONITOR:HDMI-1}
 ;monitor = ${env:MONITOR:DisplayPort-2}
-monitor = ${env:MONITOR:DisplayPort-3}
+;monitor = ${env:MONITOR:DisplayPort-3}
 
 bottom = false
 top = true

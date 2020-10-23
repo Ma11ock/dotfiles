@@ -4,12 +4,6 @@ pgrep -x sxhkd > /dev/null || sxhkd &
 
 
 
-#bspc monitor -d I II III IV V VI VII VIII IX X
-
-
-#bspc monitor "HDMI-A-2" -d I II III IV V
-#bspc monitor "DisplayPort-1" -d VI VII VIII IX X
-
 ws1=("Web" "_>"  "_>" "_>"  "Msg")
 ws2=("_>" "_>" "Music" "Mail" "Prop")
 
@@ -19,6 +13,8 @@ if [ "$HOST" = "Southpark" ]; then
 else
     bspc monitor -d $ws1 $ws2
 fi
+
+bspc config merge_overlapping_monitors true
 
 
 bspc config border_width         2
@@ -44,6 +40,8 @@ bspc rule -a Screenkey manage=off
 
 
 sleep 3s && init-polybar.sh &
+
+/usr/bin/wal -i $(/home/ryan/src/dotfiles/scripts/ranwal)
 
 picom -b
 

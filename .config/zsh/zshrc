@@ -120,6 +120,7 @@ export EDITOR='emacsclient -t'
 export BROWSER='brave'
 export COLORTERM='truecolor'
 export NODE_PATH='~/src/node_modules'
+export MEDNAFEN_HOME='/home/ryan/.config/mednafen/'
 
 
 # Editor and zsh
