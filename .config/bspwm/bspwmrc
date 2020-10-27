@@ -10,6 +10,8 @@ ws2=("_>" "_>" "Music" "Mail" "Prop")
 if [ "$HOST" = "Southpark" ]; then
     bspc monitor "HDMI-A-2" -d $ws1
     bspc monitor "DisplayPort-1" -d $ws2
+    xset -display :0.0 s off
+    xset -display :0.0 s noblank
 else
     bspc monitor -d $ws1 $ws2
 fi
@@ -41,7 +43,6 @@ bspc rule -a Screenkey manage=off
 
 sleep 3s && init-polybar.sh &
 
-/usr/bin/wal -i $(/home/ryan/src/dotfiles/scripts/ranwal)
 
 picom -b
 
