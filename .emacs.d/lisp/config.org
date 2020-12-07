@@ -272,8 +272,9 @@
 (use-package magit
   :ensure t
   :init
-  (add-hook 'after-init-hook '(lambda ()
-                                (global-magit-file-mode -1))))
+;  (add-hook 'after-init-hook '(lambda ()
+;                                (global-magit-file-mode -1)))
+)
 #+end_src
 ** Misc
 #+BEGIN_SRC emacs-lisp
