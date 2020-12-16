@@ -41,7 +41,7 @@ bspc rule -a Screenkey manage=off
 
 
 
-sleep 3s && init-polybar.sh &
+(sleep 3s && init-polybar.sh) &>/dev/null &
 
 
 picom -b
