@@ -85,6 +85,7 @@ flycheck_*.el
 !/.config/joestar/joestarrc
 !/.config/polybar/
 !/.config/polybar/config
+!/.config/polybar/desktop
 !/.config/dunst/
 !/.config/dunst/dunstrc
 !/.config/mimeapps.list
