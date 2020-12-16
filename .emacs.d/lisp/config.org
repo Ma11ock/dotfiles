@@ -236,6 +236,20 @@
 
 #+END_SRC
 * IDE
+** Clojure 
+#+begin_src emacs-lisp
+ (use-package cider
+  :ensure t
+  :bind (:map cider-mode-map
+              ("M-e" . cider-eval-last-sexp)
+              ("C-x C-e" . nil))
+  :init
+  (eval-after-load "cider-mode"
+    '(define-key cider-mode-map (kbd "C-x") 'joe-nextword)))
+
+(use-package clojure-mode
+  :ensure t)
+#+end_src
 ** all programming languages
 *** todos
 #+BEGIN_SRC emacs-lisp
