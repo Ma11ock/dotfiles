@@ -2,10 +2,8 @@
 
 pgrep -x sxhkd > /dev/null || sxhkd &
 
-
-
-ws1=("Web" "_>"  "_>" "_>"  "Msg")
-ws2=("_>" "_>" "Music" "Mail" "Prop")
+ws1=("Web" "Music"  "Mail" "_>"  "Msg")
+ws2=("_>" "_>" "_>" "_>" "Prop")
 
 if [ "$HOST" = "Southpark" ]; then
     bspc monitor "HDMI-A-2" -d $ws1
@@ -13,7 +11,7 @@ if [ "$HOST" = "Southpark" ]; then
     xset -display :0.0 s off
     xset -display :0.0 s noblank
 else
-    bspc monitor -d $ws1 $ws2
+     bspc monitor -d $ws1 $ws2
 fi
 
 bspc config merge_overlapping_monitors true
@@ -40,8 +38,8 @@ bspc rule -a Steam desktop='^10'
 bspc rule -a Screenkey manage=off
 
 
-
-(sleep 3s && /home/ryan/src/dotfiles/scripts//init-polybar.sh) &>/dev/null &
+(sleep 3s && \
+     /home/ryan/src/dotfiles/scripts/init-polybar.sh) &>/dev/null &
 
 
 picom -b
