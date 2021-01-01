@@ -47,7 +47,7 @@ super + s
 
 # music
 super + y
-    bspc desktop -f '^8' && (pgrep >/dev/null ncmpcpp || st -e zsh -ic ncmpcpp)
+    bspc desktop -f '^2' && (pgrep >/dev/null ncmpcpp || st -e zsh -ic ncmpcpp)
 
 super + p
     mpc toggle
