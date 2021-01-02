@@ -303,7 +303,7 @@ label = %percentage_used%%
 
 [module/wlan]
 type = internal/network
-interface = wlp3s0
+interface = wlp5s0
 interval = 3.0
 
 format-connected = 🌐 <ramp-signal> <label-connected>
@@ -325,7 +325,7 @@ ramp-signal-foreground = ${colors.foreground-alt}
 
 [module/eth]
 type = internal/network
-interface = enp0s25
+interface = enp6s0
 interval = 3.0
 
 format-connected-underline = #55aa55
@@ -466,7 +466,7 @@ label-warn = %temperature-c%
 label-warn-foreground = ${colors.secondary}
 
 interval = 1
-hwmon-path = /sys/class/thermal/thermal_zone0/temp
+hwmon-path =/sys/class/thermal/thermal_zone3/temp
 
 ramp-0 = 
 ramp-1 = 
