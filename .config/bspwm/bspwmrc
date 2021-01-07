@@ -35,6 +35,7 @@ bspc rule -a Emacs state=tiled follow=on
 bspc rule -a emacsclient state=tiled follow=on
 bspc rule -a emacs state=tiled follow=on
 bspc rule -a Steam desktop='^10'
+bspc rule -a zoom desktop='^10'
 bspc rule -a Screenkey manage=off
 
 
