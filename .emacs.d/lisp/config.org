@@ -2,7 +2,6 @@
 #+AUTHOR: Ryan Jeffrey
 #+EMAIL: pwishie@gmail.com
 #+OPTIONS: num:nil
-    
 * Emacs
 ** init
 #+BEGIN_SRC emacs-lisp
@@ -12,8 +11,8 @@
 
 (defalias 'yes-or-no-p 'y-or-n-p)
 
-(set-frame-parameter (selected-frame) 'alpha '(100 . 100))
-(add-to-list 'default-frame-alist '(alpha . (100 . 100)))
+(set-frame-parameter (selected-frame) 'alpha '(80 . 80))
+(add-to-list 'default-frame-alist '(alpha . (80 . 80)))
 
 #+END_SRC
 ** font and theme
@@ -214,14 +213,39 @@
 (use-package org-bullets
   :ensure t)
 
-(add-hook 'tex-mode-hook 'toggle-truncate-lines)
-
 (use-package wc-mode
   :ensure t
-  :hook (org-mode tex-mode))
+  :hook org-mode)
 
 (use-package display-line-numbers-mode
-  :hook (org-mode tex-mode))
+  :hook org-mode)
+
+(use-package company-auctex
+  :ensure t)
+
+;; Configuring LaTeX must be done like this because of legacy. 
+(use-package tex-mode
+  :ensure auctex
+  :init
+  (setq TeX-auto-save t)
+  (setq TeX-parse-self t)
+  (setq-default TeX-master nil)
+  (setq-default TeX-engine 'luatex)
+  (setq-default TeX-PDF-mode t)
+  (add-hook 'LaTeX-mode-hook #'flyspell-mode)
+  (add-hook 'LaTeX-mode-hook #'wc-mode)
+  (add-hook 'LaTeX-mode-hook #'display-line-numbers-mode)
+  (add-hook 'LaTeX-mode-hook #'company-auctex-init)
+  (add-hook 'LaTeX-mode-hook #'company-mode)
+  (add-hook 'LaTeX-mode-hook #'TeX-source-correlate-mode)
+  
+  (use-package auctex-latexmk
+    :ensure t
+    :init
+     (auctex-latexmk-setup)
+     (add-hook 'LaTeX-mode-hook
+          (lambda ()
+            (add-hook 'after-save-hook 'TeX-command-master nil t)))))
 
 #+End_src
 ** vterm
@@ -393,7 +417,7 @@
 (setq ispell-local-dictionary-alist
       '(("en_US" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil nil nil utf-8)))
 
-
+(add-hook 'org-mode-hook 'flyspell-mode)
 
 #+END_SRC
 ** sudo edit

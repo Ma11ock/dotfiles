@@ -43,7 +43,7 @@
  '(org-export-with-sub-superscripts '{})
  '(org-time-stamp-custom-formats '("<%b %e %G>" . "<%m/%d/%y %a %H:%M>"))
  '(package-selected-packages
-   '(inf-clojure cider clojure-mode clojure-mode-extra-font-locking clojure-quick-repls clojure-snippets json-mode crontab-mode rainbow-mode impatient-mode vterm rust-mode systemd yasnippet-snippets yasnippet gitignore-mode company flycheck wc-mode htmlize fic-mode emojify org-bullets use-package-hydra use-package-ensure-system-package use-package-el-get use-package-chords undo-tree quelpa-use-package mu4e-query-fragments mu4e-overview mu4e-maildirs-extension mu4e-jump-to-list mu4e-conversation mu4e-alert modus-vivendi-theme modus-operandi-theme ivy-ycmd ivy-avy highlight fish-mode elfeed-web elfeed-score elfeed-protocol elfeed-org elfeed-goodies csgo-conf-mode counsel))
+   '(auctex-cluttex auctex-latexmk auctex-lua company-auctex auctex inf-clojure cider clojure-mode clojure-mode-extra-font-locking clojure-quick-repls clojure-snippets json-mode crontab-mode rainbow-mode impatient-mode vterm rust-mode systemd yasnippet-snippets yasnippet gitignore-mode company flycheck wc-mode htmlize fic-mode emojify org-bullets use-package-hydra use-package-ensure-system-package use-package-el-get use-package-chords undo-tree quelpa-use-package mu4e-query-fragments mu4e-overview mu4e-maildirs-extension mu4e-jump-to-list mu4e-conversation mu4e-alert modus-vivendi-theme modus-operandi-theme ivy-ycmd ivy-avy highlight fish-mode elfeed-web elfeed-score elfeed-protocol elfeed-org elfeed-goodies csgo-conf-mode counsel))
  '(safe-local-variable-values '((company-mode) (flycheck-mode))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
