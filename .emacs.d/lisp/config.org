@@ -103,6 +103,7 @@
 (blink-cursor-mode 0)
 (set-language-environment "UTF-8")
 (setq redisplay-dont-pause t)
+(setq vc-follow-symlinks t) ; Otherwise emacs asks
 
 ;; TODO Smithetsz
 (global-set-key (kbd "M-SPC") #'(lambda ()

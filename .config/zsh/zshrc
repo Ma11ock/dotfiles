@@ -1,4 +1,4 @@
-autoload -U colors && colors	# Load colors
+autoload -U colors && colors
 autoload -Uz vcs_info
 precmd() { vcs_info }
 
@@ -112,24 +112,25 @@ export PATH="$PATH:$GOROOT/bin:/usr/lib/go/bin/:$SCRIPTS:$HOME/bin/"
 # The HURD does have /sbin in its path
 (uname -a | grep "gnu-mach" -qi) && export PATH="$PATH:/sbin"
 
-export MUSIC='~/Music/'
+export MUSIC="$HOME/Music/"
 export TERMINAL='xterm-256color'
 export TERM='xterm-256color'
 export BROWSER='brave'
 export COLORTERM='truecolor'
-export NODE_PATH='~/src/node_modules'
-export MEDNAFEN_HOME='/home/ryan/.config/mednafen/'
+export NODE_PATH="$HOME/src/node_modules"
+export MEDNAFEN_HOME="$HOME/.config/mednafen/"
 
 
 # Editor and zsh
-export EDITOR='emacsclient -t -a'
-export VISUAL='emacsclient -c -a'
+export ALT='joe'
+export EDITOR="emacsclient -t -a $ALT"
+export VISUAL="emacsclient -c -a $ALT"
 
 alias srz='source ~/.zshrc'
 alias jrc='joe $HOME/.config/joestar/joestarrc'
 alias vim='nvim'
-alias cfz="$EDITOR ~/.zshrc"
-alias cfe="$EDITOR ~/.emacs ~/.econfig.org"
+alias cfz="$EDITOR $HOME/.zshrc"
+alias cfe="$EDITOR $HOME/.emacs.d/lisp/config.org $HOME/.emacs.d/init.el"
 alias jrd='joe -rdonly'
 # default options and shortcuts
 alias rip='abcde -o opus'
@@ -137,15 +138,16 @@ alias ls='ls --color -h --group-directories-first'
 
 # Arch based vs debian based package manager aliases
 if type "pacman" &>/dev/null; then
-    alias up='sudo pacman -Syu && yay -Syu'
-    alias pac='sudo pacman -Syu'
-    alias aur='yay -Syu'
+    alias up='paru -Syu'
+    alias pac='doas pacman -Syu'
+    alias aur='paru -Syu'
 elif type "apt" &>/dev/null; then
-    alias up='sudo apt-get update && sudo apt-get upgrade'
-    alias inst='sudo apt-get install'
+    alias up='doas apt-get update && doas apt-get upgrade'
+    alias inst='doas apt-get install'
 fi
 
-
+alias untar='tar -xvf'
+alias cmpz='tar -cvJf'
 alias latex='lualatex'
 alias cls='clear'
 alias mkd='mkdir -pv'
