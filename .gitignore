@@ -100,7 +100,8 @@ flycheck_*.el
 !/.config/bspwm/bspwmrc
 !/.config/sxhkd/
 !/.config/sxhkd/sxhkdrc
-
+!/.config/kitty
+!/.config/kitty/kitty.conf
 
 /.emacs.d/**/*
 !/.emacs.d/init.el

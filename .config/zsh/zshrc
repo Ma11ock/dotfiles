@@ -96,8 +96,7 @@ zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
 #  en_US.UTF-8 UTF-8
 export DICPATH='/usr/share/hunspell'
 
-# User configuration
-
+# Programming language globals.
 export LANG='en_US.UTF-8'
 export SCRIPTS="$HOME/src/dotfiles/scripts/"
 export GOARCH="amd64"
@@ -116,7 +115,6 @@ export PATH="$PATH:$GOROOT/bin:/usr/lib/go/bin/:$SCRIPTS:$HOME/bin/"
 export MUSIC='~/Music/'
 export TERMINAL='xterm-256color'
 export TERM='xterm-256color'
-export EDITOR='emacsclient -t'
 export BROWSER='brave'
 export COLORTERM='truecolor'
 export NODE_PATH='~/src/node_modules'
@@ -124,13 +122,14 @@ export MEDNAFEN_HOME='/home/ryan/.config/mednafen/'
 
 
 # Editor and zsh
+export EDITOR='emacsclient -t -a'
+export VISUAL='emacsclient -c -a'
+
 alias srz='source ~/.zshrc'
-alias jrc='joestar $HOME/.config/joestar/joestarrc'
-alias joe='joestar'
+alias jrc='joe $HOME/.config/joestar/joestarrc'
 alias vim='nvim'
-alias j='joestar'
-alias cfz='joe ~/.zshrc'
-alias cfe='joe ~/.emacs ~/.econfig.org'
+alias cfz="$EDITOR ~/.zshrc"
+alias cfe="$EDITOR ~/.emacs ~/.econfig.org"
 alias jrd='joe -rdonly'
 # default options and shortcuts
 alias rip='abcde -o opus'

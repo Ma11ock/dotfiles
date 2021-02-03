@@ -25,9 +25,9 @@
 ;; font
 (if (string= system-name "Southpark")
     (add-to-list 'default-frame-alist
-                 '(font . "JetBrainsMono-Medium:size=20:antialias=true:autohint=true:family=mono"))
+                 '(font . "Hasklig:size=20:antialias=false:autohint=true:family=mono"))
   (add-to-list 'default-frame-alist
-               '(font . "JetBrainsMono-Medium:size=16:antialias=true:autohint=true:family=mono")))
+               '(font . "Hasklig:size=16:antialias=false:autohint=true:family=mono")))
 
 (use-package prettify-symbols-mode
   :init 
@@ -104,6 +104,12 @@
 (set-language-environment "UTF-8")
 (setq redisplay-dont-pause t)
 
+;; TODO Smithetsz
+(global-set-key (kbd "M-SPC") #'(lambda ()
+                                  (interactive)
+                                  (search-forward "<++>")
+                                  (delete-backward-char 4)))
+
 
 #+END_SRC
 
@@ -179,6 +185,7 @@
 (global-set-key (kbd "S-<right>") 'joe-nbuf)
 (global-set-key (kbd "S-<left>") 'joe-pbuf)
 
+
 #+END_SRC
 ** markdown
 #+begin_src emacs-lisp
@@ -242,10 +249,12 @@
   (use-package auctex-latexmk
     :ensure t
     :init
-     (auctex-latexmk-setup)
-     (add-hook 'LaTeX-mode-hook
-          (lambda ()
-            (add-hook 'after-save-hook 'TeX-command-master nil t)))))
+    ;(add-to-list 'TeX-command-list "-pvc")
+    (auctex-latexmk-setup)
+    (add-hook 'LaTeX-mode-hook
+              (lambda ()
+                (add-hook 'after-save-hook #'(lambda ()
+                                               (TeX-command-master "LaTeX")) nil t)))))
 
 #+End_src
 ** vterm
