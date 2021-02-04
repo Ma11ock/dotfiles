@@ -102,8 +102,7 @@ flycheck_*.el
 !/.config/sxhkd/sxhkdrc
 !/.config/kitty
 !/.config/kitty/kitty.conf
-
-/.emacs.d/**/*
-!/.emacs.d/init.el
-!/.emacs.d/lisp/
-!/.emacs.d/lisp/.econfig.org
+# Emacs
+!/.config/emacs/
+!/.config/emacs/init.el
+!/.config/emacs/config.org

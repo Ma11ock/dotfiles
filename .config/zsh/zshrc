@@ -130,7 +130,7 @@ alias srz='source ~/.zshrc'
 alias jrc='joe $HOME/.config/joestar/joestarrc'
 alias vim='nvim'
 alias cfz="$EDITOR $HOME/.zshrc"
-alias cfe="$EDITOR $HOME/.emacs.d/lisp/config.org $HOME/.emacs.d/init.el"
+alias cfe="$EDITOR $HOME/.config/emacs/lisp/config.org $HOME/.config/emacs/init.el"
 alias jrd='joe -rdonly'
 # default options and shortcuts
 alias rip='abcde -o opus'
@@ -158,16 +158,11 @@ alias otheru="youtube-dl -f 'bestvideo[height<=480,ext=mp4]+bestaudio[ext=mp3]/m
 alias you7="youtube-dl -f 'bestvideo[height<=720,ext=mp4]+bestaudio[ext=mp3]/mp4' --write-all-thumbnails --merge-output-format mp4"
 alias rm='rm -v'
 # Shortcuts to config files and folders
-alias jsrc='cd ~/src/joestar/src'
-alias jcfg='cd ~/.config/joestar'
 alias i3cfg='joe ~/.config/i3/config'
 alias jrz='joe ~/.zshrc'
 alias comicv='ls -v | sxiv -'
 alias ec='emacsclient -c'
 alias et='emacsclient -t'
-alias erz='emacsclient -c ~/.zshrc'
-alias econf='emacsclient -c ~/.emacs.d/init.el ~/.emacs.d/lisp/config.org'
-alias ebsp='emacsclient -c ~/.config/bspwm/bspwmrc ~/.config/sxhkd/sxhkdrc'
 
 # Emacs vterm 
 if [[ "$INSIDE_EMACS" = 'vterm' ]]; then
