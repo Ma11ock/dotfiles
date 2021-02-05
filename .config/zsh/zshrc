@@ -1,3 +1,12 @@
+
+# For emacs TRAMP mode.
+if [[ $TERM == "tramp" ]]; then
+    unsetopt zle
+    unsetopt prompt_cr
+    PS1='$ '
+    return
+fi
+
 autoload -U colors && colors
 autoload -Uz vcs_info
 precmd() { vcs_info }
@@ -26,11 +35,11 @@ PROMPT='%(?.%F{243}.%F{red})%U${(l:COLUMNS:: :)?}%u
 function check_last_exit_code() {
   local LAST_EXIT_CODE=$?
   if [[ $LAST_EXIT_CODE -ne 0 ]]; then
-    local EXIT_CODE_PROMPT=' '
-    EXIT_CODE_PROMPT+="%{$fg[red]%}-%{$reset_color%}"
-    EXIT_CODE_PROMPT+="%{$fg_bold[red]%}$LAST_EXIT_CODE%{$reset_color%}"
-    EXIT_CODE_PROMPT+="%{$fg[red]%}-%{$reset_color%}"
-    echo "$EXIT_CODE_PROMPT"
+      local EXIT_CODE_PROMPT=' '
+      EXIT_CODE_PROMPT+="%{$fg[red]%}-%{$reset_color%}"
+      EXIT_CODE_PROMPT+="%{$fg_bold[red]%}$LAST_EXIT_CODE%{$reset_color%}"
+      EXIT_CODE_PROMPT+="%{$fg[red]%}-%{$reset_color%}"
+      echo "$EXIT_CODE_PROMPT"
   fi
 }
 
@@ -88,7 +97,7 @@ alias 9='cd -9'
 COMPLETION_WAITING_DOTS="true"
 
 # Reload piwal theme
-[[ -v SSH_CLIENT ]] || (cat ~/.cache/wal/sequences &)
+#[[ -v SSH_CLIENT ]] || (cat ~/.cache/wal/sequences &)
 
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
 
@@ -141,13 +150,15 @@ if type "pacman" &>/dev/null; then
     alias up='paru -Syu'
     alias pac='doas pacman -Syu'
     alias aur='paru -Syu'
+    alias purge='doas pacman -R'
 elif type "apt" &>/dev/null; then
     alias up='doas apt-get update && doas apt-get upgrade'
     alias inst='doas apt-get install'
+    alias purge='doas apt purge'
 fi
 
 alias untar='tar -xvf'
-alias cmpz='tar -cvJf'
+alias ztar='tar -cvJf'
 alias latex='lualatex'
 alias cls='clear'
 alias mkd='mkdir -pv'

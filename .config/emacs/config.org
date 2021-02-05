@@ -3,7 +3,6 @@
 #+EMAIL: ryan@ryanmj.xyz
 #+OPTIONS: num:nil
 
-(message "Init...")
 * Emacs
 ** init
 #+BEGIN_SRC emacs-lisp
@@ -106,8 +105,9 @@
 (set-language-environment "UTF-8")
 (setq redisplay-dont-pause t)
 (setq vc-follow-symlinks t) ; Otherwise emacs asks
+(setq tramp-terminal-type "tramp") ; See zshrc
 
-;; TODO Smithetsz
+;; TODO Smithets
 (global-set-key (kbd "M-SPC") #'(lambda ()
                                   (interactive)
                                   (search-forward "<++>")
@@ -430,6 +430,16 @@
 ** sudo edit
 #+BEGIN_SRC emacs-lisp
 
+(defun er-doas-edit (&optional arg)
+  "Edit currently visited file as root With a prefix ARG prompt for a file to visit.  Will also prompt for a file to visit if current buffer is not visiting a file."
+  (interactive "P")
+  (if (or arg (not buffer-file-name))
+      (find-file (concat "/doas:root@localhost:"
+                         (ido-read-file-name "Find file(as root): ")))
+    (find-alternate-file (concat "/doas:root@localhost:" buffer-file-name))))
+
+
+
 (defun er-sudo-edit (&optional arg)
   "Edit currently visited file as root With a prefix ARG prompt for a file to visit.  Will also prompt for a file to visit if current buffer is not visiting a file."
   (interactive "P")
@@ -437,6 +447,7 @@
       (find-file (concat "/sudo:root@localhost:"
                          (ido-read-file-name "Find file(as root): ")))
     (find-alternate-file (concat "/sudo:root@localhost:" buffer-file-name))))
+
 
 #+END_SRC
 ** misc
