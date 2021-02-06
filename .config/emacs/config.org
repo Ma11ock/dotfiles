@@ -12,8 +12,8 @@
 
 (defalias 'yes-or-no-p 'y-or-n-p)
 
-(set-frame-parameter (selected-frame) 'alpha '(80 . 80))
-(add-to-list 'default-frame-alist '(alpha . (80 . 80)))
+(set-frame-parameter (selected-frame) 'alpha '(85 . 85))
+(add-to-list 'default-frame-alist '(alpha . (85 . 85)))
 
 #+END_SRC
 ** font and theme
@@ -312,8 +312,7 @@
 *** flycheck
 #+begin_src emacs-lisp
 (use-package flycheck
-  :ensure t
-  :init (add-hook 'prog-mode-hook 'flycheck-mode)) ; global 
+  :ensure t)
 
 #+end_src
 
