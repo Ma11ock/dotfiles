@@ -64,6 +64,7 @@ bindkey "^[[1;5C" forward-word
 bindkey "^[[1;5D" backward-word
 
 bindkey '^[[P' delete-char
+bindkey '^[[3~' delete-char 
 
 HISTSIZE=10000
 SAVEHIST=10000
