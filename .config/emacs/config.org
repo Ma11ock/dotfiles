@@ -107,6 +107,15 @@
 (setq vc-follow-symlinks t) ; Otherwise emacs asks
 (setq tramp-terminal-type "tramp") ; See zshrc
 
+(add-to-list 'display-buffer-alist
+             '("\\`\\*Man .*\\*\\'" .
+               (display-buffer-reuse-mode-window
+                (inhibit-same-window . nil)
+                (mode . Man-mode))))
+
+(setenv "MANWIDTH" "80") ; For man mode
+
+
 ;; TODO Smithets
 (global-set-key (kbd "M-SPC") #'(lambda ()
                                   (interactive)
@@ -323,7 +332,9 @@
   :init
 ;  (add-hook 'after-init-hook '(lambda ()
 ;                                (global-magit-file-mode -1)))
-)
+
+  (add-hook 'diff-mode-hook 'whitespace-mode))
+
 #+end_src
 ** Misc
 #+BEGIN_SRC emacs-lisp

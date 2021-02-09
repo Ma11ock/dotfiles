@@ -140,7 +140,7 @@ alias srz='source ~/.zshrc'
 alias jrc='joe $HOME/.config/joestar/joestarrc'
 alias vim='nvim'
 alias cfz="$EDITOR $HOME/.zshrc"
-alias cfe="$EDITOR $HOME/.config/emacs/lisp/config.org $HOME/.config/emacs/init.el"
+alias cfe="$EDITOR $HOME/.config/emacs/config.org $HOME/.config/emacs/init.el"
 alias jrd='joe -rdonly'
 # default options and shortcuts
 alias rip='abcde -o opus'
@@ -176,6 +176,10 @@ alias jrz='joe ~/.zshrc'
 alias comicv='ls -v | sxiv -'
 alias ec='emacsclient -c'
 alias et='emacsclient -t'
+function man() {
+    local command="$2($1)"
+    emacsclient -t -e '(man "'"$command"'")' || man "$@"
+}
 
 # Emacs vterm 
 if [[ "$INSIDE_EMACS" = 'vterm' ]]; then
