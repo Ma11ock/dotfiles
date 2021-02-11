@@ -132,9 +132,8 @@ export MEDNAFEN_HOME="$HOME/.config/mednafen/"
 
 
 # Editor and zsh
-export ALT='joe'
-export EDITOR="emacsclient -t -a $ALT"
-export VISUAL="emacsclient -c -a $ALT"
+export EDITOR="emacsclient -t -a emacs"
+export VISUAL="emacsclient -c -a emacs"
 
 alias srz='source ~/.zshrc'
 alias jrc='joe $HOME/.config/joestar/joestarrc'
@@ -176,9 +175,11 @@ alias jrz='joe ~/.zshrc'
 alias comicv='ls -v | sxiv -'
 alias ec='emacsclient -c'
 alias et='emacsclient -t'
+# Basically an alias for man
 function man() {
     local command="$2($1)"
-    emacsclient -t -e '(man "'"$command"'")' || man "$@"
+    [ -z $2 ] && command="$1"
+    emacsclient -t -e '(man-mode-shell "'"$command"'")' || man "$@"
 }
 
 # Emacs vterm 

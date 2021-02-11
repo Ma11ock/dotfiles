@@ -106,15 +106,19 @@
 (setq redisplay-dont-pause t)
 (setq vc-follow-symlinks t) ; Otherwise emacs asks
 (setq tramp-terminal-type "tramp") ; See zshrc
+(add-hook 'after-save-hook #'executable-make-buffer-file-executable-if-script-p)
 
-(add-to-list 'display-buffer-alist
-             '("\\`\\*Man .*\\*\\'" .
-               (display-buffer-reuse-mode-window
-                (inhibit-same-window . nil)
-                (mode . Man-mode))))
 
-(setenv "MANWIDTH" "80") ; For man mode
+(setenv "MANWIDTH" "100") ; For man mode
 
+;; Man-mode auto-kill frame on exit. Should only be called from shell.
+(defun man-mode-shell (man-page)
+  (add-hook 'man-end-hook '(lambda () 
+                             (setq man-end-hook nil)
+                             (delete-frame)
+                             (message "Heck")))
+  (man man-page)
+  (delete-window))
 
 ;; TODO Smithets
 (global-set-key (kbd "M-SPC") #'(lambda ()
@@ -262,10 +266,11 @@
     :init
     ;(add-to-list 'TeX-command-list "-pvc")
     (auctex-latexmk-setup)
-    (add-hook 'LaTeX-mode-hook
-              (lambda ()
-                (add-hook 'after-save-hook #'(lambda ()
-                                               (TeX-command-master "LaTeX")) nil t)))))
+    ;; (add-hook 'LaTeX-mode-hook
+    ;;           (lambda ()
+    ;;             (add-hook 'after-save-hook #'(lambda ()
+    ;;                                           (TeX-command-master "LaTeX")) nil t)))
+))
 
 #+End_src
 ** vterm
@@ -353,6 +358,8 @@
 
 (use-package crontab-mode
   :ensure t)
+
+(add-hook 'prog-mode-hook #'flyspell-prog-mode) ; Flyspell on comments and strings.
 
 #+END_SRC
 ** html 
