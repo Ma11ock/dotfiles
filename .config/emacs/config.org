@@ -34,8 +34,7 @@
   :init 
   (defconst lisp--prettify-symbols-alist
     '(("lambda"  . ?λ)))
-  :hook
-  (lisp-mode))
+  :hook (lisp-mode emacs-lisp-mode))
 
 
 (add-to-list 'load-path (concat user-emacs-directory "/themes/"))
