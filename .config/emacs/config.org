@@ -34,7 +34,8 @@
   :init 
   (defconst lisp--prettify-symbols-alist
     '(("lambda"  . ?λ)))
-  :hook (lisp-mode emacs-lisp-mode))
+  :hook
+  (lisp-mode))
 
 
 (add-to-list 'load-path (concat user-emacs-directory "/themes/"))
@@ -320,7 +321,12 @@
   :config
   (setq company-idle-delay 0.3)
   (setq company-tooltip-align-annotations t) ; aligns annotation to the right hand side
-  (setq company-minimum-prefix-length 1))
+  (setq company-minimum-prefix-length 1)
+  (setq company-clang-arguments '("-std=c++17"))
+  (use-package company-c-headers
+    :ensure t
+    :init
+    (add-to-list 'company-backends 'company-c-headers)))
 #+end_src
 *** flycheck
 #+begin_src emacs-lisp
@@ -359,6 +365,9 @@
   :ensure t)
 
 (add-hook 'prog-mode-hook #'flyspell-prog-mode) ; Flyspell on comments and strings.
+
+(use-package cmake-mode
+   :ensure t)
 
 #+END_SRC
 ** html 
