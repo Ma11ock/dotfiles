@@ -19,60 +19,128 @@
 ** font and theme
 #+BEGIN_SRC emacs-lisp
 
-  (add-to-list 'load-path (concat user-emacs-directory "lisp/"))
+ (add-to-list 'load-path (concat user-emacs-directory "lisp/"))
 
-  (setq x-gtk-use-system-tooltips nil)     
+ (setq x-gtk-use-system-tooltips nil)     
 
-  ;; font
-  (if (string= system-name "Southpark")
-      (add-to-list 'default-frame-alist
-		   '(font . "Hasklig:size=20:antialias=true:autohint=true:family=mono"))
-    (add-to-list 'default-frame-alist
-		 '(font . "Hasklig:size=16:antialias=true:autohint=true:family=mono")))
+ ;; font
+ (if (string= system-name "Southpark")
+     (add-to-list 'default-frame-alist
+		  '(font . "Hasklig:size=20:antialias=true:autohint=true:family=mono"))
+   (add-to-list 'default-frame-alist
+		'(font . "Hasklig:size=16:antialias=true:autohint=true:family=mono")))
 
-  (use-package prettify-symbols-mode
-    :init 
-    (defconst lisp--prettify-symbols-alist
-      '(("lambda"  . ?λ)))
-    :hook
-    (lisp-mode))
-
-
-  (add-to-list 'load-path (concat user-emacs-directory "/themes/"))
+ (use-package prettify-symbols-mode
+   :init 
+   (defconst lisp--prettify-symbols-alist
+     '(("lambda"  . ?λ)))
+   :hook
+   (lisp-mode))
 
 
-  (use-package modus-themes
-    :ensure t
-    :init
-     (setq modus-themes-slanted-constructs nil
-	  modus-themes-bold-constructs nil
-	  modus-themes-visible-fringes nil
-	  modus-themes-subtle-diffs nil
-	  modus-themes-distinct-org-blocks nil
-	  modus-themes-proportional-fonts nil
-	  modus-themes-scale-headings nil
-	  modus-themes-scale-1 1
-	  modus-themes-scale-2 1
-	  modus-themes-scale-3 1
-	  modus-themes-scale-4 1)
- ;   (modus-themes-load-themes)
-    :config
-    ;; Load the theme of your choice:
-    ;(modus-themes-load-vivendi)
-)
-  (global-set-key (kbd "M-S-<up>") 'text-scale-increase)
-  (global-set-key (kbd "M-S-<down>") 'text-scale-decrease)
-  (scroll-bar-mode nil)
+ (add-to-list 'load-path (concat user-emacs-directory "/themes/"))
 
-  (use-package shr
-    :commands (eww
-	       eww-browse-url)
-    :config
-					  ;(setq browse-url-browser-function 'eww-browse-url)
-    (setq shr-use-fonts nil)
-    (setq shr-use-colors nil)
-    (setq shr-max-image-proportion 0.2)
-    (setq shr-width (current-fill-column)))
+
+(use-package modus-themes
+  :ensure t
+  :init
+  (setq modus-themes-slanted-constructs t
+       modus-themes-bold-constructs nil
+       modus-themes-fringes nil ; {nil,'subtle,'intense}
+
+       ;; Options for `modus-themes-lang-checkers': nil,
+       ;; 'straight-underline, 'subtle-foreground,
+       ;; 'subtle-foreground-straight-underline, 'intense-foreground,
+       ;; 'intense-foreground-straight-underline, 'colored-background
+       modus-themes-lang-checkers nil
+
+       ;; Options for `modus-themes-mode-line': nil, '3d, 'moody,
+       ;; 'borderless, 'borderless-3d, 'borderless-moody, 'accented,
+       ;; 'accented-3d, 'accented-moody
+       modus-themes-mode-line 'accented-3d
+
+       ;; Options for `modus-themes-syntax': nil, 'faint,
+       ;; 'yellow-comments, 'green-strings,
+       ;; 'yellow-comments-green-strings, 'alt-syntax,
+       ;; 'alt-syntax-yellow-comments, 'faint-yellow-comments
+       modus-themes-syntax nil
+
+       ;; Options for `modus-themes-hl-line': nil, 'intense-background,
+       ;; 'accented-background, 'underline-neutral,
+       ;; 'underline-accented, 'underline-only-neutral,
+       ;; 'underline-only-accented
+       modus-themes-hl-line 'underline-neutral
+       modus-themes-subtle-line-numbers nil
+       modus-themes-paren-match 'subtle-bold ; {nil,'subtle-bold,'intense,'intense-bold}
+
+       ;; Options for `modus-themes-links': nil, 'faint,
+       ;; 'neutral-underline, 'faint-neutral-underline, 'no-underline,
+       ;; 'underline-only, 'neutral-underline-only
+       modus-themes-links 'neutral-underline
+       modus-themes-no-mixed-fonts nil
+
+       ;; Options for `modus-themes-prompts': nil, 'subtle-accented,
+       ;; 'intense-accented, 'subtle-gray, 'intense-gray
+       modus-themes-prompts 'subtle-gray
+       modus-themes-completions 'moderate ; {nil,'moderate,'opinionated}
+
+       ;; Options for `modus-themes-region': nil, 'no-extend, 'bg-only,
+       ;; 'bg-only-no-extend, 'accent, 'accent-no-extend
+       modus-themes-region 'accent-no-extend
+
+       ;; Options for `modus-themes-diffs': nil, 'desaturated,
+       ;; 'fg-only, 'bg-only, 'deuteranopia,
+       modus-themes-diffs 'deuteranopia
+
+       modus-themes-org-blocks nil ; {nil,'grayscale,'rainbow}
+       modus-themes-org-habit nil ; {nil,'simplified,'traffic-light}
+
+       modus-themes-headings ; this is an alist: read the manual
+       '((1 . rainbow-section)
+         (2 . rainbow-line)
+         (3 . rainbow))
+
+       modus-themes-variable-pitch-ui nil
+       modus-themes-variable-pitch-headings nil
+       modus-themes-scale-headings nil
+       modus-themes-scale-1 1
+       modus-themes-scale-2 1
+       modus-themes-scale-3 1
+       modus-themes-scale-4 1
+       modus-themes-scale-5 1)
+ ;; Load the theme files before enabling a theme (else you get an error).
+ (modus-themes-load-themes)
+
+ ;; Enable the theme at startup.  This is done after loading the files.
+ ;; You only need `modus-themes-load-operandi' for the light theme or
+ ;; `modus-themes-load-vivendi' for the dark one.  What I have here is
+ ;; a simple test to load a light/dark theme based on some general time
+ ;; ranges (just accounting for the hour and without checking for the
+ ;; actual sunrise/sunset times).  Plus we have `modus-themes-toggle'
+ ;; to switch themes at will.
+ (let ((time (string-to-number (format-time-string "%H"))))
+   (if (and (> time 5) (< time 18))
+       (modus-themes-load-operandi)
+     (modus-themes-load-vivendi)))
+
+ ;; Also check my package configurations for `prot-fonts' because I use
+ ;; the `modus-themes-after-load-theme-hook' for some typeface-related
+ ;; tweaks (as those are made at the "face" level).
+ (define-key global-map (kbd "<f5>") #'modus-themes-toggle))
+
+ (global-set-key (kbd "M-S-<up>") 'text-scale-increase)
+ (global-set-key (kbd "M-S-<down>") 'text-scale-decrease)
+ (scroll-bar-mode nil)
+
+ (use-package shr
+   :commands (eww
+	      eww-browse-url)
+   :config
+					 ;(setq browse-url-browser-function 'eww-browse-url)
+   (setq shr-use-fonts nil)
+   (setq shr-use-colors nil)
+   (setq shr-max-image-proportion 0.2)
+   (setq shr-width (current-fill-column)))
 
 
 #+END_SRC

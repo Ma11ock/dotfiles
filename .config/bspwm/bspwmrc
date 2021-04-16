@@ -6,8 +6,8 @@ ws1=("Web" "Music"  "Mail" "_>"  "Msg")
 ws2=("_>" "_>" "_>" "_>" "Prop")
 
 if [ "$HOST" = "Southpark" ]; then
-   #bspc monitor "HDMI-A-2" -d $ws1
-   bspc monitor "DisplayPort-1" -d $ws1 $ws2
+   bspc monitor "DisplayPort-1" -d $ws1
+   bspc monitor "HDMI-A-2" -d $ws2
    xset -display :0.0 s off
    xset -display :0.0 s noblank
 else
