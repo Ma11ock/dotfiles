@@ -413,7 +413,8 @@
 ;  (add-hook 'after-init-hook '(lambda ()
 ;                                (global-magit-file-mode -1)))
 
-  (add-hook 'diff-mode-hook 'whitespace-mode))
+  (add-hook 'diff-mode-hook 'whitespace-mode)
+  (add-hook 'git-commit-setup-hook 'git-commit-turn-on-flyspell))
 
 #+end_src
 ** Misc
@@ -531,6 +532,22 @@
   :init
   (add-hook 'elpy-mode-hook #'py-autopep8-enable-on-save))
 #+end_src
+** ess (R)
+#+begin_src emacs-lisp
+(use-package ess-site
+  :load-path "/usr/share/emacs/site-lisp/ess/"
+  :commands R
+  
+  :init
+  (add-to-list 'auto-mode-alist '("\\.R\\'" . r-mode))
+  (require 'ess-site)
+  (setq tab-always-indent 'complete)
+  (setq company-idle-delay 0.1)
+  (ess-toggle-underscore nil)
+  (with-eval-after-load 'ess
+    (setq ess-use-company t)))
+
+#+end_src
 * Text-editor
 ** spellcheck
 #+BEGIN_SRC emacs-lisp
@@ -574,6 +591,15 @@
 
 (global-set-key (kbd "M-i") 'ido-switch-buffer)
 
+;; Left-to-right by default for slight performance increase.
+(setq-default bidi-paragraph-direction 'left-to-right)
+(setq bidi-inhibit-bpa t)
+;; For slight performance increase with long lines.
+(global-so-long-mode 1)
+
+;; For asynchronous.
+(use-package async
+  :ensure t)
 #+END_SRC
 ** snippets
 #+begin_src emacs-lisp
