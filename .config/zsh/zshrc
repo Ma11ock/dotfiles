@@ -7,6 +7,12 @@ if [[ $TERM == "tramp" ]]; then
     return
 fi
 
+# Fixes old versions of tmux
+if [[ -n "$TMUX" && $(tmux -V | awk '{print $2}' | head -c3) -lt "1.8" ]]
+then
+        PROMPT_COMMAND="printf '\ePtmux;\e\e[<u\e\\'"
+fi
+
 autoload -U colors && colors
 autoload -Uz vcs_info
 precmd() { vcs_info }
