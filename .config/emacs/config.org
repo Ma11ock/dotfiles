@@ -19,128 +19,53 @@
 ** font and theme
 #+BEGIN_SRC emacs-lisp
 
- (add-to-list 'load-path (concat user-emacs-directory "lisp/"))
+(add-to-list 'load-path (concat user-emacs-directory "lisp/"))
 
- (setq x-gtk-use-system-tooltips nil)     
+(setq x-gtk-use-system-tooltips nil)     
 
- ;; font
- (if (string= system-name "Southpark")
-     (add-to-list 'default-frame-alist
-		  '(font . "Hasklig:size=20:antialias=true:autohint=true:family=mono"))
-   (add-to-list 'default-frame-alist
-		'(font . "Hasklig:size=16:antialias=true:autohint=true:family=mono")))
+;; font
+(if (string= system-name "Southpark")
+    (add-to-list 'default-frame-alist
+		         '(font . "Hasklig:size=20:antialias=true:autohint=true:family=mono"))
+  (add-to-list 'default-frame-alist
+		       '(font . "Hasklig:size=16:antialias=true:autohint=true:family=mono")))
 
- (use-package prettify-symbols-mode
-   :init 
-   (defconst lisp--prettify-symbols-alist
-     '(("lambda"  . ?λ)))
-   :hook
-   (lisp-mode))
+(use-package prettify-symbols-mode
+  :init 
+  (defconst lisp--prettify-symbols-alist
+    '(("lambda"  . ?λ)))
+  :hook
+  (lisp-mode))
 
 
- (add-to-list 'load-path (concat user-emacs-directory "/themes/"))
+(add-to-list 'load-path (concat user-emacs-directory "/themes/"))
 
 
 (use-package modus-themes
-  :ensure t
+  :ensure t                         ; omit this to use the built-in themes
   :init
-  (setq modus-themes-slanted-constructs t
-       modus-themes-bold-constructs nil
-       modus-themes-fringes nil ; {nil,'subtle,'intense}
+  ;; Add all your customizations prior to loading the themes
+  (setq modus-themes-region '(bg-only no-extend))
 
-       ;; Options for `modus-themes-lang-checkers': nil,
-       ;; 'straight-underline, 'subtle-foreground,
-       ;; 'subtle-foreground-straight-underline, 'intense-foreground,
-       ;; 'intense-foreground-straight-underline, 'colored-background
-       modus-themes-lang-checkers nil
+  ;; Load the theme files before enabling a theme (else you get an error).
+  (modus-themes-load-themes)
+  :config
+  ;; Load the theme of your choice:
+  (modus-themes-load-vivendi))
 
-       ;; Options for `modus-themes-mode-line': nil, '3d, 'moody,
-       ;; 'borderless, 'borderless-3d, 'borderless-moody, 'accented,
-       ;; 'accented-3d, 'accented-moody
-       modus-themes-mode-line 'accented-3d
+  (global-set-key (kbd "M-S-<up>") 'text-scale-increase)
+  (global-set-key (kbd "M-S-<down>") 'text-scale-decrease)
+  (scroll-bar-mode nil)
 
-       ;; Options for `modus-themes-syntax': nil, 'faint,
-       ;; 'yellow-comments, 'green-strings,
-       ;; 'yellow-comments-green-strings, 'alt-syntax,
-       ;; 'alt-syntax-yellow-comments, 'faint-yellow-comments
-       modus-themes-syntax nil
-
-       ;; Options for `modus-themes-hl-line': nil, 'intense-background,
-       ;; 'accented-background, 'underline-neutral,
-       ;; 'underline-accented, 'underline-only-neutral,
-       ;; 'underline-only-accented
-       modus-themes-hl-line 'underline-neutral
-       modus-themes-subtle-line-numbers nil
-       modus-themes-paren-match 'subtle-bold ; {nil,'subtle-bold,'intense,'intense-bold}
-
-       ;; Options for `modus-themes-links': nil, 'faint,
-       ;; 'neutral-underline, 'faint-neutral-underline, 'no-underline,
-       ;; 'underline-only, 'neutral-underline-only
-       modus-themes-links 'neutral-underline
-       modus-themes-no-mixed-fonts nil
-
-       ;; Options for `modus-themes-prompts': nil, 'subtle-accented,
-       ;; 'intense-accented, 'subtle-gray, 'intense-gray
-       modus-themes-prompts 'subtle-gray
-       modus-themes-completions 'moderate ; {nil,'moderate,'opinionated}
-
-       ;; Options for `modus-themes-region': nil, 'no-extend, 'bg-only,
-       ;; 'bg-only-no-extend, 'accent, 'accent-no-extend
-       modus-themes-region 'accent-no-extend
-
-       ;; Options for `modus-themes-diffs': nil, 'desaturated,
-       ;; 'fg-only, 'bg-only, 'deuteranopia,
-       modus-themes-diffs 'deuteranopia
-
-       modus-themes-org-blocks nil ; {nil,'grayscale,'rainbow}
-       modus-themes-org-habit nil ; {nil,'simplified,'traffic-light}
-
-       modus-themes-headings ; this is an alist: read the manual
-       '((1 . rainbow-section)
-         (2 . rainbow-line)
-         (3 . rainbow))
-
-       modus-themes-variable-pitch-ui nil
-       modus-themes-variable-pitch-headings nil
-       modus-themes-scale-headings nil
-       modus-themes-scale-1 1
-       modus-themes-scale-2 1
-       modus-themes-scale-3 1
-       modus-themes-scale-4 1
-       modus-themes-scale-5 1)
- ;; Load the theme files before enabling a theme (else you get an error).
- (modus-themes-load-themes)
-
- ;; Enable the theme at startup.  This is done after loading the files.
- ;; You only need `modus-themes-load-operandi' for the light theme or
- ;; `modus-themes-load-vivendi' for the dark one.  What I have here is
- ;; a simple test to load a light/dark theme based on some general time
- ;; ranges (just accounting for the hour and without checking for the
- ;; actual sunrise/sunset times).  Plus we have `modus-themes-toggle'
- ;; to switch themes at will.
- (let ((time (string-to-number (format-time-string "%H"))))
-   (if (and (> time 5) (< time 18))
-       (modus-themes-load-operandi)
-     (modus-themes-load-vivendi)))
-
- ;; Also check my package configurations for `prot-fonts' because I use
- ;; the `modus-themes-after-load-theme-hook' for some typeface-related
- ;; tweaks (as those are made at the "face" level).
- (define-key global-map (kbd "<f5>") #'modus-themes-toggle))
-
- (global-set-key (kbd "M-S-<up>") 'text-scale-increase)
- (global-set-key (kbd "M-S-<down>") 'text-scale-decrease)
- (scroll-bar-mode nil)
-
- (use-package shr
-   :commands (eww
-	      eww-browse-url)
-   :config
-					 ;(setq browse-url-browser-function 'eww-browse-url)
-   (setq shr-use-fonts nil)
-   (setq shr-use-colors nil)
-   (setq shr-max-image-proportion 0.2)
-   (setq shr-width (current-fill-column)))
+  (use-package shr
+    :commands (eww
+	           eww-browse-url)
+    :config
+                                        ;(setq browse-url-browser-function 'eww-browse-url)
+    (setq shr-use-fonts nil)
+    (setq shr-use-colors nil)
+    (setq shr-max-image-proportion 0.2)
+    (setq shr-width (current-fill-column)))
 
 
 #+END_SRC
@@ -177,6 +102,23 @@
 (setq vc-follow-symlinks t) ; Otherwise emacs asks
 (setq tramp-terminal-type "tramp") ; See zshrc
 (add-hook 'after-save-hook #'executable-make-buffer-file-executable-if-script-p)
+;; scroll one line at a time (less "jumpy" than defaults)
+
+(setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) ;; one line at a time
+
+(setq mouse-wheel-progressive-speed nil) ;; don't accelerate scrolling
+
+(setq mouse-wheel-follow-mouse 't) ;; scroll window under mouse
+
+(setq scroll-step 1) ;; keyboard scroll one line at a time
+
+;; Column 80 fill line.
+(setq display-fill-column-indicator-column 80)
+(add-hook 'prog-mode-hook #'display-fill-column-indicator-mode)
+(add-hook 'prog-mode-hook #'(lambda ()
+                              (display-line-numbers-mode)
+                              (setq display-line-numbers 'relative)))
+
 
 
 (setenv "MANWIDTH" "100") ; For man mode
@@ -231,32 +173,25 @@
   :ensure t)
 (use-package highlight
   :ensure t)
-(use-package joestar
+(use-package evil
+  :ensure t
   :init
-  (add-to-list 'load-path (concat user-emacs-directory "joestar/"))
-  (progn
-    (defvar undo-tree-map
-      (let ((map (make-sparse-keymap)))
-        ;; remap `undo' and `undo-only' to `undo-tree-undo'
-        (define-key map [remap undo] 'undo-tree-undo)
-        (define-key map [remap undo-only] 'undo-tree-undo)
-        ;; bind standard undo bindings (since these match redo counterparts)
-        (define-key map (kbd "C-/") 'undo-tree-undo)
-        (define-key map "\C-_" 'undo-tree-undo)
-        ;; redo doesn't exist normally, so define our own keybindings
-        (define-key map (kbd "C-?") 'undo-tree-redo)
-        (define-key map (kbd "M-_") 'undo-tree-redo)
-        ;; just in case something has defined `redo'...
-        (define-key map [remap redo] 'undo-tree-redo)
-        ;; we use "C-x u" for the undo-tree visualizer
-        (define-key map (kbd "s-x u") 'undo-tree-visualize)
-        ;; bind register commands
-        (define-key map (kbd "s-x r u") 'undo-tree-save-state-to-register)
-        (define-key map (kbd "s-x r U") 'undo-tree-restore-state-from-register)
-        ;; set keymap
-        (setq undo-tree-map map)))))
-
-(global-joestar-mode)
+(setq evil-want-keybinding nil)
+  (global-undo-tree-mode)
+  (setq evil-undo-system 'undo-tree)
+  (evil-mode 1)
+  (use-package evil-collection
+    :ensure t
+    :init
+    (evil-collection-init))
+(setq-default evil-cross-lines t)
+(setq evil-normal-state-tag   (propertize " COMMAND " 'face '((:background "dark khaki" :foreground "black")))
+      evil-emacs-state-tag    (propertize "  EMACS  " 'face '((:background "turquoise" :foreground "black")))
+      evil-insert-state-tag   (propertize " ------- " 'face '((:background "dark sea green" :foreground "black")))
+      evil-replace-state-tag  (propertize " REPLACE " 'face '((:background "dark orange" :foreground "black")))
+      evil-motion-state-tag   (propertize "  MOTION " 'face '((:background "khaki" :foreground "black")))
+      evil-visual-state-tag   (propertize "  VISUAL " 'face '((:background "light salmon" :foreground "black")))
+      evil-operator-state-tag (propertize " OPERATE " 'face '((:background "sandy brown" :foreground "black")))))
 
 ;; global move window keys so non joestar buffers can still have these bindings
 (global-set-key (kbd "M-<left>") #'(lambda ()
@@ -266,10 +201,6 @@
 (global-set-key (kbd "M-<right>") #'(lambda ()
                                       (interactive)
                                       (other-window 1)))
-
-(global-set-key (kbd "S-<right>") 'joe-nbuf)
-(global-set-key (kbd "S-<left>") 'joe-pbuf)
-
 
 #+END_SRC
 ** markdown
@@ -505,7 +436,6 @@
   (c-set-offset 'inline-open '0))
 
 
-
 #+end_src
 ** JavaScript
 #+begin_src emacs-lisp
@@ -547,6 +477,32 @@
   (with-eval-after-load 'ess
     (setq ess-use-company t)))
 
+#+end_src
+** gdscript
+#+begin_src emacs-lisp
+(use-package gdscript-mode
+  :ensure t
+  :init
+  (use-package lsp-mode
+    :ensure t)
+  (defun lsp--gdscript-ignore-errors (original-function &rest args)
+    "Ignore the error message resulting from Godot not replying to the `JSONRPC' request."
+    (if (string-equal major-mode "gdscript-mode")
+        (let ((json-data (nth 0 args)))
+          (if (and (string= (gethash "jsonrpc" json-data "") "2.0")
+                   (not (gethash "id" json-data nil))
+                   (not (gethash "method" json-data nil)))
+              nil ; (message "Method not found")
+            (apply original-function args)))
+      (apply original-function args)))
+  ;; Runs the function `lsp--gdscript-ignore-errors` around `lsp--get-message-type` to suppress unknown notification errors.
+  (advice-add #'lsp--get-message-type :around #'lsp--gdscript-ignore-errors)
+  (setq gdscript-godot-executable "/usr/bin/godot")
+  (setq gdscript-use-tab-indents nil)
+  (setq gdscript-indent-offset 4)
+  (setq gdscript-docs-local-path "/home/ryan/Documents/godot-docs/_build/html/")
+  :config
+  (auto-revert-mode))
 #+end_src
 * Text-editor
 ** spellcheck
