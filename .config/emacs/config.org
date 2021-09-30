@@ -191,7 +191,9 @@
       evil-replace-state-tag  (propertize " REPLACE " 'face '((:background "dark orange" :foreground "black")))
       evil-motion-state-tag   (propertize "  MOTION " 'face '((:background "khaki" :foreground "black")))
       evil-visual-state-tag   (propertize "  VISUAL " 'face '((:background "light salmon" :foreground "black")))
-      evil-operator-state-tag (propertize " OPERATE " 'face '((:background "sandy brown" :foreground "black")))))
+      evil-operator-state-tag (propertize " OPERATE " 'face '((:background "sandy brown" :foreground "black"))))
+(setq evil-insert-state-cursor '(bar  "green")
+      evil-normal-state-cursor '(box "magenta")))
 
 ;; global move window keys so non joestar buffers can still have these bindings
 (global-set-key (kbd "M-<left>") #'(lambda ()
