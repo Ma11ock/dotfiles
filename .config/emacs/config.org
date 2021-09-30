@@ -193,7 +193,11 @@
       evil-visual-state-tag   (propertize "  VISUAL " 'face '((:background "light salmon" :foreground "black")))
       evil-operator-state-tag (propertize " OPERATE " 'face '((:background "sandy brown" :foreground "black"))))
 (setq evil-insert-state-cursor '(bar  "green")
-      evil-normal-state-cursor '(box "magenta")))
+      evil-normal-state-cursor '(box "magenta"))
+(use-package evil-terminal-cursor-changer
+:ensure t
+:init
+(evil-terminal-cursor-changer-activate)))
 
 ;; global move window keys so non joestar buffers can still have these bindings
 (global-set-key (kbd "M-<left>") #'(lambda ()
