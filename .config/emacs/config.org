@@ -115,10 +115,6 @@
 ;; Column 80 fill line.
 (setq display-fill-column-indicator-column 80)
 (add-hook 'prog-mode-hook #'display-fill-column-indicator-mode)
-(add-hook 'prog-mode-hook #'(lambda ()
-                              (display-line-numbers-mode)
-                              (setq display-line-numbers 'relative)))
-
 
 
 (setenv "MANWIDTH" "100") ; For man mode
@@ -194,10 +190,13 @@
       evil-operator-state-tag (propertize " OPERATE " 'face '((:background "sandy brown" :foreground "black"))))
 (setq evil-insert-state-cursor '(bar  "green")
       evil-normal-state-cursor '(box "magenta"))
+
 (use-package evil-terminal-cursor-changer
 :ensure t
-:init
-(evil-terminal-cursor-changer-activate)))
+;:init
+;(evil-terminal-cursor-changer-activate)))
+)
+(define-key evil-visual-state-map (kbd "<tab>") #'indent-region))
 
 ;; global move window keys so non joestar buffers can still have these bindings
 (global-set-key (kbd "M-<left>") #'(lambda ()
@@ -247,7 +246,9 @@
   :hook org-mode)
 
 (use-package display-line-numbers-mode
-  :hook org-mode)
+  :hook (prog-mode org-mode LaTex-mode)
+  :init
+  (setq display-line-numbers-type 'relative))
 
 (use-package company-auctex
   :ensure t)
@@ -263,7 +264,6 @@
   (setq-default TeX-PDF-mode t)
   (add-hook 'LaTeX-mode-hook #'flyspell-mode)
   (add-hook 'LaTeX-mode-hook #'wc-mode)
-  (add-hook 'LaTeX-mode-hook #'display-line-numbers-mode)
   (add-hook 'LaTeX-mode-hook #'company-auctex-init)
   (add-hook 'LaTeX-mode-hook #'company-mode)
   (add-hook 'LaTeX-mode-hook #'TeX-source-correlate-mode)
