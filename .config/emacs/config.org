@@ -39,34 +39,11 @@
 
 
 (add-to-list 'load-path (concat user-emacs-directory "/themes/"))
+(setq custom-safe-themes t)   ; Treat all themes as safe
 
-
-(use-package modus-themes
-  :ensure t                         ; omit this to use the built-in themes
-  :init
-  ;; Add all your customizations prior to loading the themes
-  (setq modus-themes-region '(bg-only no-extend))
-
-  ;; Load the theme files before enabling a theme (else you get an error).
-  (modus-themes-load-themes)
-  :config
-  ;; Load the theme of your choice:
-  (modus-themes-load-vivendi))
-
-  (global-set-key (kbd "M-S-<up>") 'text-scale-increase)
-  (global-set-key (kbd "M-S-<down>") 'text-scale-decrease)
-  (scroll-bar-mode nil)
-
-  (use-package shr
-    :commands (eww
-	           eww-browse-url)
-    :config
-                                        ;(setq browse-url-browser-function 'eww-browse-url)
-    (setq shr-use-fonts nil)
-    (setq shr-use-colors nil)
-    (setq shr-max-image-proportion 0.2)
-    (setq shr-width (current-fill-column)))
-
+(use-package replace-colorthemes
+:quelpa (replace-colorthemes :fetcher github :repo "emacs-jp/replace-colorthemes")
+:init (load-theme 'hober ))
 
 #+END_SRC
 ** swiper
@@ -163,7 +140,7 @@
   :mode (("\\.rs\\'" . rust-mode)))
 
 #+END_SRC
-** joestar
+** evil mode
 #+BEGIN_SRC emacs-lisp
 (use-package undo-tree
   :ensure t)
@@ -193,10 +170,12 @@
 
 (use-package evil-terminal-cursor-changer
 :ensure t
-;:init
-;(evil-terminal-cursor-changer-activate)))
-)
-(define-key evil-visual-state-map (kbd "<tab>") #'indent-region))
+:init
+(evil-terminal-cursor-changer-activate))
+(define-key evil-visual-state-map (kbd "<tab>") #'indent-region)
+(add-hook 'evil-insert-state-exit-hook
+          (lambda ()
+            (call-interactively #'save-buffer))))
 
 ;; global move window keys so non joestar buffers can still have these bindings
 (global-set-key (kbd "M-<left>") #'(lambda ()
