@@ -127,9 +127,6 @@ alias 9='cd -9'
 
 COMPLETION_WAITING_DOTS="true"
 
-# Reload piwal theme
-[[ -v SSH_CLIENT ]] || (cat ~/.cache/wal/sequences &)
-
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
 
 
