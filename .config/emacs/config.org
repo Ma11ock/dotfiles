@@ -40,10 +40,11 @@
 
 (add-to-list 'load-path (concat user-emacs-directory "/themes/"))
 (setq custom-safe-themes t)   ; Treat all themes as safe
-
-(use-package replace-colorthemes
-:quelpa (replace-colorthemes :fetcher github :repo "emacs-jp/replace-colorthemes")
-:init (load-theme 'hober ))
+(quelpa
+ '(replace-colorthemes
+   :fetcher git
+   :url "https://github.com/emacs-jp/replace-colorthemes"))
+(load-theme 'hober)
 
 #+END_SRC
 ** swiper
@@ -111,6 +112,10 @@
                                   (search-forward "<++>")
                                   (delete-backward-char 4)))
 
+(use-package command-log-mode
+  :ensure t
+  :init
+  (global-command-log-mode))
 
 #+END_SRC
 
@@ -149,7 +154,7 @@
 (use-package evil
   :ensure t
   :init
-(setq evil-want-keybinding nil)
+  (setq evil-want-keybinding nil)
   (global-undo-tree-mode)
   (setq evil-undo-system 'undo-tree)
   (evil-mode 1)
@@ -157,25 +162,40 @@
     :ensure t
     :init
     (evil-collection-init))
-(setq-default evil-cross-lines t)
-(setq evil-normal-state-tag   (propertize " COMMAND " 'face '((:background "dark khaki" :foreground "black")))
-      evil-emacs-state-tag    (propertize "  EMACS  " 'face '((:background "turquoise" :foreground "black")))
-      evil-insert-state-tag   (propertize " ------- " 'face '((:background "dark sea green" :foreground "black")))
-      evil-replace-state-tag  (propertize " REPLACE " 'face '((:background "dark orange" :foreground "black")))
-      evil-motion-state-tag   (propertize "  MOTION " 'face '((:background "khaki" :foreground "black")))
-      evil-visual-state-tag   (propertize "  VISUAL " 'face '((:background "light salmon" :foreground "black")))
-      evil-operator-state-tag (propertize " OPERATE " 'face '((:background "sandy brown" :foreground "black"))))
-(setq evil-insert-state-cursor '(bar  "green")
-      evil-normal-state-cursor '(box "magenta"))
+  (setq-default evil-cross-lines t)
+  (setq evil-normal-state-tag   (propertize " COMMAND " 'face '((:background "dark khaki" :foreground "black")))
+        evil-emacs-state-tag    (propertize "  EMACS  " 'face '((:background "turquoise" :foreground "black")))
+        evil-insert-state-tag   (propertize " ------- " 'face '((:background "dark sea green" :foreground "black")))
+        evil-replace-state-tag  (propertize " REPLACE " 'face '((:background "dark orange" :foreground "black")))
+        evil-motion-state-tag   (propertize "  MOTION " 'face '((:background "khaki" :foreground "black")))
+        evil-visual-state-tag   (propertize "  VISUAL " 'face '((:background "light salmon" :foreground "black")))
+        evil-operator-state-tag (propertize " OPERATE " 'face '((:background "sandy brown" :foreground "black"))))
+  (setq evil-insert-state-cursor '(bar  "green")
+        evil-normal-state-cursor '(box "magenta"))
 
-(use-package evil-terminal-cursor-changer
-:ensure t
-:init
-(evil-terminal-cursor-changer-activate))
-(define-key evil-visual-state-map (kbd "<tab>") #'indent-region)
-(add-hook 'evil-insert-state-exit-hook
-          (lambda ()
-            (call-interactively #'save-buffer))))
+  (use-package evil-terminal-cursor-changer
+    :ensure t
+    :init
+    (evil-terminal-cursor-changer-activate))
+  (global-unset-key (kbd "C-SPC"))
+  (define-key evil-normal-state-map (kbd "SPC") nil)
+
+  (evil-define-key 'normal 'globas (kbd "<leader>e") #'eval-region)
+  (evil-define-key 'normal 'global (kbd "<leader>o") #'eval-region)
+  (evil-define-key 'normal 'global (kbd "<leader>ss") #'split-window-horizontally)
+  (evil-define-key 'normal 'global (kbd "<leader>so") #'split-window-vertically)
+  (evil-define-key 'normal 'global (kbd "<leader>x") #'execute-extended-command)
+  ;; set leader key in all states
+  (evil-set-leader 'visual (kbd "C-SPC"))
+  (evil-set-leader 'insert (kbd "C-SPC"))
+  ;; set leader key in normal state
+  (evil-set-leader 'normal (kbd "SPC"))
+
+  (define-key evil-visual-state-map (kbd "<tab>") #'indent-region)
+  (add-hook 'evil-insert-state-exit-hook
+            (lambda ()
+              (if buffer-file-name
+                  (call-interactively #'save-buffer)))))
 
 ;; global move window keys so non joestar buffers can still have these bindings
 (global-set-key (kbd "M-<left>") #'(lambda ()
@@ -217,12 +237,18 @@
   (org-indent-mode t)
   :hook org-mode)
 
+(quelpa
+ '(ox-thtml
+   :fetcher git
+   :url "https://github.com/Ma11ock/org-thtml"))
+
 (use-package org-bullets
   :ensure t)
 
 (use-package wc-mode
   :ensure t
   :hook org-mode)
+
 
 (use-package display-line-numbers-mode
   :hook (prog-mode org-mode LaTex-mode)
