@@ -46,7 +46,16 @@
    :url "https://github.com/emacs-jp/replace-colorthemes"))
 (load-theme 'hober)
 
+; arjen
+; dark laptop
+; euphoria
+; simple-1
+
 #+END_SRC
+
+#+RESULTS:
+: t
+
 ** swiper
 #+BEGIN_SRC emacs-lisp
 (use-package swiper
@@ -113,9 +122,7 @@
                                   (delete-backward-char 4)))
 
 (use-package command-log-mode
-  :ensure t
-  :init
-  (global-command-log-mode))
+  :ensure t)
 
 #+END_SRC
 
@@ -297,6 +304,13 @@
 
 #+END_SRC
 * IDE
+** LSP
+#+begin_src emacs-lisp
+
+(use-package lsp-mode
+  :ensure t)
+
+#+end_src
 ** Clojure 
 #+begin_src emacs-lisp
  (use-package cider
@@ -489,13 +503,20 @@
     (setq ess-use-company t)))
 
 #+end_src
+** golang
+#+begin_src emacs-lisp
+(use-package go-mode
+:ensure t
+:init
+(add-to-list 'auto-mode-alist '("\\.go\\'" . go-mode))
+(add-hook 'go-mode-hook 'lsp-deferred)
+(add-hook 'before-save-hook 'gofmt-before-save))
+#+end_src
 ** gdscript
 #+begin_src emacs-lisp
 (use-package gdscript-mode
   :ensure t
   :init
-  (use-package lsp-mode
-    :ensure t)
   (defun lsp--gdscript-ignore-errors (original-function &rest args)
     "Ignore the error message resulting from Godot not replying to the `JSONRPC' request."
     (if (string-equal major-mode "gdscript-mode")
