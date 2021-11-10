@@ -2,7 +2,6 @@
 #+AUTHOR: Ryan Jeffrey
 #+EMAIL: ryan@ryanmj.xyz
 #+OPTIONS: num:nil
-
 * Emacs
 ** init
 #+BEGIN_SRC emacs-lisp
@@ -24,11 +23,12 @@
 (setq x-gtk-use-system-tooltips nil)     
 
 ;; font
-(if (string= system-name "Southpark")
-    (add-to-list 'default-frame-alist
-		         '(font . "Hasklig:size=20:antialias=true:autohint=true:family=mono"))
-  (add-to-list 'default-frame-alist
-		       '(font . "Hasklig:size=16:antialias=true:autohint=true:family=mono")))
+(when (not (eq system-type 'windows-nt))
+    (if (string= system-name "Southpark")
+        (add-to-list 'default-frame-alist
+		             '(font . "Hasklig:size=20:antialias=true:autohint=true:family=mono"))
+      (add-to-list 'default-frame-alist
+		           '(font . "Hasklig:size=16:antialias=true:autohint=true:family=mono"))))
 
 (use-package prettify-symbols-mode
   :init 
@@ -46,10 +46,10 @@
    :url "https://github.com/emacs-jp/replace-colorthemes"))
 (load-theme 'hober)
 
-; arjen
-; dark laptop
-; euphoria
-; simple-1
+                                        ; arjen
+                                        ; dark laptop
+                                        ; euphoria
+                                        ; simple-1
 
 #+END_SRC
 
@@ -294,7 +294,7 @@
 #+End_src
 ** vterm
 #+BEGIN_SRC emacs-lisp
-(when module-file-suffix
+(when (and module-file-suffix (not ( eq system-type 'windows-nt)))
   (use-package vterm
     :ensure t
     :init (setq vterm-always-compile-module t)
@@ -304,12 +304,52 @@
 
 #+END_SRC
 * IDE
-** LSP
+** flutter
 #+begin_src emacs-lisp
 
-(use-package lsp-mode
+(use-package dart-mode
+  :ensure t
+
+  (use-package flutter
+    :ensure t
+    :after dart-mode
+    :bind (:map dart-mode-map
+                ("s-f" . #'flutter-run-or-hot-reload))
+    :custom
+    (flutter-sdk-path "C:\\Users\\Ryan\\Documents\\flutter\\bin")))
+
+(use-package dart-mode
   :ensure t)
 
+(use-package lsp-dart
+  :ensure t)
+#+end_src
+** LSP
+#+begin_src emacs-lisp
+(use-package lsp-mode
+  :ensure t
+  :init
+  ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
+  (setq lsp-keymap-prefix "C-c l")
+  :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
+         (dart-mode . lsp)
+         ;; if you want which-key integration
+         (lsp-mode . lsp-enable-which-key-integration))
+  :commands lsp)
+
+;; optionally
+(use-package lsp-ui :commands lsp-ui-mode :ensure t)
+
+;; optionally if you want to use debugger
+(use-package dap-mode
+:ensure t)
+;; (use-package dap-LANGUAGE) to load the dap adapter for your language
+
+;; optional if you want which-key integration
+(use-package which-key
+:ensure t
+    :config
+    (which-key-mode))
 #+end_src
 ** Clojure 
 #+begin_src emacs-lisp
@@ -379,7 +419,7 @@
   (interactive)
   (insert (shell-command-to-string "echo -n $(date +%Y-%m-%d)")))
 
-(use-package gitignore-mode
+(use-package git-modes
   :ensure t
   :init
   (add-to-list 'auto-mode-alist '("\\.gitignore\\'" . gitignore-mode)) )
@@ -486,22 +526,6 @@
   :ensure t
   :init
   (add-hook 'elpy-mode-hook #'py-autopep8-enable-on-save))
-#+end_src
-** ess (R)
-#+begin_src emacs-lisp
-(use-package ess-site
-  :load-path "/usr/share/emacs/site-lisp/ess/"
-  :commands R
-  
-  :init
-  (add-to-list 'auto-mode-alist '("\\.R\\'" . r-mode))
-  (require 'ess-site)
-  (setq tab-always-indent 'complete)
-  (setq company-idle-delay 0.1)
-  (ess-toggle-underscore nil)
-  (with-eval-after-load 'ess
-    (setq ess-use-company t)))
-
 #+end_src
 ** golang
 #+begin_src emacs-lisp
