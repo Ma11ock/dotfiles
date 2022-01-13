@@ -1,40 +1,9 @@
 *selectToClipboard: true
 
+xterm*font: -Misc-Fixed-Medium-R-Normal--20-200-75-75-C-100-ISO10646-1
+xterm*foreground: grey
+xterm*background: black
 XTerm*metaSendsEscape: true
-
-st.font:Hack:size=12:antialias=true:autohint=true:family=mono
-
-! Black
-st.color0: #2e3436
-st.color8: #6e706b
-! Red
-st.color1: #cc0000
-st.color9: #ef2929
-! Green
-st.color2: #9ece9e
-st.color10: #9ece9e
-! Yellow
-st.color3: #f0dfaf
-st.color11: #f0dfaf
-! Blue
-st.color4: #4169E1
-st.color12: #4169E1
-! Magenta
-!*.color5: #c0bed1
-!*.color13: #c0bed1
-! Cyan
-st.color6: #07c7ca
-st.color14: #63e9e9
-! White
-st.color7: #808080
-st.color15: #808080
-
-st.alpha: 0.8
-
-
-*.background: #1f1f2a
-*.foreground: #bcbcc6
-
 ! xscreensaver
 xscreensaver.fade:        false
 xscreensaver.unfade:      falseXcursor.theme: Breeze-2~Lightd

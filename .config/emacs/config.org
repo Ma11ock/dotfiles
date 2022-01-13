@@ -234,6 +234,7 @@
         org-edit-src-content-indentation 0)
   (require 'org-tempo)
   (add-hook 'org-mode-hook 'toggle-truncate-lines)
+
   (setq org-src-tab-acts-natively t)
   :bind (:map org-mode-map
               ("M-S-<up>" . 'text-scale-increase)
@@ -262,34 +263,40 @@
   :init
   (setq display-line-numbers-type 'relative))
 
-(use-package company-auctex
-  :ensure t)
 
 ;; Configuring LaTeX must be done like this because of legacy. 
 (use-package tex-mode
   :ensure auctex
   :init
+  (use-package company-auctex
+    :ensure t)
+
+  (use-package auctex-latexmk
+    :ensure t)
+
+  (require 'tex-buf)
   (setq TeX-auto-save t)
   (setq TeX-parse-self t)
+  (setq Tex-command-default "LatexMk")
   (setq-default TeX-master nil)
   (setq-default TeX-engine 'luatex)
   (setq-default TeX-PDF-mode t)
+  (setq-default TeX-show-compilation nil)
+  (setq-default TeX-process-asynchronous t)
+  ;(setq-default TeX-save-query nil)
   (add-hook 'LaTeX-mode-hook #'flyspell-mode)
   (add-hook 'LaTeX-mode-hook #'wc-mode)
   (add-hook 'LaTeX-mode-hook #'company-auctex-init)
   (add-hook 'LaTeX-mode-hook #'company-mode)
   (add-hook 'LaTeX-mode-hook #'TeX-source-correlate-mode)
-  
-  ;; (use-package auctex-latexmk
-  ;;   :ensure t
-  ;;   :init
-  ;;   (add-to-list 'TeX-command-list '("-pvc"))
-  ;;   (auctex-latexmk-setup)
-  ;;   (add-hook 'LaTeX-mode-hook
-  ;;             (lambda ()
-  ;;               (add-hook 'after-save-hook #'(lambda ()
-  ;;                                              (TeX-command-master "LaTeX")) nil t))))
-  )
+  (add-hook 'LaTeX-mode-hook #'TeX-interactive-mode)
+  :config
+  (add-hook 'after-save-hook #'(lambda ()
+                                 (let* ((master-file (TeX-master-file)))
+                                   (TeX-command "LatexMk" #'TeX-master-file))))
+
+  (require 'auctex-latexmk)
+  (auctex-latexmk-setup))
 
 #+End_src
 ** vterm
