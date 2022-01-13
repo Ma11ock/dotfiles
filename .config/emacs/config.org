@@ -26,9 +26,9 @@
 (when (not (eq system-type 'windows-nt))
     (if (string= system-name "Southpark")
         (add-to-list 'default-frame-alist
-		             '(font . "Hasklig:size=20:antialias=true:autohint=true:family=mono"))
+		             '(font . "Iosevka:size=22"))
       (add-to-list 'default-frame-alist
-		           '(font . "Hasklig:size=16:antialias=true:autohint=true:family=mono"))))
+		           '(font . "Iosevka:size=18"))))
 
 (use-package prettify-symbols-mode
   :init 
@@ -301,7 +301,7 @@
 #+End_src
 ** vterm
 #+BEGIN_SRC emacs-lisp
-(when (and module-file-suffix (not ( eq system-type 'windows-nt)))
+(when (and module-file-suffix (not (eq system-type 'windows-nt)))
   (use-package vterm
     :ensure t
     :init (setq vterm-always-compile-module t)
@@ -323,6 +323,7 @@
     :bind (:map dart-mode-map
                 ("s-f" . #'flutter-run-or-hot-reload))
     :custom
+;; TODO linux
     (flutter-sdk-path "C:\\Users\\Ryan\\Documents\\flutter\\bin")))
 
 (use-package dart-mode
