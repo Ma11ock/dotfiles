@@ -53,6 +53,16 @@
    :fetcher git
    :url "https://github.com/emacs-jp/replace-colorthemes"))
 (load-theme 'hober)
+;; Clarity
+;; Hober
+;; Comidia
+;; Dark laptop
+;; euphoria
+;; late-night
+;; ld-dark
+;; simple-1
+;; subdued
+;; TODO make joe theme
 
                                         ; arjen
                                         ; dark laptop
@@ -186,13 +196,13 @@
     :init
     (evil-collection-init))
   (setq-default evil-cross-lines t)
-  (setq evil-normal-state-tag   (propertize " COMMAND " 'face '((:background "dark khaki" :foreground "black")))
+  (setq evil-normal-state-tag   (propertize " COMMAND " 'face '((:background "red" :foreground "black")))
         evil-emacs-state-tag    (propertize "  EMACS  " 'face '((:background "turquoise" :foreground "black")))
-        evil-insert-state-tag   (propertize " ------- " 'face '((:background "dark sea green" :foreground "black")))
-        evil-replace-state-tag  (propertize " REPLACE " 'face '((:background "dark orange" :foreground "black")))
-        evil-motion-state-tag   (propertize "  MOTION " 'face '((:background "khaki" :foreground "black")))
-        evil-visual-state-tag   (propertize "  VISUAL " 'face '((:background "light salmon" :foreground "black")))
-        evil-operator-state-tag (propertize " OPERATE " 'face '((:background "sandy brown" :foreground "black"))))
+        evil-insert-state-tag   (propertize " ------- " 'face '((:background "green" :foreground "black")))
+        evil-replace-state-tag  (propertize " REPLACE " 'face '((:background "orange" :foreground "black")))
+        evil-motion-state-tag   (propertize "  MOTION " 'face '((:background "cyan" :foreground "black")))
+        evil-visual-state-tag   (propertize "  VISUAL " 'face '((:background "salmon" :foreground "black")))
+        evil-operator-state-tag (propertize " OPERATE " 'face '((:background "magenta" :foreground "black"))))
   (setq evil-insert-state-cursor '(bar  "green")
         evil-normal-state-cursor '(box "magenta"))
 
@@ -327,6 +337,46 @@
                 ("M-i" . 'ido-switch-buffer))))
 
 #+END_SRC
+** ivy
+#+begin_src emacs-lisp
+
+(use-package ivy
+  :ensure t
+  :init
+  (ivy-mode 1)
+  (setq ivy-use-virtual-buffers t)
+  (setq enable-recursive-minibuffers t)
+
+  (define-key minibuffer-local-map (kbd "C-r") 'counsel-minibuffer-history)
+;; Swiper
+  (evil-define-key 'normal 'global (kbd "<leader>f") #'swiper)
+;; Counsel
+  (evil-define-key 'normal 'global (kbd "<leader>cf") #'counsel-fzf)
+  (evil-define-key 'normal 'global (kbd "<leader>co") #'counsel-find-file)
+  (evil-define-key 'normal 'global (kbd "<leader>cdf") #'counsel-describe-function)
+  (evil-define-key 'normal 'global (kbd "<leader>cds") #'counsel-describe-variable)
+  (evil-define-key 'normal 'global (kbd "<leader>cdv") #'counsel-describe-symbol)
+  (evil-define-key 'normal 'global (kbd "<leader>cdb") #'counsel-descbinds)
+  (evil-define-key 'normal 'global (kbd "<leader>dl") #'counsel-info-lookup-symbol)
+  (evil-define-key 'normal 'global (kbd "<leader>cg") #'counsel-git)
+  (evil-define-key 'normal 'global (kbd "<leader>cG") #'counsel-grep)
+  (evil-define-key 'normal 'global (kbd "<leader>cl") #'counsel-locate)
+  (evil-define-key 'normal 'global (kbd "<leader>ca") #'counsel-ag)
+  (evil-define-key 'normal 'global (kbd "<leader>cr") #'counsel-rhythmbox)
+  (evil-define-key 'normal 'global (kbd "<leader>cu") #'counsel-unicode-char)
+  (evil-define-key 'normal 'global (kbd "<leader>cu") #'counsel-file-jump)
+  (evil-define-key 'normal 'global (kbd "<leader>cb") #'counsel-bookmark)
+  (evil-define-key 'normal 'global (kbd "<leader>cu") #'counsel-org-file)
+  (global-set-key (kbd "M-x") 'counsel-M-x)
+  (evil-define-key 'normal 'global (kbd "<leader>SPC") #'counsel-M-x)
+;; General ivy
+  (evil-define-key 'normal 'global (kbd "<leader>ip") #'ivy-push-view)
+  (evil-define-key 'normal 'global (kbd "<leader>iP") #'ivy-pop-view)
+  (evil-define-key 'normal 'global (kbd "<leader>is") #'ivy-switch-buffer)
+  (evil-define-key 'normal 'global (kbd "<leader>ir") #'ivy-resume)
+  (global-set-key (kbd "M-i") 'ivy-switch-buffer))
+
+#+end_src
 * IDE
 ** flutter
 #+begin_src emacs-lisp
@@ -632,9 +682,6 @@
 
 ;; tell emacs not to use the clipboard
                                         ;(setq x-select-enable-clipboard nil)
-
-(global-set-key (kbd "M-i") 'ido-switch-buffer)
-
 ;; Left-to-right by default for slight performance increase.
 (setq-default bidi-paragraph-direction 'left-to-right)
 (setq bidi-inhibit-bpa t)
