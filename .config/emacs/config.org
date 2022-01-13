@@ -14,6 +14,15 @@
 (add-to-list 'default-frame-alist '(alpha . (85 . 85)))
 
 #+END_SRC
+** quelpa packages
+#+begin_src emacs-lisp
+
+(quelpa
+ '(ox-thtml
+   :fetcher git
+   :url "https://github.com/juanjosegarciaripoll/org-thtml"))
+
+#+end_src
 ** font and theme
 #+BEGIN_SRC emacs-lisp
 
@@ -91,12 +100,20 @@
 ;; scroll one line at a time (less "jumpy" than defaults)
 
 (setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) ;; one line at a time
-
 (setq mouse-wheel-progressive-speed nil) ;; don't accelerate scrolling
-
 (setq mouse-wheel-follow-mouse 't) ;; scroll window under mouse
 
-(setq scroll-step 1) ;; keyboard scroll one line at a time
+(use-package good-scroll
+  :ensure t
+  :init
+  (good-scroll-mode 1))
+
+                                        ; TODO smooth-scrolling mode has a bug where it annoyingly jumps when a virtual line exists
+(use-package smooth-scrolling
+  :ensure t
+  :init
+  (setq smooth-scroll-margin 1) 
+  (smooth-scrolling-mode 1))
 
 ;; Column 80 fill line.
 (setq display-fill-column-indicator-column 80)
@@ -567,6 +584,13 @@
   (setq gdscript-docs-local-path "/home/ryan/Documents/godot-docs/_build/html/")
   :config
   (auto-revert-mode))
+#+end_src
+** glsl
+#+begin_src emacs-lisp
+
+(use-package glsl-mode
+  :ensure t)
+
 #+end_src
 * Text-editor
 ** spellcheck
