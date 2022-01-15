@@ -119,7 +119,7 @@
 (setq vc-follow-symlinks t) ; Otherwise emacs asks
 (setq tramp-terminal-type "tramp") ; See zshrc
 (add-hook 'after-save-hook #'executable-make-buffer-file-executable-if-script-p)
-(toggle-truncate-lines)
+(setq-default truncate-lines t)
 ;; scroll one line at a time (less "jumpy" than defaults)
 
 (setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) ;; one line at a time
@@ -131,12 +131,15 @@
   :init
   (good-scroll-mode 1))
 
-                                        ; TODO smooth-scrolling mode has a bug where it annoyingly jumps when a virtual line exists
 (use-package smooth-scrolling
   :ensure t
   :init
   (setq smooth-scroll-margin 1) 
   (smooth-scrolling-mode 1))
+;; Do not jump scroll
+(setq auto-window-vscroll nil)
+(setq scroll-conservatively 10)
+(setq scroll-margin 1)
 
 ;; Column 80 fill line.
 (setq display-fill-column-indicator-column 80)
@@ -392,6 +395,7 @@
   (evil-define-key 'normal 'global (kbd "<leader>iP") #'ivy-pop-view)
   (evil-define-key 'normal 'global (kbd "<leader>is") #'ivy-switch-buffer)
   (evil-define-key 'normal 'global (kbd "<leader>ir") #'ivy-resume)
+  (evil-define-key 'normal 'global (kbd "<leader>is") #'ivy-switch-buffer)
   (global-set-key (kbd "M-i") 'ivy-switch-buffer))
 
 #+end_src
@@ -460,15 +464,6 @@
   :ensure t)
 #+end_src
 ** all programming languages
-*** todos
-#+BEGIN_SRC emacs-lisp
-(use-package fic-mode
-  :ensure t
-  :init (add-hook 'prog-mode-hook 'fic-mode)
-  :config
-  (fic-mode t))
-
-#+END_SRC
 *** company
 #+begin_src emacs-lisp
 (use-package company
