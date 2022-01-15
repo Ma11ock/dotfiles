@@ -119,6 +119,7 @@
 (setq vc-follow-symlinks t) ; Otherwise emacs asks
 (setq tramp-terminal-type "tramp") ; See zshrc
 (add-hook 'after-save-hook #'executable-make-buffer-file-executable-if-script-p)
+(toggle-truncate-lines)
 ;; scroll one line at a time (less "jumpy" than defaults)
 
 (setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) ;; one line at a time
@@ -208,13 +209,16 @@
     :init
     (evil-collection-init))
   (setq-default evil-cross-lines t)
-  (setq evil-normal-state-tag   (propertize " COMMAND " 'face '((:background "red" :foreground "black")))
-        evil-emacs-state-tag    (propertize "  EMACS  " 'face '((:background "turquoise" :foreground "black")))
-        evil-insert-state-tag   (propertize " ------- " 'face '((:background "green" :foreground "black")))
-        evil-replace-state-tag  (propertize " REPLACE " 'face '((:background "orange" :foreground "black")))
-        evil-motion-state-tag   (propertize "  MOTION " 'face '((:background "cyan" :foreground "black")))
-        evil-visual-state-tag   (propertize "  VISUAL " 'face '((:background "salmon" :foreground "black")))
-        evil-operator-state-tag (propertize " OPERATE " 'face '((:background "magenta" :foreground "black"))))
+
+        ;; Code snippet for color
+        ;;evil-emacs-state-tag    (propertize "  EMACS  " 'face '((:background "turquoise" :foreground "black")))
+  (setq evil-normal-state-tag   (propertize "-COMMAND-" 'face '((:foreground "turquoise")))
+        evil-emacs-state-tag    (propertize "--EMACS--" 'face '((:foreground "blue")))
+        evil-insert-state-tag   (propertize "--INSRT--" 'face '((:foreground "gold")))
+        evil-replace-state-tag  (propertize "-REPLACE-" 'face '((:foreground "cyan")))
+        evil-motion-state-tag   (propertize "--MOTION-" 'face '((:foreground "grey")))
+        evil-visual-state-tag   (propertize "--VISUAL-" 'face '((:foreground "magenta")))
+        evil-operator-state-tag (propertize " OPERATE-" 'face '((:foreground "grey"))))
   (setq evil-insert-state-cursor '(bar  "green")
         evil-normal-state-cursor '(box "magenta"))
 
@@ -229,6 +233,7 @@
   (evil-define-key 'normal 'global (kbd "<leader>o") #'eval-region)
   (evil-define-key 'normal 'global (kbd "<leader>ss") #'split-window-horizontally)
   (evil-define-key 'normal 'global (kbd "<leader>so") #'split-window-vertically)
+  (evil-define-key 'normal 'global (kbd "<leader>x") #'execute-extended-command)
   (evil-define-key 'normal 'global (kbd "<leader>x") #'execute-extended-command)
   ;; set leader key in all states
   (evil-set-leader 'visual (kbd "C-SPC"))
@@ -493,11 +498,8 @@
 (use-package magit
   :ensure t
   :init
-;  (add-hook 'after-init-hook '(lambda ()
-;                                (global-magit-file-mode -1)))
-
-  (add-hook 'diff-mode-hook 'whitespace-mode)
-  (add-hook 'git-commit-setup-hook 'git-commit-turn-on-flyspell))
+  (add-hook 'diff-mode-hook #'whitespace-mode)
+  (add-hook 'git-commit-setup-hook #'git-commit-turn-on-flyspell))
 
 #+end_src
 ** Misc

@@ -70,7 +70,6 @@ function check_last_exit_code() {
   fi
 }
 
-# TODO make this better
 function git_prompt_string() {
     stat .git &>/dev/null && git status | head -n1 | awk '{print $3}'
 }
@@ -96,7 +95,7 @@ bindkey '^[[3~' delete-char
 HISTSIZE=10000
 SAVEHIST=10000
 # Make sure to create this dir and touch history when installing on new system
-HISTFILE=~/.cache/zsh/history
+HISTFILE="$HOME/.cache/zsh/history"
 
 # Write to history immediately
 setopt inc_append_history
@@ -159,7 +158,7 @@ export EDITOR="emacsclient -t -a emacs"
 export VISUAL="emacsclient -c -a emacs"
 
 alias cfk="$EDITOR $HOME/.config/kitty/kitty.conf "
-alias magit="emacsclient -t -e  '(magit)'"
+alias magit="emacsclient -t -e  '(progn (magit) (delete-other-windows))'"
 alias srz='source ~/.zshrc'
 alias jrc='joe $HOME/.config/joestar/joestarrc'
 alias vim='nvim'
@@ -246,6 +245,5 @@ zinit snippet "OMZL::theme-and-appearance.zsh"
 zinit snippet "OMZL::git.zsh"
 zinit snippet "OMZP::mercurial"
 # oh-my-zsh theme
-
 zinit snippet "OMZT::/af-magic"
 
