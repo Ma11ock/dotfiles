@@ -17,6 +17,21 @@ autoload -U colors && colors
 autoload -Uz vcs_info
 precmd() { vcs_info }
 
+# Key hash, for better keybinds.
+typeset -A key
+
+key[Home]=${terminfo[khome]}
+key[End]=${terminfo[kend]}
+key[Insert]=${terminfo[kich1]}
+key[Delete]=${terminfo[kdch1]}
+key[Up]=${terminfo[kcuu1]}
+key[Down]=${terminfo[kcud1]}
+key[Left]=${terminfo[kcub1]}
+key[Right]=${terminfo[kcuf1]}
+key[PageUp]=${terminfo[kpp]}
+key[PageDown]=${terminfo[knp]}
+
+
 # Change cursor shape for different vi modes.
 function zle-keymap-select {
   if [[ ${KEYMAP} == vicmd ]] ||
@@ -188,13 +203,27 @@ source /usr/share/zinit/zinit.zsh 2>/dev/null
 autoload -Uz _zinit
 (( ${+_comps} )) && _comps[zinit]=_zinit
 
+zinit load "zdharma-continuum/fast-syntax-highlighting"
+# Must load after fast-syntax-highlighting
+zinit load "zsh-users/zsh-history-substring-search"
+
+# Vim mode. 
+# The plugin will auto execute this zvm_after_lazy_keybindings function
+# This makes substring history search play nice with vim mode.
+function zvm_after_lazy_keybindings() {
+    # TODO replace key sequence with "${key[Up]}"
+    zvm_bindkey vicmd '^[[A' history-substring-search-up
+    zvm_bindkey vicmd '^[[B' history-substring-search-down
+    zvm_bindkey vicmd 'k' history-substring-search-up
+    zvm_bindkey vicmd 'j' history-substring-search-down
+}
 # Zsh vi mode.
 zinit load "jeffreytse/zsh-vi-mode"
-zinit load "zdharma-continuum/fast-syntax-highlighting"
-#
-zinit load "zsh-users/zsh-history-substring-search"
-bindkey "$terminfo[kcuu1]" history-substring-search-up
-bindkey "$terminfo[kcud1]" history-substring-search-down
+# Also needed for substring history search
+zvm_define_widget history-substring-search-up
+zvm_define_widget history-substring-search-down
+zvm_bindkey viins '^[[A' history-substring-search-up
+zvm_bindkey viins '^[[B' history-substring-search-down
 
 # Zsh plugins to use oh-my-zsh themes 
 zinit snippet "OMZL::spectrum.zsh"
