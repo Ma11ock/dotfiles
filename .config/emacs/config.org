@@ -32,11 +32,11 @@
 
 ;; font
 (when (not (eq system-type 'windows-nt))
-    (if (string= system-name "Southpark")
-        (add-to-list 'default-frame-alist
-		             '(font . "Iosevka:size=22"))
+  (if (string= system-name "Southpark")
       (add-to-list 'default-frame-alist
-		           '(font . "Iosevka:size=18"))))
+		           '(font . "Iosevka:size=22"))
+    (add-to-list 'default-frame-alist
+		         '(font . "Iosevka:size=18"))))
 
 (use-package prettify-symbols-mode
   :init 
@@ -52,7 +52,19 @@
  '(replace-colorthemes
    :fetcher git
    :url "https://github.com/emacs-jp/replace-colorthemes"))
-(load-theme 'hober)
+
+(use-package modus-themes
+  :ensure t
+  :init
+  (setq modus-themes-bold-constructs t
+        modus-themes-mode-line '3d
+        modus-themes-italic-constructs t
+        modus-themes-mixed-fonts nil
+        modus-themes-subtle-line-numbers nil
+        modus-themes-intense-markup t)
+
+  (modus-themes-load-themes)
+  (modus-themes-load-vivendi))
 ;; Clarity
 ;; Hober
 ;; Comidia
