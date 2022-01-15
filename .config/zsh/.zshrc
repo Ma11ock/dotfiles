@@ -17,9 +17,6 @@ autoload -U colors && colors
 autoload -Uz vcs_info
 precmd() { vcs_info }
 
-# Vi mode
-bindkey -v
-
 # Change cursor shape for different vi modes.
 function zle-keymap-select {
   if [[ ${KEYMAP} == vicmd ]] ||
@@ -135,7 +132,7 @@ export DICPATH='/usr/share/hunspell'
 
 # Programming language globals.
 export LANG='en_US.UTF-8'
-export SCRIPTS="$HOME/src/dotfiles/scripts/"
+export SCRIPTS="$HOME/src/dotfiles/scripts/:$HOME/src/scripts"
 export GOARCH="amd64"
 export GOOS="linux"
 export CC="gcc"
@@ -161,6 +158,8 @@ export MEDNAFEN_HOME="$HOME/.config/mednafen/"
 export EDITOR="emacsclient -t -a emacs"
 export VISUAL="emacsclient -c -a emacs"
 
+alias cfk="$EDITOR $HOME/.config/kitty/kitty.conf "
+alias magit="emacsclient -t -e  '(magit)'"
 alias srz='source ~/.zshrc'
 alias jrc='joe $HOME/.config/joestar/joestarrc'
 alias vim='nvim'
@@ -169,13 +168,14 @@ alias cfe="$EDITOR $HOME/.config/emacs/config.org $HOME/.config/emacs/init.el"
 alias jrd='joe -rdonly'
 # default options and shortcuts
 alias rip='abcde -o opus'
-alias ls='ls --color -h --group-directories-first'
+alias ls='ls --hyperlink=auto --color -h --group-directories-first'
+alias lmk='latexmk -lualatex -synctex=1 -pvc'
 
 # Arch based vs debian based package manager aliases
 if type "pacman" &>/dev/null; then
-    alias up='paru -Syu'
+    alias up='yay -Syu'
     alias pac='doas pacman -Syu'
-    alias aur='paru -Syu'
+    alias aur='yay -Syu'
     alias purge='doas pacman -R'
 elif type "apt" &>/dev/null; then
     alias up='doas apt-get update && doas apt-get upgrade'
@@ -207,6 +207,11 @@ function man() {
     [ -z $2 ] && command="$1"
     emacsclient -t -e '(man-mode-shell "'"$command"'")' || man "$@"
 }
+# Create a list of packages to install to move installations.
+function create_pkg_list() {
+    pacman -Qqen > pac.lst
+    pacman -Qqm > aur.lst
+}
 
 # Emacs vterm 
 if [[ "$INSIDE_EMACS" = 'vterm' ]]; then
@@ -223,4 +228,24 @@ bindkey "^[[A" history-beginning-search-backward-end
 bindkey "^[[B" history-beginning-search-forward-end
 unset HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND
 
-source /usr/share/zsh/plugins/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh  2>/dev/null
+# Set up plugins and extensions.
+
+# Zinit.
+source /usr/share/zinit/zinit.zsh 2>/dev/null
+# If source zinit is under compload.
+autoload -Uz _zinit
+(( ${+_comps} )) && _comps[zinit]=_zinit
+
+# Zsh vi mode.
+zinit load "jeffreytse/zsh-vi-mode"
+zinit load "zdharma-continuum/fast-syntax-highlighting"
+
+# Zsh plugins to use oh-my-zsh themes 
+zinit snippet "OMZL::spectrum.zsh"
+zinit snippet "OMZL::theme-and-appearance.zsh"
+zinit snippet "OMZL::git.zsh"
+zinit snippet "OMZP::mercurial"
+# oh-my-zsh theme
+
+zinit snippet "OMZT::/af-magic"
+

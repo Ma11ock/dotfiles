@@ -88,7 +88,6 @@ flycheck_*.el
 !/.config/polybar/desktop
 !/.config/dunst/
 !/.config/dunst/dunstrc
-!/.config/mimeapps.list
 !/.config/zsh/
 !/.config/zsh/zshrc
 !/.config/systemd
@@ -106,3 +105,4 @@ flycheck_*.el
 !/.config/emacs/
 !/.config/emacs/init.el
 !/.config/emacs/config.org
+
