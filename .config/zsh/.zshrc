@@ -13,6 +13,11 @@ then
         PROMPT_COMMAND="printf '\ePtmux;\e\e[<u\e\\'"
 fi
 
+# Shorthands for various modern linux paths
+MY_DATA_DIR="${XDG_DATA_HOME:-${HOME}/.local/share/}"
+MY_CONF_DIR="${XDG_CONFIG_HOME:-${HOME}/.config/}"
+MY_CACHE_DIR="${XDG_CACHE_HOME:-${HOME}/.cache/}"
+
 autoload -U colors && colors
 autoload -Uz vcs_info
 precmd() { vcs_info }
@@ -70,7 +75,7 @@ bindkey '^[[3~' delete-char
 HISTSIZE=10000
 SAVEHIST=10000
 # Make sure to create this dir and touch history when installing on new system
-HISTFILE="$HOME/.cache/zsh/history"
+HISTFILE="$MY_CACHE_DIR/zsh/history"
 
 # Write to history immediately
 setopt inc_append_history
@@ -126,21 +131,24 @@ export BROWSER='brave'
 export COLORTERM='truecolor'
 export NODE_PATH="$HOME/src/node_modules"
 # TODO patch mednafen to use .config/ by default
-export MEDNAFEN_HOME="$HOME/.config/mednafen/"
+export MEDNAFEN_HOME="$MY_CONF_DIR/mednafen/"
 
 
 # Editor and zsh
 export EDITOR="emacsclient -t -a emacs"
 export VISUAL="emacsclient -c -a emacs"
-
-alias cfk="$EDITOR $HOME/.config/kitty/kitty.conf "
-alias magit="emacsclient -t -e  '(progn (magit) (delete-other-windows))'"
+# Shortcuts to config files and folders
+alias cfk="$EDITOR $MY_CONF_DIR/kitty/kitty.conf "
 alias srz='source ~/.zshrc'
-alias jrc='joe $HOME/.config/joestar/joestarrc'
-alias vim='nvim'
-alias cfz="$EDITOR $HOME/.config/zsh/.zshrc"
-alias cfe="$EDITOR $HOME/.config/emacs/config.org $HOME/.config/emacs/init.el"
-alias jrd='joe -rdonly'
+alias jrc='joe $MY_CONF_DIR/joestar/joestarrc'
+if type "nvim" &>/dev/null; then
+    alias vim='nvim'
+    alias cfv="nvim $MY_CONF_DIR/nvim/init.vim"
+else
+    alias cfv="vim $HOME/.vimrc"
+fi
+alias cfz="$EDITOR $MY_CONF_DIR/zsh/.zshrc"
+alias cfe="$EDITOR $MY_CONF_DIR/emacs/config.org $MY_CONF_DIR/emacs/init.el"
 # default options and shortcuts
 alias rip='abcde -o opus'
 alias ls='ls --hyperlink=auto --color -h --group-directories-first'
@@ -170,13 +178,14 @@ alias youaud='youtube-dl --output "%(title)s.%(ext)s" --extract-audio --audio-fo
 alias otheru="youtube-dl -f 'bestvideo[height<=480,ext=mp4]+bestaudio[ext=mp3]/mp4' --write-all-thumbnails --merge-output-format mp4"
 alias you7="youtube-dl -f 'bestvideo[height<=720,ext=mp4]+bestaudio[ext=mp3]/mp4' --write-all-thumbnails --merge-output-format mp4"
 alias rm='rm -v'
-# Shortcuts to config files and folders
-alias i3cfg='joe ~/.config/i3/config'
-alias jrz='joe ~/.zshrc'
 alias comicv='ls -v | sxiv -'
 alias ec='emacsclient -c'
 alias et='emacsclient -t'
 # Basically an alias for man
+
+# emacs aliases 
+
+alias magit="emacsclient -t -e  '(progn (magit) (delete-other-windows))'"
 function man() {
     local command="$2($1)"
     [ -z $2 ] && command="$1"
@@ -201,7 +210,7 @@ setopt interactivecomments
 if type "pacman" &>/dev/null; then
     source /usr/share/zinit/zinit.zsh 2>/dev/null
 else
-    ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
+    ZINIT_HOME="$MY_CACHE_DIR/zinit/zinit.git"
     [ ! -d "$ZINIT_HOME" ] && mkdir -p "$(dirname $ZINIT_HOME)" && git clone 'git@github.com:zdharma-continuum/zinit.git' "$ZINIT_HOME"
     source "${ZINIT_HOME}/zinit.zsh"
 fi
