@@ -198,7 +198,13 @@ setopt interactivecomments
 # Set up plugins and extensions.
 
 # Zinit.
-source /usr/share/zinit/zinit.zsh 2>/dev/null
+if type "pacman" &>/dev/null; then
+    source /usr/share/zinit/zinit.zsh 2>/dev/null
+else
+    ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
+    [ ! -d "$ZINIT_HOME" ] && mkdir -p "$(dirname $ZINIT_HOME)" && git clone 'git@github.com/zdharma-continuum/zinit.git' "$ZINIT_HOME"
+    source "${ZINIT_HOME}/zinit.zsh"
+fi
 # If source zinit is under compload.
 autoload -Uz _zinit
 (( ${+_comps} )) && _comps[zinit]=_zinit
