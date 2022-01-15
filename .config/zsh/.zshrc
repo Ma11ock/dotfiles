@@ -14,9 +14,9 @@ then
 fi
 
 # Shorthands for various modern linux paths
-MY_DATA_DIR="${XDG_DATA_HOME:-${HOME}/.local/share/}"
-MY_CONF_DIR="${XDG_CONFIG_HOME:-${HOME}/.config/}"
-MY_CACHE_DIR="${XDG_CACHE_HOME:-${HOME}/.cache/}"
+MY_DATA_DIR="${XDG_DATA_HOME:-${HOME}/.local/share}"
+MY_CONF_DIR="${XDG_CONFIG_HOME:-${HOME}/.config}"
+MY_CACHE_DIR="${XDG_CACHE_HOME:-${HOME}/.cache}"
 
 autoload -U colors && colors
 autoload -Uz vcs_info
