@@ -211,7 +211,7 @@ if type "pacman" &>/dev/null; then
     source /usr/share/zinit/zinit.zsh 2>/dev/null
 else
     ZINIT_HOME="$MY_CACHE_DIR/zinit/zinit.git"
-    [ ! -d "$ZINIT_HOME" ] && mkdir -p "$(dirname $ZINIT_HOME)" && git clone 'git@github.com:zdharma-continuum/zinit.git' "$ZINIT_HOME"
+    [ ! -d "$ZINIT_HOME" ] && mkdir -p "$(dirname $ZINIT_HOME)" && git clone 'https://github.com/zdharma-continuum/zinit.git' "$ZINIT_HOME"
     source "${ZINIT_HOME}/zinit.zsh"
 fi
 # If source zinit is under compload.
