@@ -29,52 +29,12 @@ function zle-keymap-select {
     echo -ne '\e[5 q'
   fi
 }
-zle -N zle-keymap-select
-zle-line-init() {
-    zle -K viins # initiate `vi insert` as keymap (can be removed if `bindkey -V` has been set elsewhere)
-    echo -ne "\e[5 q"
-}
-zle -N zle-line-init
-echo -ne '\e[5 q' # Use beam shape cursor on startup.
-preexec() { echo -ne '\e[5 q' ;} # Use beam shape cursor for each new prompt.
-
 setopt PROMPT_SUBST
 
 ssh_info() {
   [[ "$SSH_CONNECTION" != '' ]] && echo '%(!.%{$fg[red]%}.%{$fg[yellow]%})%n%{$reset_color%}@%{$fg[green]%}%m%{$reset_color%}:' || echo ''
 }
 
-color_codes=(1 2 4 5 6 9 10 12 13 14)
-
-
-color_code_from_str() {
-    local h=$(sum <<< "$1" | cut -f1 -d' ')
-    local i=$((h % ${#color_codes}))
-    printf ${color_codes[i]}
-}
-
-
-user="%F{$(color_code_from_str "$USER")}%n"
-host="%F{$(color_code_from_str "$HOST")}%m"
-PROMPT='%(?.%F{243}.%F{red})%U${(l:COLUMNS:: :)?}%u
-%B%{$fg[red]%}[%{$fg[yellow]%}%n%{$fg[green]%}@%{$fg[blue]%}%M %{$fg[magenta]%}%~%{$fg[red]%}]%{$reset_color%}$%b '
-
-function check_last_exit_code() {
-  local LAST_EXIT_CODE=$?
-  if [[ $LAST_EXIT_CODE -ne 0 ]]; then
-      local EXIT_CODE_PROMPT=' '
-      EXIT_CODE_PROMPT+="%{$fg[red]%}-%{$reset_color%}"
-      EXIT_CODE_PROMPT+="%{$fg_bold[red]%}$LAST_EXIT_CODE%{$reset_color%}"
-      EXIT_CODE_PROMPT+="%{$fg[red]%}-%{$reset_color%}"
-      echo "$EXIT_CODE_PROMPT"
-  fi
-}
-
-function git_prompt_string() {
-    stat .git &>/dev/null && git status | head -n1 | awk '{print $3}'
-}
-
-RPROMPT='$(git_prompt_string)'
 
 setopt autocd
 stty stop undef
@@ -138,18 +98,19 @@ export CC="gcc"
 export CXX="g++"
 export CGO_ENABLED="1"
 export GOROOT="/usr/lib/go"
-export GOBIN="$HOME/src/goproj/bin/"
-export GOPATH="$HOME/src/goproj/"
+export GOBIN="$HOME/src/go/bin/"
+export GOPATH="$HOME/src/go/"
 export PATH="$PATH:$GOROOT/bin:/usr/lib/go/bin/:$SCRIPTS:$HOME/bin/"
 
-# The HURD does have /sbin in its path
+# The HURD does not have /sbin in its path
 (uname -a | grep "gnu-mach" -qi) && export PATH="$PATH:/sbin"
 
 export MUSIC="$HOME/Music/"
-export TERMINAL='xterm-256color'
+export TERMINAL='kitty-xterm'
 export BROWSER='brave'
 export COLORTERM='truecolor'
 export NODE_PATH="$HOME/src/node_modules"
+# TODO patch mednafen to use .config/ by default
 export MEDNAFEN_HOME="$HOME/.config/mednafen/"
 
 
@@ -162,7 +123,7 @@ alias magit="emacsclient -t -e  '(progn (magit) (delete-other-windows))'"
 alias srz='source ~/.zshrc'
 alias jrc='joe $HOME/.config/joestar/joestarrc'
 alias vim='nvim'
-alias cfz="$EDITOR $HOME/.zshrc"
+alias cfz="$EDITOR $HOME/.config/zsh/.zshrc"
 alias cfe="$EDITOR $HOME/.config/emacs/config.org $HOME/.config/emacs/init.el"
 alias jrd='joe -rdonly'
 # default options and shortcuts
@@ -219,14 +180,6 @@ fi
 
 setopt interactivecomments
 
-setopt HIST_IGNORE_ALL_DUPS
-autoload -U history-search-end
-zle -N history-beginning-search-backward-end history-search-end
-zle -N history-beginning-search-forward-end history-search-end
-bindkey "^[[A" history-beginning-search-backward-end
-bindkey "^[[B" history-beginning-search-forward-end
-unset HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND
-
 # Set up plugins and extensions.
 
 # Zinit.
@@ -238,6 +191,10 @@ autoload -Uz _zinit
 # Zsh vi mode.
 zinit load "jeffreytse/zsh-vi-mode"
 zinit load "zdharma-continuum/fast-syntax-highlighting"
+#
+zinit load "zsh-users/zsh-history-substring-search"
+bindkey "$terminfo[kcuu1]" history-substring-search-up
+bindkey "$terminfo[kcud1]" history-substring-search-down
 
 # Zsh plugins to use oh-my-zsh themes 
 zinit snippet "OMZL::spectrum.zsh"
