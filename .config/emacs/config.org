@@ -245,7 +245,8 @@
   (evil-define-key nil 'global (kbd "<leader>ss") #'split-window-horizontally)
   (evil-define-key nil 'global (kbd "<leader>so") #'split-window-vertically)
   (evil-define-key nil 'global (kbd "<leader>x") #'execute-extended-command)
-  (evil-define-key nil org-mode-map (kbd "TAB") #'org-cycle)
+;; This keybind must be bound to normal map for some reason.
+  (evil-define-key 'normal org-mode-map (kbd "TAB") #'org-cycle)
   ;; set leader key in all states
   (evil-set-leader 'insert (kbd "C-SPC"))
   (evil-set-leader 'normal (kbd "SPC"))
