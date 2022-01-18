@@ -100,6 +100,11 @@
 
 ** Misc
 #+BEGIN_SRC emacs-lisp
+(use-package rainbow-delimiters
+:ensure t
+:hook (prog-mode . rainbow-delimiters-mode))
+
+(save-place-mode 1) 
 (setq tty-menu-open-use-tmm t)
 (global-set-key [f10] 'tmm-menubar)
 (put 'upcase-region 'disabled nil)
@@ -213,8 +218,8 @@
     (evil-collection-init))
   (setq-default evil-cross-lines t)
 
-        ;; Code snippet for color
-        ;;evil-emacs-state-tag    (propertize "  EMACS  " 'face '((:background "turquoise" :foreground "black")))
+  ;; Code snippet for color
+  ;;evil-emacs-state-tag    (propertize "  EMACS  " 'face '((:background "turquoise" :foreground "black")))
   (setq evil-normal-state-tag   (propertize "-COMMAND-" 'face '((:foreground "turquoise")))
         evil-emacs-state-tag    (propertize "--EMACS--" 'face '((:foreground "blue")))
         evil-insert-state-tag   (propertize "--INSRT--" 'face '((:foreground "gold")))
@@ -229,21 +234,22 @@
     :ensure t
     :init
     (evil-terminal-cursor-changer-activate))
+
   (global-unset-key (kbd "C-SPC"))
   (define-key evil-normal-state-map (kbd "SPC") nil)
+  (define-key evil-visual-state-map (kbd "SPC") nil)
+  (define-key evil-motion-state-map (kbd "SPC") nil)
 
-  (evil-define-key 'normal 'globas (kbd "<leader>e") #'eval-region)
-  (evil-define-key 'normal 'global (kbd "<leader>o") #'eval-region)
-  (evil-define-key 'normal 'global (kbd "<leader>ss") #'split-window-horizontally)
-  (evil-define-key 'normal 'global (kbd "<leader>so") #'split-window-vertically)
-  (evil-define-key 'normal 'global (kbd "<leader>x") #'execute-extended-command)
-  (evil-define-key 'normal 'global (kbd "<leader>x") #'execute-extended-command)
-  (evil-define-key 'normal org-mode-map (kbd "TAB") #'org-cycle)
+  (evil-define-key nil 'global (kbd "<leader>er") #'eval-region)
+  (evil-define-key nil 'global (kbd "<leader>ez") #'suspend-frame)
+  (evil-define-key nil 'global (kbd "<leader>ss") #'split-window-horizontally)
+  (evil-define-key nil 'global (kbd "<leader>so") #'split-window-vertically)
+  (evil-define-key nil 'global (kbd "<leader>x") #'execute-extended-command)
+  (evil-define-key nil org-mode-map (kbd "TAB") #'org-cycle)
   ;; set leader key in all states
-  (evil-set-leader 'visual (kbd "C-SPC"))
   (evil-set-leader 'insert (kbd "C-SPC"))
-  ;; set leader key in normal state
   (evil-set-leader 'normal (kbd "SPC"))
+  (evil-set-leader 'visual (kbd "SPC"))
 
   (define-key evil-visual-state-map (kbd "TAB") #'indent-region)
 

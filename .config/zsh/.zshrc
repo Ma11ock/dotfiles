@@ -1,4 +1,3 @@
-
 # For emacs TRAMP mode.
 if [[ $TERM == "tramp" ]]; then
     unsetopt zle
