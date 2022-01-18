@@ -11,13 +11,13 @@ Plug 'preservim/nerdtree'
 Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-fugitive'
 Plug 'Raimondi/delimitMate'
-Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-Plug 'zchee/deoplete-jedi'
 Plug 'scrooloose/nerdcommenter'
 Plug 'sbdchd/neoformat'
 Plug 'davidhalter/jedi-vim'
 Plug 'neomake/neomake'
 Plug 'machakann/vim-highlightedyank'
+Plug 'projekt0n/github-nvim-theme'
+
 
 call plug#end()
 
@@ -51,7 +51,9 @@ hi HighlightedyankRegion cterm=reverse gui=reverse
 " set highlight duration time to 1000 ms, i.e., 1 second
 let g:highlightedyank_highlight_duration = 1000
 
-colorscheme dracula
+
+colorscheme github_dark_colorblind
+
 
 hi CursorLineNR cterm=bold
 augroup CLNRSet

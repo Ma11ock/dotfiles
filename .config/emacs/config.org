@@ -491,6 +491,9 @@
 
 ** magit
 #+begin_src emacs-lisp
+(use-package with-editor
+:ensure t)
+
 (use-package magit
   :ensure t
   :init
