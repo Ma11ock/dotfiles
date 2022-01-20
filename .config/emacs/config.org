@@ -407,9 +407,39 @@
 
 #+end_src
 * IDE
+** LSP
+#+begin_src emacs-lisp
+(use-package lsp-mode
+  :ensure t
+  :init
+  ;; optional if you want which-key integration
+  (use-package which-key
+    :ensure t
+    :config
+    (which-key-mode))
+  ;; optionally
+  (use-package lsp-ui :commands lsp-ui-mode :ensure t)
+
+  ;; optionally if you want to use debugger
+  (use-package dap-mode
+    :ensure t)
+
+  (use-package lsp-treemacs
+    :ensure t
+    :hook dart-mode)
+  ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
+  (setq lsp-keymap-prefix "C-c l")
+  :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
+         (dart-mode . lsp)
+         ;; if you want which-key integration
+         (lsp-mode . lsp-enable-which-key-integration))
+  :commands lsp)
+
+;; (use-package dap-LANGUAGE) to load the dap adapter for your language
+
+#+end_src
 ** flutter
 #+begin_src emacs-lisp
-
 (use-package dart-mode
   :ensure t
   :init
@@ -419,41 +449,23 @@
     :bind (:map dart-mode-map
                 ("s-f" . #'flutter-run-or-hot-reload))
     :custom
-;; TODO linux
-    (flutter-sdk-path "C:\\Users\\Ryan\\Documents\\flutter\\bin")))
+    (when (eq system-type 'windows-nt)
+      (flutter-sdk-path "C:\\Users\\Ryan\\Documents\\flutter\\bin")))
 
-(use-package dart-mode
-  :ensure t)
+  (use-package lsp-dart
+    :ensure t
+    :hook dart-mode)
 
-(use-package lsp-dart
-  :ensure t)
-#+end_src
-** LSP
-#+begin_src emacs-lisp
-(use-package lsp-mode
-  :ensure t
-  :init
-  ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
-  (setq lsp-keymap-prefix "C-c l")
-  :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
-         (dart-mode . lsp)
-         ;; if you want which-key integration
-         (lsp-mode . lsp-enable-which-key-integration))
-  :commands lsp)
+  (use-package hover
+    :ensure t
+    :hook dart-mode)
 
-;; optionally
-(use-package lsp-ui :commands lsp-ui-mode :ensure t)
+  (setq gc-cons-threshold (* 100 1024 1024)
+        read-process-output-max (* 1024 1024)
+        company-minimum-prefix-length 1
+        lsp-lens-enable t
+        lsp-signature-auto-activate nil))
 
-;; optionally if you want to use debugger
-(use-package dap-mode
-:ensure t)
-;; (use-package dap-LANGUAGE) to load the dap adapter for your language
-
-;; optional if you want which-key integration
-(use-package which-key
-:ensure t
-    :config
-    (which-key-mode))
 #+end_src
 ** Clojure 
 #+begin_src emacs-lisp
@@ -601,6 +613,9 @@
 #+begin_src emacs-lisp
 (setq js-indent-level 2)
 (use-package json-mode
+  :ensure t)
+;; Typescript
+(use-package typescript-mode
   :ensure t)
 #+end_src
 ** Python
