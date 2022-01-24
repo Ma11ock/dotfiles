@@ -4,6 +4,7 @@
 
 
 ;;; Code:
+(prefer-coding-system 'utf-8-unix)
 
 (if (eq system-type 'windows-nt)
     (setq user-emacs-directory (concat (getenv "HOME") "/.emacs.d/"))
