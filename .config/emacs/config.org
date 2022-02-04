@@ -407,6 +407,13 @@
 
 #+end_src
 * IDE
+** Prettify
+#+begin_src emacs-lisp
+
+(use-package format-all
+:ensure t)
+
+#+end_src
 ** Haskell
 #+begin_src emacs-lisp
 (use-package haskell-mode
