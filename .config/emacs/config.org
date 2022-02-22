@@ -258,12 +258,7 @@ mouse-3: Toggle minor modes"
   (evil-set-leader 'normal (kbd "SPC"))
   (evil-set-leader 'visual (kbd "SPC"))
 
-  (define-key evil-visual-state-map (kbd "TAB") #'indent-region)
-
-  (add-hook 'evil-insert-state-exit-hook
-            (lambda ()
-              (if buffer-file-name
-                  (call-interactively #'save-buffer)))))
+  (define-key evil-visual-state-map (kbd "TAB") #'indent-region))
 
 ;; global move window keys so non joestar buffers can still have these bindings
 (global-set-key (kbd "M-<left>") #'(lambda ()
@@ -294,7 +289,6 @@ mouse-3: Toggle minor modes"
   (setq org-src-preserve-indentation nil 
         org-edit-src-content-indentation 0)
   (require 'org-tempo)
-  (add-hook 'org-mode-hook 'toggle-truncate-lines)
 
   (setq org-src-tab-acts-natively t)
   :bind (:map org-mode-map
@@ -729,6 +723,13 @@ mouse-3: Toggle minor modes"
 (use-package groovy-mode
 :ensure t)
 #+end_src
+** Lua
+#+begin_src emacs-lisp
+
+(use-package lua-mode
+:ensure t)
+
+#+end_src
 * Text-editor
 ** spellcheck
 #+BEGIN_SRC emacs-lisp
@@ -778,6 +779,9 @@ mouse-3: Toggle minor modes"
 ;; For asynchronous.
 (use-package async
   :ensure t)
+
+(use-package emojify
+:ensure t)
 #+END_SRC
 ** snippets
 #+begin_src emacs-lisp

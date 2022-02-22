@@ -119,7 +119,7 @@ export CGO_ENABLED="1"
 export GOROOT="/usr/lib/go"
 export GOBIN="$HOME/src/go/bin/"
 export GOPATH="$HOME/src/go/"
-export PATH="$PATH:$GOROOT/bin:/usr/lib/go/bin/:$SCRIPTS:$HOME/bin/"
+export PATH="$PATH:$GOROOT/bin:/usr/lib/go/bin/:$SCRIPTS:$HOME/bin/:/home/ryan/.local/share/gem/ruby/3.0.0/bin"
 
 # The HURD does not have /sbin in its path
 (uname -a | grep "gnu-mach" -qi) && export PATH="$PATH:/sbin"
