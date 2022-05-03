@@ -119,7 +119,7 @@ export CGO_ENABLED="1"
 export GOROOT="/usr/lib/go"
 export GOBIN="$HOME/src/go/bin/"
 export GOPATH="$HOME/src/go/"
-export PATH="$PATH:$GOROOT/bin:/usr/lib/go/bin/:$SCRIPTS:$HOME/bin/:/home/ryan/.local/share/gem/ruby/3.0.0/bin"
+export PATH="$PATH:$GOROOT/bin:/usr/lib/go/bin/:$SCRIPTS:$HOME/bin/:/home/ryan/.local/share/gem/ruby/3.0.0/bin:$HOME/.pub-cache/bin"
 
 # The HURD does not have /sbin in its path
 (uname -a | grep "gnu-mach" -qi) && export PATH="$PATH:/sbin"
@@ -138,7 +138,7 @@ export EDITOR="emacsclient -t -a emacs"
 export VISUAL="emacsclient -c -a emacs"
 # Shortcuts to config files and folders
 alias cfk="$EDITOR $MY_CONF_DIR/kitty/kitty.conf "
-alias srz='source ~/.zshrc'
+alias srz='source ~/.config/zsh/.zshrc'
 alias jrc='joe $MY_CONF_DIR/joestar/joestarrc'
 if type "nvim" &>/dev/null; then
     alias vim='nvim'
@@ -166,6 +166,7 @@ elif type "apt" &>/dev/null; then
 fi
 
 alias dosu='doas -u root -s'
+alias ll='ls -l'
 alias untar='tar -xvf'
 alias ztar='tar -cvJf'
 alias latex='lualatex'
@@ -182,7 +183,7 @@ alias ec='emacsclient -c'
 alias et='emacsclient -t'
 # Basically an alias for man
 
-# emacs aliases 
+# emacs aliases
 
 alias magit="emacsclient -t -e  '(progn (magit) (delete-other-windows))'"
 function man() {
@@ -196,7 +197,13 @@ function create_pkg_list() {
     pacman -Qqm > aur.lst
 }
 
-# Emacs vterm 
+function eternity() {
+    SDL_SOUNDFONTS=/usr/share/soundfonts/GeneralUser.sf2\
+        SDL_FORCE_SOUNDFONTS=1\
+        /usr/bin/eternity $@
+}
+
+# Emacs vterm
 if [[ "$INSIDE_EMACS" = 'vterm' ]]; then
     alias clear='vterm_printf "51;Evterm-clear-scrollback";tput clear'
 fi
@@ -221,7 +228,7 @@ zinit load "zdharma-continuum/fast-syntax-highlighting"
 # Must load after fast-syntax-highlighting
 zinit load "zsh-users/zsh-history-substring-search"
 
-# Vim mode. 
+# Vim mode.
 # The plugin will auto execute this zvm_after_lazy_keybindings function
 # This makes substring history search play nice with vim mode.
 function zvm_after_lazy_keybindings() {

@@ -108,10 +108,12 @@ mouse-3: Toggle minor modes"
 ** Misc
 #+BEGIN_SRC emacs-lisp
 (use-package rainbow-delimiters
-:ensure t
-:hook (prog-mode . rainbow-delimiters-mode))
+  :ensure t
+  :hook (prog-mode . rainbow-delimiters-mode))
 
-(save-place-mode 1) 
+(add-hook 'prog-mode-hook #'(lambda ()
+                              (setq show-trailing-whitespace t)))
+(save-place-mode 1)
 (setq tty-menu-open-use-tmm t)
 (global-set-key [f10] 'tmm-menubar)
 (put 'upcase-region 'disabled nil)
@@ -121,7 +123,7 @@ mouse-3: Toggle minor modes"
 (setq-default tab-width 4)
 (setq column-number-mode t)
 (tool-bar-mode -1)
-(menu-bar-mode -1) 
+(menu-bar-mode -1)
 (scroll-bar-mode -1)
 (setq ring-bell-function 'ignore)
 (blink-cursor-mode 0)
@@ -809,7 +811,7 @@ mouse-3: Toggle minor modes"
 * emacs-os
 #+begin_src emacs-lisp
 (when 
-    (or (string= system-name "Southpark") (string= system-name "Springfield"))
+    (or (string= system-name "arlen") (string= system-name "Springfield"))
   (require 'ryan-os))
 #+end_src
 
