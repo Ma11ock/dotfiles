@@ -155,9 +155,9 @@ alias lmk='latexmk -lualatex -synctex=1 -pvc'
 
 # Arch based vs debian based package manager aliases
 if type "pacman" &>/dev/null; then
-    alias up='yay -Syu'
+    alias up='paru -Syu'
     alias pac='doas pacman -Syu'
-    alias aur='yay -Syu'
+    alias aur='paru -Syu'
     alias purge='doas pacman -R'
 elif type "apt" &>/dev/null; then
     alias up='doas apt-get update && doas apt-get upgrade'
