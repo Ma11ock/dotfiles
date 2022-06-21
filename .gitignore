@@ -107,4 +107,7 @@ flycheck_*.el
 !/.config/emacs/
 !/.config/emacs/init.el
 !/.config/emacs/config.org
+!/.config/ncmpcpp
+!/.config/ncmpcpp/config
+!/.config/ncmpcpp/bindings
 

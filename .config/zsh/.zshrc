@@ -1,5 +1,5 @@
 # For emacs TRAMP mode.
-if [[ $TERM == "tramp" ]]; then
+if [[ $TERM == "tramp" || $TERM == "dumb" ]]; then
     unsetopt zle
     unsetopt prompt_cr
     PS1='$ '
@@ -201,6 +201,44 @@ function eternity() {
     SDL_SOUNDFONTS=/usr/share/soundfonts/GeneralUser.sf2\
         SDL_FORCE_SOUNDFONTS=1\
         /usr/bin/eternity $@
+}
+
+function det() {
+    local realargs=()
+    for a in $@; do
+        realargs+="/sudo::$a"
+    done
+
+    ec $realargs
+}
+
+function shet() {
+    local realargs=()
+    for a in $@; do
+        realargs+="/ssh:$1:${@:1}"
+    done
+
+    et $realargs
+}
+
+function dec() {
+    local realargs=()
+    for a in $@; do
+        realargs+="/sudo::$a"
+    done
+
+    ec $realargs
+}
+
+function shec() {
+    local realargs=()
+    for a in $@; do
+        realargs+="/ssh:$1:${@:2}"
+    done
+
+    echo "${@:2}"
+
+    ec $realargs
 }
 
 # Emacs vterm
