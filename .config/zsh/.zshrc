@@ -209,7 +209,7 @@ function det() {
         realargs+="/sudo::$a"
     done
 
-    ec $realargs
+    et $realargs
 }
 
 function shet() {

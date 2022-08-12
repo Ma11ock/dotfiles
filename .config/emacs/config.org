@@ -10,9 +10,6 @@
 
 (defalias 'yes-or-no-p 'y-or-n-p)
 
-(set-frame-parameter (selected-frame) 'alpha '(85 . 85))
-(add-to-list 'default-frame-alist '(alpha . (85 . 85)))
-
 #+END_SRC
 ** quelpa packages
 #+begin_src emacs-lisp
@@ -34,9 +31,9 @@
 (when (not (eq system-type 'windows-nt))
   (if (string= system-name "Southpark")
       (add-to-list 'default-frame-alist
-		           '(font . "Ubuntu Mono:size=22"))
+		           '(font . "Meslo LG M DZ:size=16"))
     (add-to-list 'default-frame-alist
-		         '(font . "Ubuntu Mono:size=24"))))
+		         '(font . "Meslo LG M DZ:size=16"))))
 
 (use-package prettify-symbols-mode
   :init 
@@ -376,6 +373,7 @@ mouse-3: Toggle minor modes"
   (use-package auctex-latexmk
     :ensure t)
 
+  :config
   (require 'tex-buf)
   (setq TeX-auto-save t)
   (setq TeX-parse-self t)
@@ -392,7 +390,6 @@ mouse-3: Toggle minor modes"
   (add-hook 'LaTeX-mode-hook #'company-mode)
   (add-hook 'LaTeX-mode-hook #'TeX-source-correlate-mode)
   (add-hook 'LaTeX-mode-hook #'TeX-interactive-mode)
-  :config
   (add-hook 'after-save-hook #'(lambda ()
                                  (let* ((master-file (TeX-master-file)))
                                    (TeX-command "LatexMk" #'TeX-master-file))))
@@ -412,48 +409,42 @@ mouse-3: Toggle minor modes"
                 ("M-i" . 'ido-switch-buffer))))
 
 #+END_SRC
-** ivy
+** helm
 #+begin_src emacs-lisp
 
-(use-package ivy
+(define-key global-map (kbd "M-i") #'find-file)
+(use-package helm
   :ensure t
   :init
-  (ivy-mode 1)
-  (setq ivy-use-virtual-buffers t)
-  (setq enable-recursive-minibuffers t)
+  (helm-mode 1)
+
+
+  (use-package helm-ag
+    :ensure t)
+  (use-package helm-unicode
+    :ensure t)
+  (use-package helm-xref
+    :ensure t)
+  (define-key global-map [remap find-file] #'helm-find-files)
+  (define-key global-map [remap execute-extended-command] #'helm-M-x)
+  (define-key global-map [remap switch-to-buffer] #'helm-mini)
 
   (define-key minibuffer-local-map (kbd "C-r") 'counsel-minibuffer-history)
-;; Swiper
-  (evil-define-key 'normal 'global (kbd "<leader>f") #'swiper)
-;; Counsel
-  (evil-define-key 'normal 'global (kbd "<leader>cf") #'counsel-fzf)
-  (evil-define-key 'normal 'global (kbd "<leader>co") #'counsel-find-file)
-  (evil-define-key 'normal 'global (kbd "<leader>cdf") #'counsel-describe-function)
-  (evil-define-key 'normal 'global (kbd "<leader>cds") #'counsel-describe-variable)
-  (evil-define-key 'normal 'global (kbd "<leader>cdv") #'counsel-describe-symbol)
-  (evil-define-key 'normal 'global (kbd "<leader>cdb") #'counsel-descbinds)
-  (evil-define-key 'normal 'global (kbd "<leader>dl") #'counsel-info-lookup-symbol)
-  (evil-define-key 'normal 'global (kbd "<leader>cg") #'counsel-git)
-  (evil-define-key 'normal 'global (kbd "<leader>cG") #'counsel-grep)
-  (evil-define-key 'normal 'global (kbd "<leader>cl") #'counsel-locate)
-  (evil-define-key 'normal 'global (kbd "<leader>ca") #'counsel-ag)
-  (evil-define-key 'normal 'global (kbd "<leader>cr") #'counsel-rhythmbox)
-  (evil-define-key 'normal 'global (kbd "<leader>cu") #'counsel-unicode-char)
-  (evil-define-key 'normal 'global (kbd "<leader>cu") #'counsel-file-jump)
-  (evil-define-key 'normal 'global (kbd "<leader>cb") #'counsel-bookmark)
-  (evil-define-key 'normal 'global (kbd "<leader>cu") #'counsel-org-file)
-  (global-set-key (kbd "M-x") 'counsel-M-x)
-  (evil-define-key 'normal 'global (kbd "<leader>SPC") #'counsel-M-x)
+                                        ;(evil-define-key 'normal 'global (kbd "<leader>f") #'swiper)
+                                        ;(evil-define-key 'normal 'global (kbd "<leader>cf") #'counsel-fzf)
+                                        ;(evil-define-key 'normal 'global (kbd "<leader>co") #'counsel-find-file)
+                                        ;(evil-define-key 'normal 'global (kbd "<leader>cdf") #'counsel-describe-function)
+                                        ;(evil-define-key 'normal 'global (kbd "<leader>cds") #'counsel-describe-variable)
+                                        ;(evil-define-key 'normal 'global (kbd "<leader>cdv") #'counsel-describe-symbol)
+                                        ;(evil-define-key 'normal 'global (kbd "<leader>cdb") #'counsel-descbinds)
+                                        ;(evil-define-key 'normal 'global (kbd "<leader>dl") #'counsel-info-lookup-symbol)
+                                        ;(evil-define-key 'normal 'global (kbd "<leader>cg") #'counsel-git)
+                                        ;(evil-define-key 'normal 'global (kbd "<leader>cG") #'counsel-grep)
+  (evil-define-key 'normal 'global (kbd "<leader>ha") #'helm-ag)
+  (evil-define-key 'normal 'global (kbd "<leader>hu") #'helm-unicode)
+  (evil-define-key 'normal 'global (kbd "<leader>SPC") #'helm-M-x))
 ;; General ivy
-  (evil-define-key 'normal 'global (kbd "<leader>ip") #'ivy-push-view)
-  (evil-define-key 'normal 'global (kbd "<leader>iP") #'ivy-pop-view)
-  (evil-define-key 'normal 'global (kbd "<leader>is") #'ivy-switch-buffer)
-  (evil-define-key 'normal 'global (kbd "<leader>ir") #'ivy-resume)
-  (evil-define-key 'normal 'global (kbd "<leader>is") #'ivy-switch-buffer)
-  (global-set-key (kbd "M-i") 'ivy-switch-buffer))
-
-(use-package ivy-bibtex
-:ensure t)
+;;(global-set-key (kbd "M-i") 'ivy-switch-buffer))
 
 #+end_src
 * IDE
@@ -480,6 +471,19 @@ mouse-3: Toggle minor modes"
 (use-package lsp-mode
   :ensure t
   :init
+
+  (setq gc-cons-threshold (* 100 1024 1024)
+        read-process-output-max (* 1024 1024)
+        treemacs-space-between-root-nodes nil
+        company-idle-delay 0.0
+        company-minimum-prefix-length 1
+        lsp-idle-delay 0.1)  ;; clangd is fast
+
+  (with-eval-after-load 'lsp-mode
+    (add-hook 'lsp-mode-hook #'lsp-enable-which-key-integration)
+    (require 'dap-cpptools)
+    (yas-global-mode))
+
   ;; optional if you want which-key integration
   (use-package which-key
     :ensure t
@@ -493,14 +497,10 @@ mouse-3: Toggle minor modes"
     :ensure t)
 
   (use-package lsp-treemacs
-    :ensure t
-    :hook dart-mode)
+    :ensure t)
   ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
   (setq lsp-keymap-prefix "C-c l")
-  :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
-         (dart-mode . lsp)
-         ;; if you want which-key integration
-         (lsp-mode . lsp-enable-which-key-integration))
+  :hook ((c-mode c++-mode) . lsp)
   :commands lsp)
 
 ;; (use-package dap-LANGUAGE) to load the dap adapter for your language
