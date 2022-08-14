@@ -1,8 +1,11 @@
 require('plugins')
 
-local g = vim.g
-local o = vim.o
-local A = vim.api
+local g = vim.g   -- Global options.
+local o = vim.o   -- Vim options.
+local A = vim.api -- Vim API.
+local wo = vim.wo -- Window options.
+
+local absGrp = A.nvim_create_augroup("AbsoluteGroup", { clear = true }) -- Autocmd group
 
 -- Editor options.
 -- Do not save when switching buffers
@@ -11,6 +14,12 @@ local A = vim.api
 -- Decrease update time
 o.timeoutlen = 500
 o.updatetime = 200
+
+-- Show 80'th column.
+vim.wo.colorcolumn = "80"
+
+-- TODO this in lua
+vim.cmd 'hi ColorColumn ctermbg=gray guibg=gray'
 
 -- Number of screen lines to keep above and below the cursor
 o.scrolloff = 8
@@ -115,3 +124,49 @@ lsp.clangd.setup{
     on_attach = on_attach,
     flags = lsp_flags,
 }
+
+-- YouCompleteMe
+--
+g.ycm_language_server = {{
+    name = 'c',
+    cmdline = {'/usr/bin/clangd'},
+    filetypes = {'c'},
+    project_root_files = {'Makefile', 'compile_commands.json'}
+}}
+
+-- Clang-format
+
+-- Autostart.
+A.nvim_create_autocmd("FileType", {
+    command = 'ClangFormatAutoEnable',
+    group = absGrp,
+    pattern = 'c,cpp,objc'
+})
+
+
+-- Code formatting.
+
+-- If nvim version >= 0.7, use native lua functionality to handle autocmd.
+-------------------------------------- Note: This does not work. ---------------------------------
+if vim.fn.has "nvim-0.7" then
+    vim.api.nvim_create_autocmd("BufWritePre", {
+        pattern = '.*',
+        callback = function()
+            vim.schedule(AbsCodeFormat)
+        end,
+    })
+else
+    vim.cmd "autocmd BufWritePre * lua AbsCodeFormat()"
+end
+
+-- Function to format the code in the current buffer.
+function AbsCodeFormat()
+    local bufnr = vim.api.nvim_get_current_buf()
+    local ft = vim.api.nvim_buf_get_option(bufnr, "filetype")
+    local fname = vim.fn.expand "%:p:t"
+    local keymap_c = {}
+
+    --        if ft == 'c' or ft == 'cpp' or ft == 'objc' then
+    --            ClangFormat()
+    --        end
+end
