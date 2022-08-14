@@ -142,7 +142,7 @@ alias srz='source ~/.config/zsh/.zshrc'
 alias jrc='joe $MY_CONF_DIR/joestar/joestarrc'
 if type "nvim" &>/dev/null; then
     alias vim='nvim'
-    alias cfv="nvim $MY_CONF_DIR/nvim/init.vim"
+    alias cfv="nvim $MY_CONF_DIR/nvim/init.lua"
 else
     alias cfv="vim $HOME/.vimrc"
 fi
