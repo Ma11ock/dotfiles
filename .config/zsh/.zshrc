@@ -147,7 +147,7 @@ else
     alias cfv="vim $HOME/.vimrc"
 fi
 alias cfz="$EDITOR $MY_CONF_DIR/zsh/.zshrc"
-alias cfe="$EDITOR $MY_CONF_DIR/emacs/config.org $MY_CONF_DIR/emacs/init.el"
+alias cfe="$EDITOR $MY_CONF_DIR/emacs/init.el"
 # default options and shortcuts
 alias rip='abcde -o opus'
 alias ls='ls --hyperlink=auto --color -h --group-directories-first'
