@@ -112,7 +112,7 @@
   :ensure t
   :init
   (setq modus-themes-bold-constructs t
-        modus-themes-mode-line '3d
+        modus-themes-mode-line '(3d)
         modus-themes-italic-constructs t
         modus-themes-mixed-fonts nil
         modus-themes-subtle-line-numbers nil
@@ -260,6 +260,7 @@ mouse-3: Toggle minor modes"
   :ensure t)
 (use-package highlight
   :ensure t)
+
 (use-package evil
   :ensure t
   :init
@@ -267,10 +268,23 @@ mouse-3: Toggle minor modes"
   (global-undo-tree-mode)
   (setq evil-undo-system 'undo-tree)
   (evil-mode 1)
+  (evil-define-command evil-write-and-kill-buffer (path)
+    "Save and kill buffer."
+    :repeat nil
+    :move-point nil
+    (interactive "<f>")
+    (if (zerop (length path))
+        (save-buffer)
+      (write-file path))
+    (kill-buffer (current-buffer)))
+
+  (evil-ex-define-cmd "wbd[elete]" 'evil-write-and-kill-buffer)
+
   (use-package evil-collection
     :ensure t
     :init
     (evil-collection-init))
+
   (setq-default evil-cross-lines t)
 
   ;; Code snippet for color
@@ -290,6 +304,7 @@ mouse-3: Toggle minor modes"
     :init
     (evil-terminal-cursor-changer-activate))
 
+  ;; Leader (space).
   (global-unset-key (kbd "C-SPC"))
   (define-key evil-normal-state-map (kbd "SPC") nil)
   (define-key evil-visual-state-map (kbd "SPC") nil)
@@ -300,6 +315,7 @@ mouse-3: Toggle minor modes"
   (evil-define-key nil 'global (kbd "<leader>ss") #'split-window-horizontally)
   (evil-define-key nil 'global (kbd "<leader>so") #'split-window-vertically)
   (evil-define-key nil 'global (kbd "<leader>x") #'execute-extended-command)
+  (evil-define-key 'normal 'global (kbd "gr") #'revert-buffer)
   ;; This keybind must be bound to normal map for some reason.
   (evil-define-key 'normal org-mode-map (kbd "TAB") #'org-cycle)
   ;; set leader key in all states
@@ -487,6 +503,9 @@ mouse-3: Toggle minor modes"
 (use-package lsp-mode
   :ensure t
   :init
+  ;; TODO automatically format on save
+
+  (setq lsp-before-save-edits t)
 
   (setq gc-cons-threshold (* 100 1024 1024)
         read-process-output-max (* 1024 1024)
@@ -497,8 +516,7 @@ mouse-3: Toggle minor modes"
 
   (with-eval-after-load 'lsp-mode
     (add-hook 'lsp-mode-hook #'lsp-enable-which-key-integration)
-    (require 'dap-cpptools)
-    (yas-global-mode))
+    (require 'dap-cpptools))
 
   ;; optional if you want which-key integration
   (use-package which-key
@@ -524,7 +542,8 @@ mouse-3: Toggle minor modes"
 ;; (use-package dap-LANGUAGE) to load the dap adapter for your language
 
 (use-package yaml-mode
-  :ensure t)
+  :ensure t
+  :mode (("\\.clang-format\\'" . yaml-mode)))
 
 (use-package cider
   :ensure t
@@ -731,6 +750,7 @@ mouse-3: Toggle minor modes"
 (use-package yasnippet
   :ensure t
   :init
+  ;; Must be configured this way or we get errors :/
   (require 'yasnippet)
   (yas-reload-all)
   (add-hook 'prog-mode-hook #'yas-minor-mode))
@@ -738,9 +758,33 @@ mouse-3: Toggle minor modes"
 (use-package yasnippet-snippets
   :ensure t)
 
+(add-to-list 'load-path "/usr/share/emacs/site-lisp/emacs-llvm-mode/")
+(when (require 'llvm-mode)
+  (add-to-list 'auto-mode-alist '("\\.ll\\'" . llvm-mode)))
+
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;                                        Utilities                            ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+(defun apply-hook-to-modes (modes-list hook-fun &optional depth local)
+  "Apply a hook `HOOK-FUN' to a list of modes `MODES-LIST' at depth `DEPTH'.
+If `LOCAL' is non-nil, then the hook is applied to the buffer local hook
+variable rather than the global one."
+  (when (not (null modes-list))
+    (add-hook (car modes-list) hook-fun depth local)
+    (apply-hook-to-modes (cdr modes-list) hook-fun depth local)))
+
+(defun indent-buffer ()
+  (interactive)
+  (save-excursion
+    (indent-region (point-min) (point-max) nil)))
+
+(apply-hook-to-modes '(c-mode-hook c++-mode-hook objc-mode-hook emacs-lisp-mode) #'(lambda ()
+                                                                                     (add-hook 'before-save-hook #'indent-buffer nil t)))
+
+(apply-hook-to-modes '(emacs-lisp-mode) #'flycheck-mode)
 
 (defun er-doas-edit (&optional arg)
   "Edit currently visited file as root With a prefix ARG prompt for a file to visit.
