@@ -121,6 +121,9 @@ export GOBIN="$HOME/src/go/bin/"
 export GOPATH="$HOME/src/go/"
 export PATH="$PATH:$GOROOT/bin:/usr/lib/go/bin/:$SCRIPTS:$HOME/bin/:/home/ryan/.local/share/gem/ruby/3.0.0/bin:$HOME/.pub-cache/bin"
 
+[ -d "/mingw64/bin" ] && export PATH="$PATH:/mingw64/bin"
+[ -d "/mingw32/bin" ] && export PATH="$PATH:/mingw32/bin"
+
 # The HURD does not have /sbin in its path
 (uname -a | grep "gnu-mach" -qi) && export PATH="$PATH:/sbin"
 
@@ -251,10 +254,10 @@ setopt interactivecomments
 # Set up plugins and extensions.
 
 # Zinit.
-if type "pacman" &>/dev/null; then
+if [ -d "/usr/share/zinit" ]; then
     source /usr/share/zinit/zinit.zsh 2>/dev/null
 else
-    ZINIT_HOME="$MY_CACHE_DIR/zinit/zinit.git"
+    ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
     [ ! -d "$ZINIT_HOME" ] && mkdir -p "$(dirname $ZINIT_HOME)" && git clone 'https://github.com/zdharma-continuum/zinit.git' "$ZINIT_HOME"
     source "${ZINIT_HOME}/zinit.zsh"
 fi
@@ -284,7 +287,7 @@ zvm_define_widget history-substring-search-down
 zvm_bindkey viins '^[[A' history-substring-search-up
 zvm_bindkey viins '^[[B' history-substring-search-down
 
-# Zsh plugins to use oh-my-zsh themes 
+# Zsh plugins to use oh-my-zsh themes
 zinit snippet "OMZL::spectrum.zsh"
 zinit snippet "OMZL::theme-and-appearance.zsh"
 zinit snippet "OMZL::git.zsh"
@@ -292,3 +295,13 @@ zinit snippet "OMZP::mercurial"
 # oh-my-zsh theme
 zinit snippet "OMZT::/af-magic"
 
+
+# Load a few important annexes, without Turbo
+# (this is currently required for annexes)
+zinit light-mode for \
+    zdharma-continuum/zinit-annex-as-monitor \
+    zdharma-continuum/zinit-annex-bin-gem-node \
+    zdharma-continuum/zinit-annex-patch-dl \
+    zdharma-continuum/zinit-annex-rust
+
+### End of Zinit's installer chunk
