@@ -153,6 +153,7 @@ mouse-3: Toggle minor modes"
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;                                        Misc                                 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(make-variable-buffer-local 'make-backup-files)
 
 (use-package rainbow-delimiters
   :ensure t
@@ -228,6 +229,9 @@ mouse-3: Toggle minor modes"
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (use-package command-log-mode
+  :ensure t)
+
+(use-package csharp-mode
   :ensure t)
 
 (use-package conf-mode
@@ -507,6 +511,8 @@ mouse-3: Toggle minor modes"
   ;; TODO automatically format on save
 
   (setq lsp-before-save-edits t)
+
+  ;(lsp-install-server 'omnisharp) TODO get this to install automagically.
 
   (setq gc-cons-threshold (* 100 1024 1024)
         read-process-output-max (* 1024 1024)
