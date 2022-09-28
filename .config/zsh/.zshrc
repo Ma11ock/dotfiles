@@ -158,9 +158,9 @@ alias lmk='latexmk -lualatex -synctex=1 -pvc'
 
 # Arch based vs debian based package manager aliases
 if type "pacman" &>/dev/null; then
-    alias up='paru -Syu'
-    alias pac='doas pacman -Syu'
-    alias aur='paru -Syu'
+    alias up='paru -Syu --noconfirm'
+    alias pac='doas pacman -Syu --noconfirm'
+    alias aur='paru -Syu --noconfirm'
     alias purge='doas pacman -R'
 elif type "apt" &>/dev/null; then
     alias up='doas apt-get update && doas apt-get upgrade'
@@ -168,6 +168,7 @@ elif type "apt" &>/dev/null; then
     alias purge='doas apt purge'
 fi
 
+alias redocmake='../; rm -rf bin; mkdir bin; cd bin; cmake .. -DCMAKE_BUILD_TYPE=debug'
 alias dosu='doas -u root -s'
 alias ll='ls -l'
 alias untar='tar -xvf'

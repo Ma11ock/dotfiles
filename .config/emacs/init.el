@@ -228,11 +228,21 @@ mouse-3: Toggle minor modes"
 ;;                                        Modes                                ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(use-package editorconfig
+  :ensure t
+  :config
+  (editorconfig-mode 1))
+
+(use-package eglot
+  :ensure t)
+
 (use-package command-log-mode
   :ensure t)
 
 (use-package csharp-mode
-  :ensure t)
+  :ensure t
+  :config
+  (format-all-mode t))
 
 (use-package conf-mode
   :init
@@ -251,7 +261,10 @@ mouse-3: Toggle minor modes"
 (use-package fish-mode
   :ensure t
   :mode (("\\.fish\\'" . fish-mode)))
-
+(use-package editorconfig
+  :ensure t
+  :config
+  (editorconfig-mode 1))
 (use-package rustic
   :ensure t
   :mode (("\\.rs\\'" . rustic-mode))
