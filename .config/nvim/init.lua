@@ -170,3 +170,6 @@ function AbsCodeFormat()
     --            ClangFormat()
     --        end
 end
+
+g.user_emmet_leader_key = ','
+g.user_emmet_mode = 'n'

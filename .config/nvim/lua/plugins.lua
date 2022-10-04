@@ -93,5 +93,10 @@ return require('packer').startup(function(use)
         'Shougo/vimproc.vim',
         as = 'Shougo.vimproc.vim'
     }
+
+    use {
+        'mattn/emmet-vim',
+        as = 'mattn.emmet-vim'
+    }
 end)
 
