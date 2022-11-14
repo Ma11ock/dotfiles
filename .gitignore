@@ -89,7 +89,7 @@ flycheck_*.el
 !/.config/dunst/
 !/.config/dunst/dunstrc
 !/.config/zsh/
-!/.config/zsh/zshrc
+!/.config/zsh/*
 !/.config/systemd
 !/.config/systemd/user
 !/.config/systemd/user/emacs.service

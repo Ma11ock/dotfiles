@@ -269,6 +269,7 @@ mouse-3: Toggle minor modes"
   :ensure t
   :mode (("\\.rs\\'" . rustic-mode))
   :config
+  (setq lsp-rust-server 'rust-analyzer)
   (setq rustic-format-on-save t))
 
 (use-package toml-mode
@@ -365,6 +366,26 @@ mouse-3: Toggle minor modes"
         org-edit-src-content-indentation 0)
   (require 'org-tempo)
 
+  ;; Configure org mode to use lualatex for TeX export.
+  ;; lualatex preview
+  (setq org-latex-pdf-process
+        '("lualatex -shell-escape -interaction nonstopmode %f"
+          "lualatex -shell-escape -interaction nonstopmode %f"))
+
+  (setq luamagick '(luamagick :programs ("lualatex" "convert")
+                              :description "pdf > png"
+                              :message "you need to install lualatex and imagemagick."
+                              :use-xcolor t
+                              :image-input-type "pdf"
+                              :image-output-type "png"
+                              :image-size-adjust (1.0 . 1.0)
+                              :latex-compiler ("lualatex -interaction nonstopmode -output-directory %o %f")
+                              :image-converter ("convert -density %D -trim -antialias %f -quality 100 %O")))
+
+  (add-to-list 'org-preview-latex-process-alist luamagick)
+
+  (setq org-preview-latex-default-process 'luamagick)
+
   (setq org-src-tab-acts-natively t)
   :bind (:map org-mode-map
               ("M-S-<up>" . 'text-scale-increase)
@@ -445,24 +466,12 @@ mouse-3: Toggle minor modes"
   :config
   (setq TeX-auto-save t)
   (setq TeX-parse-self t)
-  (setq Tex-command-default "LatexMk")
-  (setq-default TeX-master nil)
-  (setq-default TeX-engine 'luatex)
-  (setq-default TeX-PDF-mode t)
-  (setq-default TeX-show-compilation nil)
-  (setq-default TeX-process-asynchronous t)
-                                        ;(setq-default TeX-save-query nil)
   (add-hook 'LaTeX-mode-hook #'flyspell-mode)
   (add-hook 'LaTeX-mode-hook #'wc-mode)
   (add-hook 'LaTeX-mode-hook #'company-auctex-init)
   (add-hook 'LaTeX-mode-hook #'company-mode)
   (add-hook 'LaTeX-mode-hook #'TeX-source-correlate-mode)
-  (add-hook 'LaTeX-mode-hook #'TeX-interactive-mode)
-  (add-hook 'after-save-hook #'(lambda ()
-                                 (let* ((master-file (TeX-master-file)))
-                                   (TeX-command "LatexMk" #'TeX-master-file))))
-
-  (require 'auctex-latexmk))
+  (add-hook 'LaTeX-mode-hook #'TeX-interactive-mode))
 
 (when (and module-file-suffix (not (eq system-type 'windows-nt)))
   (use-package vterm
@@ -520,6 +529,17 @@ mouse-3: Toggle minor modes"
 
 (use-package lsp-mode
   :ensure t
+  :custom
+  (lsp-eldoc-render-all t)
+  (lsp-idle-delay 0.6)
+  ;; enable / disable the hints as you prefer:
+  (lsp-rust-analyzer-server-display-inlay-hints t)
+  (lsp-rust-analyzer-display-lifetime-elision-hints-enable "skip_trivial")
+  (lsp-rust-analyzer-display-chaining-hints t)
+  (lsp-rust-analyzer-display-lifetime-elision-hints-use-parameter-names nil)
+  (lsp-rust-analyzer-display-closure-return-type-hints t)
+  (lsp-rust-analyzer-display-parameter-hints nil)
+  (lsp-rust-analyzer-display-reborrow-hints nil)
   :init
   ;; TODO automatically format on save
 
@@ -544,7 +564,13 @@ mouse-3: Toggle minor modes"
     :config
     (which-key-mode))
   ;; optionally
-  (use-package lsp-ui :commands lsp-ui-mode :ensure t)
+  (use-package lsp-ui
+    :ensure t
+    :commands lsp-ui-mode
+    :custom
+    (lsp-ui-peek-always-show t)
+    (lsp-ui-sideline-show-hover t)
+    (lsp-ui-doc-enable nil))
 
   ;; optionally if you want to use debugger
   (use-package dap-mode
@@ -558,6 +584,7 @@ mouse-3: Toggle minor modes"
   (setq lsp-keymap-prefix "C-c l")
   :hook ((c-mode c++-mode) . lsp)
   :commands lsp)
+
 
 ;; (use-package dap-LANGUAGE) to load the dap adapter for your language
 
