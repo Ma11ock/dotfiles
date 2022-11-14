@@ -245,14 +245,13 @@ function shec() {
     ec $realargs
 }
 
-# Emacs vterm
-if [[ "$INSIDE_EMACS" = 'vterm' ]]; then
-    alias clear='vterm_printf "51;Evterm-clear-scrollback";tput clear'
-fi
 
 setopt interactivecomments
 
 # Set up plugins and extensions.
+
+# Vterm
+source "${HOME}/.config/zsh/emacs-vterm-zsh.sh"
 
 # Zinit.
 if [ -d "/usr/share/zinit" ]; then
