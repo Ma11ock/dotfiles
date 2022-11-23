@@ -481,11 +481,34 @@ mouse-3: Toggle minor modes"
                 ("M-c" . 'vterm-copy-mode)
                 ("M-i" . 'ido-switch-buffer))))
 
+;; Emacs IDE bloat features.
+(use-package neotree
+  :ensure t
+  :init
+  (global-set-key [f8] 'neotree-toggle)
+  (setq server-after-make-frame-hook #'(lambda () (neotree)))
+  (setq after-make-frame-hook #'(lambda () (neotree)))
+  :config (setq neo-theme (if (display-graphic-p) 'icons 'arrow)))
+
+(use-package all-the-icons
+  :ensure t
+  :if (display-graphic-p))
+
+(use-package clippy
+  :ensure t)
+
+(use-package minimap
+  :ensure t
+  :if (display-graphic-p))
+
+(use-package beacon
+  :ensure t
+  :init (beacon-mode 1))
+
 (use-package helm
   :ensure t
   :init
   (helm-mode 1)
-
 
   (use-package helm-ag
     :ensure t)
@@ -721,6 +744,13 @@ mouse-3: Toggle minor modes"
 ;; Typescript
 (use-package typescript-mode
   :ensure t)
+
+(use-package php-mode
+  :ensure t
+  :init
+  (use-package php-language-server
+    :ensure t))
+
 
 (use-package elpy
   :ensure t
