@@ -476,10 +476,33 @@ mouse-3: Toggle minor modes"
 (when (and module-file-suffix (not (eq system-type 'windows-nt)))
   (use-package vterm
     :ensure t
-    :init (setq vterm-always-compile-module t)
+    :hook
+    (vterm-mode . evil-emacs-state)
+    (vterm-copy-mode . meliache/evil-normal-in-vterm-copy-mode)
+    :config
+    (defun meliache/evil-normal-in-vterm-copy-mode ()
+      (if (bound-and-true-p vterm-copy-mode)
+          (evil-normal-state)
+        (evil-emacs-state)))
+    :init
+    (setq vterm-always-compile-module t)
     :bind (:map vterm-mode-map
                 ("M-c" . 'vterm-copy-mode)
                 ("M-i" . 'ido-switch-buffer))))
+
+(use-package fzf
+  :ensure t
+  :config
+  (setq fzf/args "-x --color bw --print-query --margin=1,0 --no-hscroll"
+        fzf/executable "fzf"
+        fzf/git-grep-args "-i --line-number %s"
+        ;; command used for `fzf-grep-*` functions
+        ;; example usage for ripgrep:
+        ;; fzf/grep-command "rg --no-heading -nH"
+        fzf/grep-command "grep -nrH"
+        ;; If nil, the fzf buffer will appear at the top of the window
+        fzf/position-bottom t
+        fzf/window-height 15))
 
 ;; Emacs IDE bloat features.
 (use-package neotree
@@ -512,8 +535,10 @@ mouse-3: Toggle minor modes"
 
   (use-package helm-ag
     :ensure t)
+
   (use-package helm-unicode
     :ensure t)
+
   (use-package helm-xref
     :ensure t)
   (define-key global-map [remap find-file] #'helm-find-files)
@@ -521,22 +546,38 @@ mouse-3: Toggle minor modes"
   (define-key global-map [remap switch-to-buffer] #'helm-mini)
   (define-key global-map (kbd "M-i") #'switch-to-buffer)
 
-  (define-key minibuffer-local-map (kbd "C-r") 'counsel-minibuffer-history)
-                                        ;(evil-define-key 'normal 'global (kbd "<leader>f") #'swiper)
-                                        ;(evil-define-key 'normal 'global (kbd "<leader>cf") #'counsel-fzf)
-                                        ;(evil-define-key 'normal 'global (kbd "<leader>co") #'counsel-find-file)
-                                        ;(evil-define-key 'normal 'global (kbd "<leader>cdf") #'counsel-describe-function)
-                                        ;(evil-define-key 'normal 'global (kbd "<leader>cds") #'counsel-describe-variable)
-                                        ;(evil-define-key 'normal 'global (kbd "<leader>cdv") #'counsel-describe-symbol)
-                                        ;(evil-define-key 'normal 'global (kbd "<leader>cdb") #'counsel-descbinds)
-                                        ;(evil-define-key 'normal 'global (kbd "<leader>dl") #'counsel-info-lookup-symbol)
-                                        ;(evil-define-key 'normal 'global (kbd "<leader>cg") #'counsel-git)
-                                        ;(evil-define-key 'normal 'global (kbd "<leader>cG") #'counsel-grep)
-  (evil-define-key 'normal 'global (kbd "<leader>ha") #'helm-ag)
+  (evil-define-key 'normal 'global (kbd "<leader>ff") #'fzf)
+  (evil-define-key 'normal 'global (kbd "<leader>fg") #'fzf-git)
+  (evil-define-key 'normal 'global (kbd "<leader>cdf") #'clippy-describe-function)
+  (evil-define-key 'normal 'global (kbd "<leader>cds") #'clippy-describe-variable)
+  (evil-define-key 'normal 'global (kbd "<leader>df") #'describe-function)
+  (evil-define-key 'normal 'global (kbd "<leader>dv") #'describe-variable)
+  (evil-define-key 'normal 'global (kbd "<leader>ds") #'describe-symbol)
+  ;; Evil helm.
+  (evil-define-key 'normal 'global (kbd "<leader>haa") #'helm-ag)
+  (evil-define-key 'normal 'global (kbd "<leader>haf") #'helm-ag-this-file)
   (evil-define-key 'normal 'global (kbd "<leader>hu") #'helm-unicode)
-  (evil-define-key 'normal 'global (kbd "<leader>SPC") #'helm-M-x))
-;; General ivy
-;;(global-set-key (kbd "M-i") 'ivy-switch-buffer))
+  (evil-define-key 'normal 'global (kbd "<leader>SPC") #'helm-M-x)
+  ;; Use vim window commands for emacs mode.
+  (evil-define-key 'emacs 'global (kbd "C-w C-w") #'evil-window-next)
+  (evil-define-key 'emacs 'global (kbd "C-w C-k") #'evil-window-up)
+  (evil-define-key 'emacs 'global (kbd "C-w C-p") #'evil-window-mru)
+  (evil-define-key 'emacs 'global (kbd "C-w C-p") #'evil-window-mru)
+  (evil-define-key 'emacs 'global (kbd "C-w C-l") #'evil-window-right)
+  (evil-define-key 'emacs 'global (kbd "C-w C-h") #'evil-window-left)
+  (evil-define-key 'emacs 'global (kbd "C-w W") #'evil-window-prev)
+  (evil-define-key 'emacs 'global (kbd "C-w |") #'evil-window-set-width)
+  (evil-define-key 'emacs 'global (kbd "C-w C-_") #'evil-window-set-height)
+  (evil-define-key 'emacs 'global (kbd "C-w n") #'evil-window-new)
+  (evil-define-key 'emacs 'global (kbd "C-w C-s") #'evil-window-split)
+  (evil-define-key 'emacs 'global (kbd "C-w C-v") #'evil-window-vsplit)
+  (evil-define-key 'emacs 'global (kbd "C-w C-x") #'evil-window-exchange)
+  (evil-define-key 'emacs 'global (kbd "C-w >") #'evil-window-increase-width)
+  (evil-define-key 'emacs 'global (kbd "C-w <") #'evil-window-decrease-width)
+  (evil-define-key 'emacs 'global (kbd "C-w +") #'evil-window-increase-height)
+  (evil-define-key 'emacs 'global (kbd "C-w -") #'evil-window-decrease-height)
+  (evil-define-key 'emacs 'global (kbd "C-w C-r") #'evil-window-rotate-downwards)
+  (evil-define-key 'emacs 'global (kbd "C-w R") #'evil-window-rotate-upwards))
 
 (use-package format-all
   :ensure t)
