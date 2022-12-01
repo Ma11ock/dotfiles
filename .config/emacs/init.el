@@ -30,11 +30,12 @@
 (prefer-coding-system 'utf-8-unix)
 
 (if (eq system-type 'windows-nt)
+    ;; Windows
     (setq user-emacs-directory (concat (getenv "HOME") "/.emacs.d/"))
-  ;; Linux.
+  ;; Unix.
   (setq user-emacs-directory (concat (getenv "HOME") "/.config/emacs/")))
 
-;; Move where emacs puts its cache variables.
+;; Move where emacs puts its cache variables (by default it's in init.el).
 (let* ((my-emacs-custom-file (concat user-emacs-directory "custom-vars.el")))
   ;; Create custom variable file if it does not exist.
   (when (not (file-exists-p my-emacs-custom-file))
@@ -68,6 +69,7 @@
    :fetcher git
    :url "https://github.com/quelpa/quelpa-use-package.git"))
 
+; QoL
 (defalias 'yes-or-no-p 'y-or-n-p)
 
 (require 'quelpa-use-package)
@@ -85,13 +87,14 @@
 
 (setq x-gtk-use-system-tooltips nil)
 
-;; Font
+;; Font.
 (if (string= system-name "Southpark")
     (add-to-list 'default-frame-alist
                  '(font . "Inconsolata Nerd Font Mono:size=16"))
   (add-to-list 'default-frame-alist
                '(font . "Inconsolata Nerd Font Mono:size=16")))
 
+;; Pretty symbols. Does not work for some reason.
 (use-package prettify-symbols-mode
   :init
   (defconst lisp--prettify-symbols-alist
@@ -99,7 +102,7 @@
   :hook
   (lisp-mode))
 
-
+;; Custom themes not in ELPA.
 (add-to-list 'load-path (concat user-emacs-directory "/themes/"))
 (setq custom-safe-themes t)   ; Treat all themes as safe
 (quelpa
@@ -121,9 +124,9 @@
   (modus-themes-load-themes)
   (modus-themes-load-vivendi))
 
+;; Custom modeline.
 (display-time-mode 1)
 (display-battery-mode 1)
-;; Custom modeline.
 (defvar mode-line-modes
   `(:propertize ("" mode-name)
                 help-echo "Major mode\n\
@@ -155,42 +158,44 @@ mouse-3: Toggle minor modes"
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (make-variable-buffer-local 'make-backup-files)
 
+;; Makes controls easier.
 (use-package rainbow-delimiters
   :ensure t
   :hook (prog-mode . rainbow-delimiters-mode))
 
+;; Show ugly whitespaces.
 (add-hook 'prog-mode-hook #'(lambda ()
                               (setq show-trailing-whitespace t)))
-(save-place-mode 1)
+(save-place-mode 1) ; Save place between sessions.
 (setq tty-menu-open-use-tmm t)
-(global-set-key [f10] 'tmm-menubar)
+(global-set-key [f10] 'tmm-menubar) ; Use neat terminal menubar.
 (put 'upcase-region 'disabled nil)
-(electric-pair-mode t)
+(electric-pair-mode t) ; Autoclose () {} [] "" etc.
 (show-paren-mode 1)
-(setq-default indent-tabs-mode nil)
-(setq-default tab-width 4)
+(setq-default indent-tabs-mode nil) ; Use spaces.
+(setq-default tab-width 4) ; Tabs should show up as 4 spaces.
 (setq column-number-mode t)
-(tool-bar-mode -1)
-(menu-bar-mode -1)
+(tool-bar-mode -1) ; Hide toolbar.
+(menu-bar-mode -1) ; Hide menubar.
+;; Disable scrollbar.
 (when (boundp 'scroll-bar-mode)
 	(scroll-bar-mode -1))
-(setq ring-bell-function 'ignore)
-(blink-cursor-mode 0)
-(set-language-environment "UTF-8")
-(setq redisplay-dont-pause t)
+(setq ring-bell-function 'ignore) ; Shut up.
+(blink-cursor-mode 0) ; Stable cursor.
+(set-language-environment "UTF-8") ; UTF-8 by default.
+(setq redisplay-dont-pause t) ; Speed.
 (setq vc-follow-symlinks t) ; Otherwise emacs asks
 (setq tramp-terminal-type "tramp") ; See zshrc
-(add-hook 'after-save-hook #'executable-make-buffer-file-executable-if-script-p)
-(setq-default truncate-lines t)
+(add-hook 'after-save-hook #'executable-make-buffer-file-executable-if-script-p) ; If script, do chmod +x automagically.
+(setq-default truncate-lines t) ; Don't split lines visually.
 ;; scroll one line at a time (less "jumpy" than defaults)
-(setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) ;; one line at a time
-(setq mouse-wheel-progressive-speed nil) ;; don't accelerate scrolling
-(setq mouse-wheel-follow-mouse 't) ;; scroll window under mouse
+(setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) ; one line at a time
+(setq mouse-wheel-progressive-speed nil) ; don't accelerate scrolling
+(setq mouse-wheel-follow-mouse 't) ; scroll window under mouse
 (use-package good-scroll
   :ensure t
   :init
   (good-scroll-mode 1))
-
 (use-package smooth-scrolling
   :ensure t
   :init
@@ -227,6 +232,13 @@ mouse-3: Toggle minor modes"
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;                                        Modes                                ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(use-package tree-sitter
+  :ensure t
+  :init (global-tree-sitter-mode))
+
+(use-package tree-sitter-langs
+  :ensure t)
 
 (use-package editorconfig
   :ensure t
@@ -419,13 +431,6 @@ mouse-3: Toggle minor modes"
   (require 'org-ref-arxiv)
   (require 'org-ref-scopus)
   (require 'org-ref-wos))
-
-;; (use-package org-ref-ivy
-;;   :init (setq org-ref-insert-link-function 'org-ref-insert-link-hydra/body
-;; 	          org-ref-insert-cite-function 'org-ref-cite-insert-ivy
-;; 	          org-ref-insert-label-function 'org-ref-insert-label-link
-;; 	          org-ref-insert-ref-function 'org-ref-insert-ref-link
-;; 	          org-ref-cite-onclick-function (lambda (_) (org-ref-citation-hydra/body))))
 
 (use-package org-indent-mode
   :config
@@ -899,11 +904,13 @@ variable rather than the global one."
   (save-excursion
     (indent-region (point-min) (point-max) nil)))
 
+;; Format these modes on save.
 (apply-hook-to-modes '(c-mode-hook c++-mode-hook objc-mode-hook emacs-lisp-mode) #'(lambda ()
                                                                                      (add-hook 'before-save-hook #'indent-buffer nil t)))
 
 (apply-hook-to-modes '(emacs-lisp-mode) #'flycheck-mode)
 
+;;; Edit files with doas and sudo.
 (defun er-doas-edit (&optional arg)
   "Edit currently visited file as root With a prefix ARG prompt for a file to visit.
 Will also prompt for a file to visit if current buffer is not visiting a file."
@@ -912,8 +919,6 @@ Will also prompt for a file to visit if current buffer is not visiting a file."
       (find-file (concat "/doas:root@localhost:"
                          (ido-read-file-name "Find file(as root): ")))
     (find-alternate-file (concat "/doas:root@localhost:" buffer-file-name))))
-
-
 
 (defun er-sudo-edit (&optional arg)
   "Edit currently visited file as root With a prefix ARG prompt for a file to visit.
