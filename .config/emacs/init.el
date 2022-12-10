@@ -88,11 +88,16 @@
 (setq x-gtk-use-system-tooltips nil)
 
 ;; Font.
-(if (string= system-name "Southpark")
+(if (eq system-type 'windows-nt)
+    ;; Inconsolata doesn't work so well in windows.
     (add-to-list 'default-frame-alist
-                 '(font . "Inconsolata Nerd Font Mono:size=16"))
-  (add-to-list 'default-frame-alist
-               '(font . "Inconsolata Nerd Font Mono:size=16")))
+                 '(font . "Monaco:weight=normal:size=14"))
+  ;; If Southpark (high DPI monitor) up the size.
+  (if (string= system-name "Southpark")
+      (add-to-list 'default-frame-alist
+                   '(font . "Inconsolata Nerd Font Mono:weight=normal:size=18"))
+    (add-to-list 'default-frame-alist
+                 '(font . "Inconsolata Nerd Font Mono:weight=normal:size=16"))))
 
 ;; Pretty symbols. Does not work for some reason.
 (use-package prettify-symbols-mode
@@ -282,7 +287,9 @@ mouse-3: Toggle minor modes"
   :mode (("\\.rs\\'" . rustic-mode))
   :config
   (setq lsp-rust-server 'rust-analyzer)
-  (setq rustic-format-on-save t))
+  (setq rustic-format-on-save t)
+  :bind (:map rustic-mode-map
+              ([f12] . rustic-compile)))
 
 (use-package toml-mode
   :ensure t)
@@ -481,14 +488,13 @@ mouse-3: Toggle minor modes"
 (when (and module-file-suffix (not (eq system-type 'windows-nt)))
   (use-package vterm
     :ensure t
-    :hook
-    (vterm-mode . evil-emacs-state)
-    (vterm-copy-mode . meliache/evil-normal-in-vterm-copy-mode)
+    :hook ((vterm-mode) . meliache/evil-normal-in-vterm-copy-mode)
     :config
     (defun meliache/evil-normal-in-vterm-copy-mode ()
       (if (bound-and-true-p vterm-copy-mode)
           (evil-normal-state)
         (evil-emacs-state)))
+    (evil-set-initial-state 'vterm-mode 'emacs)
     :init
     (setq vterm-always-compile-module t)
     :bind (:map vterm-mode-map
@@ -510,13 +516,10 @@ mouse-3: Toggle minor modes"
         fzf/window-height 15))
 
 ;; Emacs IDE bloat features.
-(use-package neotree
+(use-package treemacs
   :ensure t
-  :init
-  (global-set-key [f8] 'neotree-toggle)
-  (setq server-after-make-frame-hook #'(lambda () (neotree)))
-  (setq after-make-frame-hook #'(lambda () (neotree)))
-  :config (setq neo-theme (if (display-graphic-p) 'icons 'arrow)))
+  :bind (:map global-map
+         ([f8] . #'treemacs)))
 
 (use-package all-the-icons
   :ensure t
@@ -610,11 +613,19 @@ mouse-3: Toggle minor modes"
   (lsp-rust-analyzer-display-parameter-hints nil)
   (lsp-rust-analyzer-display-reborrow-hints nil)
   :init
-  ;; TODO automatically format on save
+  ;; Evil mode keymaps
+  (evil-define-key nil 'global (kbd "<leader>l.") #'lsp-find-definition)
+  (evil-define-key nil 'global (kbd "<leader>l==") #'lsp-format-buffer)
+  (evil-define-key nil 'global (kbd "<leader>lr") #'lsp-find-references)
+  (evil-define-key nil 'global (kbd "<leader>lG") #'lsp-ui-peek-find-implementation)
+  (evil-define-key nil 'global (kbd "<leader>lg") #'lsp-find-implementation)
+  (evil-define-key nil 'global (kbd "<leader>lh") #'lsp-describe-thing-at-point)
+  (evil-define-key nil 'global (kbd "<leader>lr") #'lsp-rename)
 
   (setq lsp-before-save-edits t)
 
   ;(lsp-install-server 'omnisharp) TODO get this to install automagically.
+
 
   (setq gc-cons-threshold (* 100 1024 1024)
         read-process-output-max (* 1024 1024)
@@ -626,6 +637,10 @@ mouse-3: Toggle minor modes"
   (with-eval-after-load 'lsp-mode
     (add-hook 'lsp-mode-hook #'lsp-enable-which-key-integration)
     (require 'dap-cpptools))
+
+  (use-package helm-lsp
+    :ensure t
+    :init (define-key lsp-mode-map [remap xref-find-apropos] #'helm-lsp-workspace-symbol))
 
   ;; optional if you want which-key integration
   (use-package which-key
@@ -643,15 +658,29 @@ mouse-3: Toggle minor modes"
 
   ;; optionally if you want to use debugger
   (use-package dap-mode
-    :ensure t)
-  (require 'dap-gdb-lldb)
-  (dap-gdb-lldb-setup)
+    :ensure t
+    :config
+    (dap-ui-mode)
+    (dap-ui-controls-mode 1)
+
+    (require 'dap-lldb)
+    (require 'dap-gdb-lldb)
+    ;; installs .extension/vscode
+    (dap-gdb-lldb-setup)
+    (dap-register-debug-template
+     "Rust::LLDB Run Configuration"
+     (list :type "lldb"
+           :request "launch"
+           :name "LLDB::Run"
+	       :gdbpath "rust-lldb"
+           :target nil
+           :cwd nil)))
 
   (use-package lsp-treemacs
     :ensure t)
   ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
   (setq lsp-keymap-prefix "C-c l")
-  :hook ((c-mode c++-mode) . lsp)
+  :hook ((c-mode c++-mode go-mode) . lsp)
   :commands lsp)
 
 
@@ -665,8 +694,7 @@ mouse-3: Toggle minor modes"
   :ensure t
   :bind (:map cider-mode-map
               ("M-e" . cider-eval-last-sexp)
-              ("M-r" . cider-eval-region)
-              )
+              ("M-r" . cider-eval-region))
   :init
   (eval-after-load "cider-mode"
     '(define-key cider-mode-map (kbd "C-x") 'joe-nextword)))
@@ -814,6 +842,15 @@ mouse-3: Toggle minor modes"
   :ensure t
   :init
   (add-hook 'elpy-mode-hook #'py-autopep8-enable-on-save))
+
+(use-package robe
+  :ensure t
+  :init (eval-after-load 'company
+          '(push 'company-robe company-backends))
+  :hook (robe-mode . ruby-mode))
+
+(use-package rubocop
+  :ensure t)
 
 (use-package go-mode
   :ensure t
