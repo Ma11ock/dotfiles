@@ -35,6 +35,10 @@
   ;; Unix.
   (setq user-emacs-directory (concat (getenv "HOME") "/.config/emacs/")))
 
+;; Set backup dir
+(setq backup-directory-alist `(("" . ,(concat user-emacs-directory "/backup"))))
+
+
 ;; Move where emacs puts its cache variables (by default it's in init.el).
 (let* ((my-emacs-custom-file (concat user-emacs-directory "custom-vars.el")))
   ;; Create custom variable file if it does not exist.
