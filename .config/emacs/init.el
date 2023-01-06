@@ -99,9 +99,9 @@
   ;; If Southpark (high DPI monitor) up the size.
   (if (string= system-name "Southpark")
       (add-to-list 'default-frame-alist
-                   '(font . "Inconsolata Nerd Font Mono:weight=normal:size=18"))
+                   '(font . "Inconsolata:weight=normal:size=18"))
     (add-to-list 'default-frame-alist
-                 '(font . "Inconsolata Nerd Font Mono:weight=normal:size=16"))))
+                 '(font . "Inconsolata:weight=normal:size=16"))))
 
 ;; Pretty symbols. Does not work for some reason.
 (use-package prettify-symbols-mode
@@ -130,8 +130,7 @@
         modus-themes-subtle-line-numbers nil
         modus-themes-intense-markup t)
 
-  (modus-themes-load-themes)
-  (modus-themes-load-vivendi))
+    (load-theme 'modus-vivendi))
 
 ;; Custom modeline.
 (display-time-mode 1)

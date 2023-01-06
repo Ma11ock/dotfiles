@@ -210,7 +210,7 @@ function eternity() {
 function det() {
     local realargs=()
     for a in $@; do
-        realargs+="/sudo::$a"
+        realargs+="/doas::$a"
     done
 
     et $realargs
