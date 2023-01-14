@@ -164,6 +164,14 @@ mouse-3: Toggle minor modes"
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;                                        Misc                                 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; Do not show those annoying warnings.
+(setq native-comp-async-report-warnings-errors nil)
+
+;; Store those annoying undo tree files in this dir.
+(setq undo-tree-history-directory-alist
+      `(("." . ,(concat user-emacs-directory "/.undo-tree"))))
+
 (make-variable-buffer-local 'make-backup-files)
 
 ;; Makes controls easier.

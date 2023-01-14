@@ -109,6 +109,7 @@ zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
 export DICPATH='/usr/share/hunspell'
 
 # Programming language globals.
+export GEM_HOME="$HOME/.cache/gems"
 export LANG='en_US.UTF-8'
 export SCRIPTS="$HOME/src/dotfiles/scripts/:$HOME/src/scripts"
 export GOARCH="amd64"
