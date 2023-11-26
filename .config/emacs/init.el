@@ -337,7 +337,7 @@ mouse-3: Toggle minor modes"
   (setq-default evil-cross-lines t)
 
   ;; Code snippet for color
-  ;;evil-emacs-state-tag    (propertize "  EMACS  " 'face '((:background "turquoise" :foreground "black")))
+  evil-emacs-state-tag    (propertize "  EMACS  " 'face '((:background "turquoise" :foreground "black")))
   (setq evil-normal-state-tag   (propertize "-COMMAND-" 'face '((:foreground "turquoise")))
         evil-emacs-state-tag    (propertize "--EMACS--" 'face '((:foreground "blue")))
         evil-insert-state-tag   (propertize "--INSRT--" 'face '((:foreground "gold")))
@@ -650,8 +650,7 @@ mouse-3: Toggle minor modes"
     (require 'dap-cpptools))
 
   (use-package helm-lsp
-    :ensure t
-    :init (define-key lsp-mode-map [remap xref-find-apropos] #'helm-lsp-workspace-symbol))
+    :ensure t)
 
   ;; optional if you want which-key integration
   (use-package which-key
@@ -768,8 +767,8 @@ mouse-3: Toggle minor modes"
   :after cmake-mode
   :config (cmake-font-lock-activate))
 
-(use-package etc-sudoers-mode
-  :ensure t)
+;; (use-package etc-sudoers-mode
+;;   :ensure t)
 
 (use-package web-mode
   :ensure t
@@ -831,10 +830,7 @@ mouse-3: Toggle minor modes"
   :ensure t)
 
 (use-package php-mode
-  :ensure t
-  :init
-  (use-package php-language-server
-    :ensure t))
+  :ensure t)
 
 
 (use-package elpy
@@ -986,7 +982,7 @@ Will also prompt for a file to visit if current buffer is not visiting a file."
 (global-so-long-mode 1)
 
 (when
-    (or (string= system-name "arlen") (string= system-name "Springfield"))
+    (string= system-name "Southpark")
   (require 'ryan-os))
 
 (put 'narrow-to-region 'disabled nil)
