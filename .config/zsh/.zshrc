@@ -9,7 +9,7 @@ fi
 # Fixes old versions of tmux
 if [[ -n "$TMUX" && $(tmux -V | awk '{print $2}' | head -c3) -lt "1.8" ]]
 then
-        PROMPT_COMMAND="printf '\ePtmux;\e\e[<u\e\\'"
+    PROMPT_COMMAND="printf '\ePtmux;\e\e[<u\e\\'"
 fi
 
 # Shorthands for various modern linux paths
@@ -38,20 +38,20 @@ key[PageDown]=${terminfo[knp]}
 
 # Change cursor shape for different vi modes.
 function zle-keymap-select {
-  if [[ ${KEYMAP} == vicmd ]] ||
-     [[ $1 = 'block' ]]; then
-    echo -ne '\e[1 q'
-  elif [[ ${KEYMAP} == main ]] ||
-       [[ ${KEYMAP} == viins ]] ||
-       [[ ${KEYMAP} = '' ]] ||
-       [[ $1 = 'beam' ]]; then
-    echo -ne '\e[5 q'
-  fi
+    if [[ ${KEYMAP} == vicmd ]] ||
+           [[ $1 = 'block' ]]; then
+        echo -ne '\e[1 q'
+    elif [[ ${KEYMAP} == main ]] ||
+             [[ ${KEYMAP} == viins ]] ||
+             [[ ${KEYMAP} = '' ]] ||
+             [[ $1 = 'beam' ]]; then
+        echo -ne '\e[5 q'
+    fi
 }
 setopt PROMPT_SUBST
 
 ssh_info() {
-  [[ "$SSH_CONNECTION" != '' ]] && echo '%(!.%{$fg[red]%}.%{$fg[yellow]%})%n%{$reset_color%}@%{$fg[green]%}%m%{$reset_color%}:' || echo ''
+    [[ "$SSH_CONNECTION" != '' ]] && echo '%(!.%{$fg[red]%}.%{$fg[yellow]%})%n%{$reset_color%}@%{$fg[green]%}%m%{$reset_color%}:' || echo ''
 }
 
 
@@ -125,8 +125,11 @@ export PATH="$PATH:$GOROOT/bin:/usr/lib/go/bin/:$SCRIPTS:$HOME/bin/:/home/ryan/.
 [ -d "/mingw64/bin" ] && export PATH="$PATH:/mingw64/bin"
 [ -d "/mingw32/bin" ] && export PATH="$PATH:/mingw32/bin"
 
-# The HURD does not have /sbin in its path
-(uname -a | grep "gnu-mach" -qi) && export PATH="$PATH:/sbin"
+# Check if the os has sbin
+case ":$PATH:"
+in "*:$HOME/bin:"*) ;;
+   *) [ -d "/sbin/" ] && export PATH="$PATH:/sbin" ;;
+esac
 
 export MUSIC="$HOME/Music/"
 export TERMINAL='kitty-xterm'
@@ -300,10 +303,10 @@ zinit snippet "OMZT::/af-magic"
 # Load a few important annexes, without Turbo
 # (this is currently required for annexes)
 zinit light-mode for \
-    zdharma-continuum/zinit-annex-as-monitor \
-    zdharma-continuum/zinit-annex-bin-gem-node \
-    zdharma-continuum/zinit-annex-patch-dl \
-    zdharma-continuum/zinit-annex-rust
+      zdharma-continuum/zinit-annex-as-monitor \
+      zdharma-continuum/zinit-annex-bin-gem-node \
+      zdharma-continuum/zinit-annex-patch-dl \
+      zdharma-continuum/zinit-annex-rust
 
 ### End of Zinit's installer chunk
 
