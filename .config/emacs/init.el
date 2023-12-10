@@ -97,9 +97,9 @@
     (add-to-list 'default-frame-alist
                  '(font . "Monaco:weight=normal:size=14"))
   ;; If Southpark (high DPI monitor) up the size.
-  (if (string= system-name "Southpark")
+  (if (string= system-name "southpark")
       (add-to-list 'default-frame-alist
-                   '(font . "Inconsolata:weight=normal:size=18"))
+                   '(font . "Inconsolata:weight=normal:size=24"))
     (add-to-list 'default-frame-alist
                  '(font . "Inconsolata:weight=normal:size=16"))))
 
@@ -270,7 +270,9 @@ mouse-3: Toggle minor modes"
 (use-package csharp-mode
   :ensure t
   :config
-  (format-all-mode t))
+  (format-all-mode t)
+  (require 'dap-mode)
+  (require 'dap-netcore))
 
 (use-package conf-mode
   :init
@@ -337,7 +339,7 @@ mouse-3: Toggle minor modes"
   (setq-default evil-cross-lines t)
 
   ;; Code snippet for color
-  evil-emacs-state-tag    (propertize "  EMACS  " 'face '((:background "turquoise" :foreground "black")))
+  ;;evil-emacs-state-tag    (propertize "  EMACS  " 'face '((:background "turquoise" :foreground "black")))
   (setq evil-normal-state-tag   (propertize "-COMMAND-" 'face '((:foreground "turquoise")))
         evil-emacs-state-tag    (propertize "--EMACS--" 'face '((:foreground "blue")))
         evil-insert-state-tag   (propertize "--INSRT--" 'face '((:foreground "gold")))
@@ -650,7 +652,8 @@ mouse-3: Toggle minor modes"
     (require 'dap-cpptools))
 
   (use-package helm-lsp
-    :ensure t)
+    :ensure t
+    :init (define-key lsp-mode-map [remap xref-find-apropos] #'helm-lsp-workspace-symbol))
 
   ;; optional if you want which-key integration
   (use-package which-key
@@ -670,8 +673,10 @@ mouse-3: Toggle minor modes"
   (use-package dap-mode
     :ensure t
     :config
-    (dap-ui-mode)
+    (dap-mode 1)
+    (dap-ui-mode 1)
     (dap-ui-controls-mode 1)
+    (dap-auto-configure-mode)
 
     (require 'dap-lldb)
     (require 'dap-gdb-lldb)
@@ -684,7 +689,8 @@ mouse-3: Toggle minor modes"
            :name "LLDB::Run"
 	       :gdbpath "rust-lldb"
            :target nil
-           :cwd nil)))
+           :cwd nil))
+    (use-package dap-netcore))
 
   (use-package lsp-treemacs
     :ensure t)
@@ -767,8 +773,8 @@ mouse-3: Toggle minor modes"
   :after cmake-mode
   :config (cmake-font-lock-activate))
 
-;; (use-package etc-sudoers-mode
-;;   :ensure t)
+(use-package etc-sudoers-mode
+  :ensure t)
 
 (use-package web-mode
   :ensure t
@@ -830,7 +836,10 @@ mouse-3: Toggle minor modes"
   :ensure t)
 
 (use-package php-mode
-  :ensure t)
+  :ensure t
+  :init
+  (use-package php-language-server
+    :ensure t))
 
 
 (use-package elpy
@@ -934,6 +943,11 @@ mouse-3: Toggle minor modes"
 ;;                                        Utilities                            ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(defalias 'toccase
+   (kmacro "/ _ <return> b v f ( h M-x s t r i n g - i n f l e c t i o n - c a m e l c a s e <return> / - <backspace> = SPC <return> l d $ \" _ d i } \" _ d i } k o <tab> r e t u r n SPC n e w SPC S t e p P t r ( <escape> p v i ) M-x s t r i n g - i n f l e c t i o n - c a m e l c a s e <return> $ a ; <escape>"))
+(defalias 'realtocase
+   (kmacro "/ _ <return> b v f ( h M-x s t r i n g - i n f l e c t i o n - c o m a <backspace> <backspace> <backspace> a m e l c a s e <return> / - <backspace> = SPC <return> l d $ \" _ d a { \" _ d i } k o <tab> r e t u r n SPC n e w SPC S t e p P t r ( <escape> p v i ) M-x s t r i n g - i n f l e c t i o n - c a m e l c a s e <return> $ a ; <escape> j"))
+
 
 (defun apply-hook-to-modes (modes-list hook-fun &optional depth local)
   "Apply a hook `HOOK-FUN' to a list of modes `MODES-LIST' at depth `DEPTH'.
@@ -982,7 +996,7 @@ Will also prompt for a file to visit if current buffer is not visiting a file."
 (global-so-long-mode 1)
 
 (when
-    (string= system-name "Southpark")
+    (or (string= system-name "arlen") (string= system-name "Springfield"))
   (require 'ryan-os))
 
 (put 'narrow-to-region 'disabled nil)
