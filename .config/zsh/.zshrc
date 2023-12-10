@@ -146,9 +146,9 @@ export VISUAL="emacsclient -c -a emacs"
 
 # Check if using sudo or doas
 if ! command -v doas &> /dev/null; then
-    alias dosu='sudo'
+    DOSU='sudo'
 else
-    alias dosu='doas'
+    DOSU='doas'
 fi
 
 # Shortcuts to config files and folders
@@ -171,13 +171,13 @@ alias lmk='latexmk -lualatex -synctex=1 -pvc'
 # Arch based vs debian based package manager aliases
 if type "pacman" &>/dev/null; then
     alias up='paru -Syu --noconfirm'
-    alias pac='dosu pacman -Syu --noconfirm'
+    alias pac='$DOSU pacman -Syu --noconfirm'
     alias aur='paru -Syu --noconfirm'
-    alias purge='dosu pacman -R'
+    alias purge='$DOSU pacman -R'
 elif type "apt" &>/dev/null; then
-    alias up='dosu apt-get update && dosu apt-get upgrade'
-    alias inst='dosu apt-get install'
-    alias purge='dosu apt purge'
+    alias up='$DOSU apt-get update && $DOSU apt-get upgrade'
+    alias inst='$DOSU apt-get install'
+    alias purge='$DOSU apt purge'
 fi
 
 alias redocmake='../; rm -rf bin; mkdir bin; cd bin; cmake .. -DCMAKE_BUILD_TYPE=debug'
