@@ -47,6 +47,22 @@
   (setq custom-file my-emacs-custom-file)
   (load "custom-vars.el" 'noerror))
 
+;; Make sure the paths between the OS and emacs are equal.
+(defun set-exec-path-from-shell-PATH ()
+  "Set up Emacs' `exec-path' and PATH environment variable to match
+that used by the user's shell.
+
+This is particularly useful under Mac OS X and macOS, where GUI
+apps are not started from a shell."
+  (interactive)
+  (let ((path-from-shell (replace-regexp-in-string
+              "[ \t\n]*$" "" (shell-command-to-string
+                      "$SHELL --login -c 'echo $PATH'"
+                            ))))
+    (setenv "PATH" path-from-shell)
+    (setq exec-path (split-string path-from-shell path-separator))))
+
+(set-exec-path-from-shell-PATH)
 
 ;; Set up package management.
 (require 'package)
@@ -99,7 +115,7 @@
   ;; If Southpark (high DPI monitor) up the size.
   (if (string= system-name "southpark")
       (add-to-list 'default-frame-alist
-                   '(font . "Inconsolata:weight=normal:size=24"))
+                   '(font . "Inconsolata Nerd Font Mono:weight=normal:size=14"))
     (add-to-list 'default-frame-alist
                  '(font . "Inconsolata:weight=normal:size=16"))))
 
@@ -268,7 +284,6 @@ mouse-3: Toggle minor modes"
   :ensure t)
 
 (use-package csharp-mode
-  :ensure t
   :config
   (format-all-mode t)
   (require 'dap-mode)
@@ -634,11 +649,9 @@ mouse-3: Toggle minor modes"
   (evil-define-key nil 'global (kbd "<leader>lg") #'lsp-find-implementation)
   (evil-define-key nil 'global (kbd "<leader>lh") #'lsp-describe-thing-at-point)
   (evil-define-key nil 'global (kbd "<leader>lr") #'lsp-rename)
+  (evil-define-key nil 'global (kbd "<leader>lca") #'helm-lsp-code-actions)
 
   (setq lsp-before-save-edits t)
-
-  ;(lsp-install-server 'omnisharp) TODO get this to install automagically.
-
 
   (setq gc-cons-threshold (* 100 1024 1024)
         read-process-output-max (* 1024 1024)
@@ -699,6 +712,16 @@ mouse-3: Toggle minor modes"
   :hook ((c-mode c++-mode go-mode) . lsp)
   :commands lsp)
 
+(use-package projectile
+  :ensure t
+  :config
+  (evil-define-key nil 'global (kbd "<leader>pcm") #'projectile-command-map)
+  (projectile-mode t))
+
+
+(use-package helm-projectile
+  :ensure t
+  :config (helm-projectile-on))
 
 ;; (use-package dap-LANGUAGE) to load the dap adapter for your language
 
@@ -773,9 +796,6 @@ mouse-3: Toggle minor modes"
   :after cmake-mode
   :config (cmake-font-lock-activate))
 
-(use-package etc-sudoers-mode
-  :ensure t)
-
 (use-package web-mode
   :ensure t
   :config
@@ -799,10 +819,10 @@ mouse-3: Toggle minor modes"
   (add-to-list 'auto-mode-alist '("\\.tpl\\.php\\'" . web-mode))
   (add-to-list 'auto-mode-alist '("\\.[agj]sp\\'" . web-mode))
   (add-to-list 'auto-mode-alist '("\\.as[cp]x\\'" . web-mode))
-  (add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
+  ;(add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
   (add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
   (add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))
-  (add-to-list 'auto-mode-alist '("\\.css\\'" . web-mode))
+  ;(add-to-list 'auto-mode-alist '("\\.css\\'" . web-mode))
   (add-to-list 'auto-mode-alist '("\\.html\\'" . web-mode))
   (add-to-list 'auto-mode-alist '("\\.handlebars\\'" . web-mode))
   (define-key web-mode-map (kbd "C-n") 'web-mode-tag-match)
@@ -837,9 +857,7 @@ mouse-3: Toggle minor modes"
 
 (use-package php-mode
   :ensure t
-  :init
-  (use-package php-language-server
-    :ensure t))
+  :init)
 
 
 (use-package elpy
@@ -934,9 +952,9 @@ mouse-3: Toggle minor modes"
 (use-package yasnippet-snippets
   :ensure t)
 
-(add-to-list 'load-path "/usr/share/emacs/site-lisp/emacs-llvm-mode/")
-(when (require 'llvm-mode)
-  (add-to-list 'auto-mode-alist '("\\.ll\\'" . llvm-mode)))
+;; (add-to-list 'load-path "/usr/share/emacs/site-lisp/emacs-llvm-mode/")
+;; (when (require 'llvm-mode)
+;;   (add-to-list 'auto-mode-alist '("\\.ll\\'" . llvm-mode)))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
