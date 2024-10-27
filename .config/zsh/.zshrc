@@ -69,7 +69,7 @@ bindkey "^[[1;5C" forward-word
 bindkey "^[[1;5D" backward-word
 
 bindkey '^[[P' delete-char
-bindkey '^[[3~' delete-char 
+bindkey '^[[3~' delete-char
 
 HISTSIZE=10000
 SAVEHIST=10000
@@ -120,7 +120,7 @@ export CGO_ENABLED="1"
 export GOROOT="/usr/lib/go"
 export GOBIN="$HOME/src/go/bin/"
 export GOPATH="$HOME/src/go/"
-export PATH="$PATH:$GOROOT/bin:/usr/lib/go/bin/:$SCRIPTS:$HOME/bin/:/home/ryan/.local/share/gem/ruby/3.0.0/bin:$HOME/.pub-cache/bin:$HOME/.local/bin"
+export PATH="$PATH:$GOBIN:/usr/lib/go/bin/:$SCRIPTS:$HOME/bin/:/home/ryan/.local/share/gem/ruby/3.0.0/bin:$HOME/.pub-cache/bin:$HOME/.local/bin"
 
 [ -d "/mingw64/bin" ] && export PATH="$PATH:/mingw64/bin"
 [ -d "/mingw32/bin" ] && export PATH="$PATH:/mingw32/bin"
@@ -146,9 +146,9 @@ export VISUAL="emacsclient -c -a emacs"
 
 # Check if using sudo or doas
 if ! command -v doas &> /dev/null; then
-    DOSU='sudo'
+    export DOSU='sudo'
 else
-    DOSU='doas'
+    export DOSU='doas'
 fi
 
 # Shortcuts to config files and folders
@@ -171,9 +171,9 @@ alias lmk='latexmk -lualatex -synctex=1 -pvc'
 # Arch based vs debian based package manager aliases
 if type "pacman" &>/dev/null; then
     alias up='paru -Syu --noconfirm'
-    alias pac='$DOSU pacman -Syu --noconfirm'
-    alias aur='paru -Syu --noconfirm'
-    alias purge='$DOSU pacman -R'
+    alias pac="$DOSU pacman -Syu --noconfirm"
+    alias aur="paru -Syu --noconfirm"
+    alias purge="$DOSU pacman -R"
 elif type "apt" &>/dev/null; then
     alias up='$DOSU apt-get update && $DOSU apt-get upgrade'
     alias inst='$DOSU apt-get install'
@@ -181,7 +181,6 @@ elif type "apt" &>/dev/null; then
 fi
 
 alias redocmake='../; rm -rf bin; mkdir bin; cd bin; cmake .. -DCMAKE_BUILD_TYPE=debug'
-alias doas='dosu -u root -s'
 alias ll='ls -l'
 alias untar='tar -xvf'
 alias ztar='tar -cvJf'
