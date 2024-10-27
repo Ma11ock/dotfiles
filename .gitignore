@@ -112,4 +112,7 @@ flycheck_*.el
 !/.config/ncmpcpp
 !/.config/ncmpcpp/config
 !/.config/ncmpcpp/bindings
-
+!/.config/doom/
+!/.config/doom/init.el
+!/.config/doom/config.el
+!/.config/doom/packages.el
