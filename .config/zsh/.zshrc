@@ -93,3 +93,12 @@ alias et='emacsclient -t'
 # emacs aliases
 
 alias magit="emacsclient -t -e  '(progn (magit) (delete-other-windows))'"
+
+# Zinit and plugins outside of oh-my-zsh plugin system.
+ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
+[ ! -d $ZINIT_HOME ] && mkdir -p "$(dirname $ZINIT_HOME)"
+[ ! -d $ZINIT_HOME/.git ] && git clone https://github.com/zdharma-continuum/zinit.git "$ZINIT_HOME"
+source "${ZINIT_HOME}/zinit.zsh"
+
+zinit ice depth=1
+zinit light jeffreytse/zsh-vi-mode
