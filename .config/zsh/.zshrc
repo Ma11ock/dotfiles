@@ -10,7 +10,7 @@ export GOROOT="/usr/lib/go"
 export GOBIN="$HOME/src/go/bin/"
 export GOPATH="$HOME/src/go/"
 export DOOMDIR="$HOME/.config/doom"
-export DOOMBIN="$HOME/.config/doom/bin"
+export DOOMBIN="$HOME/.config/emacs/bin"
 export PATH="$PATH:$GOROOT/bin:/usr/lib/go/bin/:$SCRIPTS:$HOME/bin/:/home/ryan/.local/share/gem/ruby/3.0.0/bin:$HOME/.pub-cache/bin:$HOME/.local/bin:$DOOMBIN"
 
 
@@ -62,17 +62,16 @@ alias lmk='latexmk -lualatex -synctex=1 -pvc'
 # Arch based vs debian based package manager aliases
 if type "pacman" &>/dev/null; then
     alias up='paru -Syu --noconfirm'
-    alias pac='dosu pacman -Syu --noconfirm'
+    alias pac='sudo pacman -Syu --noconfirm'
     alias aur='paru -Syu --noconfirm'
-    alias purge='dosu pacman -R'
+    alias purge='sudo pacman -R'
 elif type "apt" &>/dev/null; then
-    alias up='dosu apt-get update && dosu apt-get upgrade'
-    alias inst='dosu apt-get install'
-    alias purge='dosu apt purge'
+    alias up='sudo apt-get update && sudo apt-get upgrade'
+    alias inst='sudo apt-get install'
+    alias purge='sudo apt purge'
 fi
 
 alias redocmake='../; rm -rf bin; mkdir bin; cd bin; cmake .. -DCMAKE_BUILD_TYPE=debug'
-alias doas='dosu -u root -s'
 alias ll='ls -l'
 alias untar='tar -xvf'
 alias ztar='tar -cvJf'
