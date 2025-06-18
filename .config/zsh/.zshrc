@@ -11,7 +11,8 @@ export GOBIN="$HOME/src/go/bin/"
 export GOPATH="$HOME/src/go/"
 export DOOMDIR="$HOME/.config/doom"
 export DOOMBIN="$HOME/.config/emacs/bin"
-export PATH="$PATH:$GOROOT/bin:/usr/lib/go/bin/:$SCRIPTS:$HOME/bin/:/home/ryan/.local/share/gem/ruby/3.0.0/bin:$HOME/.pub-cache/bin:$HOME/.local/bin:$DOOMBIN"
+export DOTNET_BIN="$HOME/.dotnet/tools"
+export PATH="$PATH:$DOTNET_BIN:$GOROOT/bin:/usr/lib/go/bin/:$SCRIPTS:$HOME/bin/:/home/ryan/.local/share/gem/ruby/3.0.0/bin:$HOME/.pub-cache/bin:$HOME/.local/bin:$DOOMBIN"
 
 
 # Path to your Oh My Zsh installation.
